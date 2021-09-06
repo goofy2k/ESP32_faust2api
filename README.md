@@ -145,6 +145,9 @@ NO SOLUTION !!!
  The trick here is to put the library AFTER the module you are compiling. The problem is a reference thing. The linker resolves references in order, so when the library is BEFORE the module being compiled, the linker gets confused and does not think that any of the functions in the library are needed. By putting the library AFTER the module, the references to the library in the module are resolved by the linker.
 
  BUT HOW AND WHERE?
+ 
+ https://stackoverflow.com/questions/67039814/linker-error-in-esp-idf-framework-undefined-reference
+ UPDATE THE CMAKE fil
    
 #### THERE IS A PROBLEM IN ARDUINO WITH RELATIVE PATHS FOR LIB INCLUDES
 #### PUT THE LIBS IN THE SAME FOLDER AS THE .INO FILE AND INCLUDE BETWEEN "   "
