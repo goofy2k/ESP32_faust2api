@@ -66,7 +66,7 @@ As we can run Linux scripts now, milestone 1 does not add anything. The Faust ID
 Activities 6,7,8 are the core and will run in improvement cycles
 User experience vs architecture
 
-**Activity 2a/b**
+**Milestone 2a/b**
 Follow the tutorial workflow, see:  
 - https://faustdoc.grame.fr/tutorials/esp32/
 also see:
@@ -113,12 +113,27 @@ also see:
    - Change the sound frequency (dynamically) with the setParamValue function
  - Compile the app again (see above)  
  
- - Debug until success  
+ - Debug until success  **NOT YET** 
  
  #### Arduino code 
  - Full Arduino folder (.ino and libs in one folder works)
  - This implies double storage (and maintenance!!) for the libs
  - find a way to include the libraries with in a different folder than the .ino file. Use relative path in the include statement.
+
+**Milestone 7**  
+FaustSawtooth and faust2api  
+doesn't compile 
+may have something to do with long path lengths, see: https://www.esp32.com/viewtopic.php?t=14651  
+and informative link therein: https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/build-system.html#idf-py-options
+possible workaround: One way to workaround it is to set env variable ..... IDF_CCACHE_ENABLED='' .... before launching idf.py.
+SET  
+$Env:<variable-name> = "<new-value>"  
+GET  
+ 
+NO SOLUTION !!!
+ 
+ READ THIS:  https://www.cxyzjd.com/article/zhangjingxun12/117095349
+
    
 #### THERE IS A PROBLEM IN ARDUINO WITH RELATIVE PATHS FOR LIB INCLUDES
 #### PUT THE LIBS IN THE SAME FOLDER AS THE .INO FILE AND INCLUDE BETWEEN "   "
