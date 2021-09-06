@@ -133,6 +133,12 @@ GET
 NO SOLUTION !!!
  
  READ THIS:  https://www.cxyzjd.com/article/zhangjingxun12/117095349
+ 
+ has something to do with paths > 90
+ 
+ idf.py --no-ccache build
+ 
+ Now the error becomes:  undefined reference to Libname::function name
 
    
 #### THERE IS A PROBLEM IN ARDUINO WITH RELATIVE PATHS FOR LIB INCLUDES
