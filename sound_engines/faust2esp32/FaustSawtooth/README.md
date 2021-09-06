@@ -5,7 +5,7 @@
 - Architecture:  
 
 By default the faust2esp32 script is used.  
-If the folder contains a file named faust2api_* that file will be used for compilation
+If the folder contains a file named faust2esp32_* that file will be used for compilation
 
 This folder contains the following elements:
 ### Faust input
