@@ -43,9 +43,9 @@ https://arduino.stackexchange.com/questions/8651/loading-local-libraries
 
 // This works provided that libs are in the same folder as .ino
 #include "WM8978.h"                 
-#include "FaustSawtooth.h"
+#include "DspFaust.h"
 
-FaustSawtooth faustSawtooth(48000,8);
+DspFaust dspFaust(48000,8);
 
 void setup() {
   WM8978 wm8978;
@@ -60,10 +60,10 @@ void setup() {
   wm8978.hpVolSet(40,40);
   wm8978.i2sCfg(2,0);
 
-  faustSawtooth.start();
+  dspFaust.start();
 }
 
 void loop() {
-  faustSawtooth.setParamValue("freq",rand()%(2000-50 + 1) + 50);
+  dspFaust.setParamValue("freq",rand()%(2000-50 + 1) + 50);
   delay(1000);
 }

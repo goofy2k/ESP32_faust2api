@@ -1,0 +1,5 @@
+Your dsp-faust.zip API package for ESP32 audio is being created
+Package sndfile was not found in the pkg-config search path.
+Perhaps you should add the directory containing `sndfile.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'sndfile' found

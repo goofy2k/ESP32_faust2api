@@ -5,7 +5,7 @@
 #include "esp_spi_flash.h"
 
 #include "WM8978.h"
-#include "FaustSawtooth.h"
+#include "DspFaust.h"
 
 extern "C" {
     void app_main(void);
@@ -27,11 +27,11 @@ void app_main(void)
 
     int SR = 48000;
     int BS = 8;
-    FaustSawtooth faustSawtooth(SR,BS);  
-    faustSawtooth.start();
+    DspFaust dspFaust(SR,BS);  
+    dspFaust.start();
 
     while(1) {
-        faustSawtooth.setParamValue("freq",rand()%(2000-50 + 1) + 50);
+        dspFaust.setParamValue("freq",rand()%(2000-50 + 1) + 50);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
