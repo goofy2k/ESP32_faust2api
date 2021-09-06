@@ -4,7 +4,7 @@
 - Platform: 
 - Architecture:  
 
-By default the faust2esp32 script is used.  
+By default the faust2api script is used.  
 If the folder contains a file named faust2api_* that file will be used for compilation
 
 This folder contains the following elements:
