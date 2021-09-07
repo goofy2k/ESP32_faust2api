@@ -148,6 +148,10 @@ NO SOLUTION !!!
  
  https://stackoverflow.com/questions/67039814/linker-error-in-esp-idf-framework-undefined-reference
  UPDATE THE CMAKE fil
+ 
+ SO ESP-IDF: set env variable CCACH + updated CMAKELists and use nocach in idf.py -nocahce build
+ 
+ Arduino:  'dynamic_cast' not permitted with -fno-rtti  
    
 #### THERE IS A PROBLEM IN ARDUINO WITH RELATIVE PATHS FOR LIB INCLUDES
 #### PUT THE LIBS IN THE SAME FOLDER AS THE .INO FILE AND INCLUDE BETWEEN "   "
