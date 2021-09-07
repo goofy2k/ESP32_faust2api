@@ -53,7 +53,7 @@ As we can run Linux scripts now, milestone 1 does not add anything. The Faust ID
 ### TODO
 
 |  #  | milestone | desrciption                            |    DSP           | Faust script| depends on | status |  
-|-----|-----------|-------------------------------------------------------------------------|------------|--------|  
+|-----|-----------|----------------------------------------|------------------|-------------|------------|--------|  
 |  1  |     *     | design command line scripts            |                  |             |            |started |  
 |  3  |     2a    | Arduino sketch                         | FaustSawtooth.dsp| faust2esp32 |            |finished|  
 |  4  |     2b    | ESP-IDF tutorial_app1                  | FaustSawtooth.dsp| faust2esp32 |     3      |finished|  
