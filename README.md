@@ -183,6 +183,37 @@ wsl ~/faust/tools/faust2appls/faust2esp32 -h > faust2esp32_help.txt
 PS C:\Users\Fred\esp_projects\ESP32-with-Faust\sound_engines\FaustSawtooth\cpp\faust2esp32> wsl ~/faust/tools/faust2appls/faust2esp32 ../../FaustSawtooth.dsp  
 PS C:\Users\Fred\esp_projects\ESP32-with-Faust\sound_engines\FaustSawtooth\cpp\faust2esp32> wsl ~/faust/tools/faust2appls/faust2esp32 - > faustesp32_help.txt
 
+ ** folder structure generator  https://ascii-tree-generator.com/
+ 
+ 
+ sound_engines/
+├─ faust2api/
+│  ├─ DSPTemplate/
+│  ├─ FaustSawtooth/
+│  │  ├─ arduino_sketch/
+│  │  │  ├─ arduino_sketch.ino
+│  │  │  ├─ DspFaust.cpp
+│  │  │  ├─ DspFaust.h
+│  │  │  ├─ WM8978.cpp
+│  │  │  ├─ WM8978.h
+│  │  ├─ cpp_code/
+│  │  │  ├─ main/
+│  │  │  │  ├─ main.cpp
+│  │  │  │  ├─ CMake_stuff
+│  │  │  │  ├─ DspFaust.cpp/
+│  │  │  │  ├─ DspFaust.h
+│  │  │  │  ├─ WM8978.cpp
+│  │  │  │  ├─ WM8978.h
+│  │  │  ├─ CMake_stuff
+│  │  ├─ FaustSawtooth.dsp
+├─ faust2esp32/
+
+ 
+ 
+ 
+ 
+ 
+ 
 
 ## MELODIES IMPLEMENT IN ARDUINO SAWTOOTH
  
