@@ -128,7 +128,7 @@ also see:
    - Make fimware recognizable to detect if indeed new firmware was flashed: with a version nr printed to the monitor, or better, a sound fingerprint 
      - changed duration of the tones   
     - SUCCES !!!!! new firmware runs OK
-   - CHECK REPAIR BY SLETZ: FILES ALREADY IMPORTED  but not deployed OK   
+   - CHECK REPAIR BY SLETZ: FILES ALREADY IMPORTED  but not deployed OK  see below  
  - Debug until success  **NOT YET** 
  
  #### Arduino code 
@@ -209,6 +209,8 @@ NO SOLUTION !!!
  The source must be on the windows side!
  
  It is now (?)  .... output in buildlog3.txt
+ 
+ NOTE: sletz repaired the output file of the script file manually. Doe it mean that a script-generated file is also OK????
  
  THe cerr is still there! Do you use the correct source?
    
