@@ -129,7 +129,35 @@ also see:
  #### Arduino code 
  - Full Arduino folder (.ino and libs in one folder works)
  - This implies double storage (and maintenance!!) for the libs
- - find a way to include the libraries with in a different folder than the .ino file. Use relative path in the include statement.
+ - find a way to include the libraries with in a different folder than the .ino file. Use relative path in the include statement.  
+
+### Tool learnings
+
+#### ESP-IDF  
+
+Must add .cpp lib files to CMakeLists.txt in main folder
+
+ESP-IDF 4.2 Powershell
+from project folder (parent folder of main folder)
+PS idf.py set-target -esp32  
+PS idf.py menuconfig  
+PS idf.py **--no-ccache** build  
+PS idf.py **--no-ccache** -p COM10 flash  
+PS idf.py **--no-ccache** -p COM10 monitor  
+
+Use --no-cchache option to prevent build errors with long paths
+
+#### Arduino IDE
+
+IDE cannot directly handle relative paths for includes, so  
+lib files must be in same folder as sketch (.ino)
+IDE cannot handle minus sign in paths. Name all folders accordingly.  
+To ease versioning, prevent double copies of libs in project tree  
+Let ESP-IDF include libs from Arduino sketch folder using relative path and environment variable
+for path to root of project  
+
+
+### Lab log  
 
 **Milestone 7**  
 FaustSawtooth and faust2api  
