@@ -112,7 +112,9 @@ also see:
    - Start the Faust DSP Engine
    - Change the sound frequency (dynamically) with the setParamValue function
  - Compile the app again (see above)  
- 
+   - FAIL: undefined references to libs.  Change CMakeLists.txt in the ... folder to contain 
+     - **idf_component_register(SRCS "main.cpp" "FaustSawtooth.cpp" "WM8978.cpp"**  or
+     - **idf_component_register(SRCS "main.cpp" "DspFaust.cpp" "WM8978.cpp"**  
  - Debug until success  **NOT YET** 
  
  #### Arduino code 
@@ -151,7 +153,7 @@ NO SOLUTION !!!
  
  SO ESP-IDF: set env variable CCACH + updated CMAKELists and use nocach in idf.py -nocahce build
  
- Arduino:  'dynamic_cast' not permitted with -fno-rtti  
+ Arduino:  'dynamic_cast' not permitted with -fno-rtti  TRY TO DETECT WHERE THE ERROR OCCURS BY COMMENTING OUT CALLS TO THE LIB
    
 #### THERE IS A PROBLEM IN ARDUINO WITH RELATIVE PATHS FOR LIB INCLUDES
 #### PUT THE LIBS IN THE SAME FOLDER AS THE .INO FILE AND INCLUDE BETWEEN "   "
