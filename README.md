@@ -9,7 +9,7 @@
 It takes a sound engine (.dsp) file generated in an GUI or with a text editor and generates C++ code that can be included in a user's project for creation of firmware for sound genrating application.
 
 ![workflow_partial](/images/workflow_general_cropped.png)  
-
+![folder_structure](images/folder%20structure.jpg)
  Recently Faust has been used for an ESP32 based board: [Lilygo TTGO TAudio](). See this [article](/documents/smc20_faust_esp32.pdf) and this [tutorial.](https://faustdoc.grame.fr/tutorials/esp32/)
 
  More:  
