@@ -184,5 +184,12 @@ PS C:\Users\Fred\esp_projects\ESP32-with-Faust\sound_engines\FaustSawtooth\cpp\f
 PS C:\Users\Fred\esp_projects\ESP32-with-Faust\sound_engines\FaustSawtooth\cpp\faust2esp32> wsl ~/faust/tools/faust2appls/faust2esp32 - > faustesp32_help.txt
 
 
+## MELODIES IMPLEMENT IN ARDUINO SAWTOOTH
+ 
+https://www.browncountylibrary.org/wp-content/uploads/2018/03/arduino_piezo.pdf
+ e.g.
+ int numTones = 10; // the number of tones in the scale
+int tones[] = {261, 277, 294, 311, 330, 349, 370, 392, 415, 440}; // the frequency for each tone
+// mid C C# D D# E F F# G G# A
 
 
