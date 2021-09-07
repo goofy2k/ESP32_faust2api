@@ -186,27 +186,27 @@ PS C:\Users\Fred\esp_projects\ESP32-with-Faust\sound_engines\FaustSawtooth\cpp\f
  ** folder structure generator  https://ascii-tree-generator.com/
  
  
- sound_engines/
-├─ faust2api/
-│  ├─ DSPTemplate/
-│  ├─ FaustSawtooth/
-│  │  ├─ arduino_sketch/
-│  │  │  ├─ arduino_sketch.ino
-│  │  │  ├─ DspFaust.cpp
-│  │  │  ├─ DspFaust.h
-│  │  │  ├─ WM8978.cpp
-│  │  │  ├─ WM8978.h
-│  │  ├─ cpp_code/
-│  │  │  ├─ main/
-│  │  │  │  ├─ main.cpp
-│  │  │  │  ├─ CMake_stuff
-│  │  │  │  ├─ DspFaust.cpp/
-│  │  │  │  ├─ DspFaust.h
-│  │  │  │  ├─ WM8978.cpp
-│  │  │  │  ├─ WM8978.h
-│  │  │  ├─ CMake_stuff
-│  │  ├─ FaustSawtooth.dsp
-├─ faust2esp32/
+ sound_engines/  
+├─ faust2api/  
+│  ├─ DSPTemplate/  
+│  ├─ FaustSawtooth/  
+│  │  ├─ arduino_sketch/  
+│  │  │  ├─ arduino_sketch.ino  
+│  │  │  ├─ DspFaust.cpp  
+│  │  │  ├─ DspFaust.h  
+│  │  │  ├─ WM8978.cpp  
+│  │  │  ├─ WM8978.h  
+│  │  ├─ cpp_code/  
+│  │  │  ├─ main/  
+│  │  │  │  ├─ main.cpp  
+│  │  │  │  ├─ CMake_stuff  
+│  │  │  │  ├─ DspFaust.cpp/  
+│  │  │  │  ├─ DspFaust.h  
+│  │  │  │  ├─ WM8978.cpp  
+│  │  │  │  ├─ WM8978.h  
+│  │  │  ├─ CMake_stuff  
+│  │  ├─ FaustSawtooth.dsp  
+├─ faust2esp32/  
 
  
  
