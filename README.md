@@ -208,11 +208,11 @@ PS C:\Users\Fred\esp_projects\ESP32-with-Faust\sound_engines\FaustSawtooth\cpp\f
 │  │  │  │  ├─ WM8978.cpp  
 │  │  │  │  ├─ WM8978.h  
 │  │  │  ├─ CMake_stuff    
-├─ faust2esp32/ 
+├─ faust2esp32/  
 │  ├─ DSPTemplate/  
 │  ├─ FaustSawtooth/ 
-│  ├─ another_dsp/
-│  │  ├─ another_dsp.dsp 
+│  ├─ another_dsp/  
+│  │  ├─ another_dsp.dsp  
 
  
  
