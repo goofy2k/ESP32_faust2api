@@ -246,6 +246,9 @@ PS C:\Users\Fred\esp_projects\ESP32-with-Faust\sound_engines\FaustSawtooth\cpp\f
 │  ├─ another_dsp/  
 │  │  ├─ another_dsp.dsp  
 
+#### Also check:  
+- https://www.makeuseof.com/tag/5-ways-to-print-folder-and-directory-contents-in-windows/  
+- https://www.thewindowsclub.com/how-to-create-a-folder-tree-in-windows-10  
  
  
  
