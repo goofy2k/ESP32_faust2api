@@ -56,12 +56,14 @@ As we can run Linux scripts now, milestone 1 does not add anything. The Faust ID
 |-----|-----------|-------------------------------------------------------------------------|------------|--------|
 |  1  |     *     | design and report command line structure for smooth dev workflow        |            |started |
 |  2  |     *     | communicate first impression, questions remarks (see issues)            |            |started |
-|  3  |     2a    | create main.cpp for Arduino IDE (FaustSawtooth, faust2esp32)            |            |finished|
-|  4  |     2b    | create main.cpp for ESP-IDF     (FaustSawtooth, faust2esp32)            |     3      |finished|
-|  5  |     2c    | create main.cpp for ESP-IDF     (large dsp/external RAM, faust2esp32)   |     4      |   w    |
+|-----|-----------|-------------------------------------------------------------------------|------------|--------|
+|  3  |     2a    | Arduino sketch                  (FaustSawtooth, faust2esp32)            |            |finished|
+|  4  |     2b    | ESP-IDF tutorial_app1           (FaustSawtooth, faust2esp32)            |     3      |finished|
+|  5  |     2c    | ESP-IDF tutorial_app2           (osc.dsp/external RAM, faust2esp32)     |     4      |   w    |  
+|  5  |     2c    | ESP-IDF sletz proposed app      (osc.dsp/external RAM, faust2esp32)     |     4      |   w    |
 |  6  |     3a    | study and evaluate API documentation (faust2api)                        |            |   w    |
 |  7  |     3b    | create main.cpp for using API        (faust2api)                        |    5,6     |started |   
-|  8  |     3b    | run sound generation tests with API   (faust2api)                       |     7      |   w    |   
+|  8  |     3b    | run sound generation tests with API  (faust2api)                        |     7      |   w    |   
 
 Activities 6,7,8 are the core and will run in improvement cycles
 User experience vs architecture
