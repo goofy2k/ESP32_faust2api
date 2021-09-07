@@ -191,7 +191,8 @@ PS C:\Users\Fred\esp_projects\ESP32-with-Faust\sound_engines\FaustSawtooth\cpp\f
  sound_engines/  
 ├─ faust2api/  
 │  ├─ DSPTemplate/  
-│  ├─ FaustSawtooth/  
+│  ├─ FaustSawtooth/ 
+│  │  ├─ FaustSawtooth.dsp 
 │  │  ├─ arduino_sketch/  
 │  │  │  ├─ arduino_sketch.ino  
 │  │  │  ├─ DspFaust.cpp  
@@ -206,9 +207,12 @@ PS C:\Users\Fred\esp_projects\ESP32-with-Faust\sound_engines\FaustSawtooth\cpp\f
 │  │  │  │  ├─ DspFaust.h  
 │  │  │  │  ├─ WM8978.cpp  
 │  │  │  │  ├─ WM8978.h  
-│  │  │  ├─ CMake_stuff  
-│  │  ├─ FaustSawtooth.dsp  
-├─ faust2esp32/  
+│  │  │  ├─ CMake_stuff    
+├─ faust2esp32/ 
+│  ├─ DSPTemplate/  
+│  ├─ FaustSawtooth/ 
+│  ├─ another_dsp/
+│  │  ├─ another_dsp.dsp 
 
  
  
