@@ -203,7 +203,7 @@ PS C:\Users\Fred\esp_projects\ESP32-with-Faust\sound_engines\FaustSawtooth\cpp\f
 │  │  │  ├─ main/  
 │  │  │  │  ├─ main.cpp  
 │  │  │  │  ├─ CMake_stuff  
-│  │  │  │  ├─ DspFaust.cpp/  Is a file NOT a folder  
+│  │  │  │  ├─ DspFaust.cpp     Is a file NOT a folder  
 │  │  │  │  ├─ DspFaust.h  
 │  │  │  │  ├─ WM8978.cpp  
 │  │  │  │  ├─ WM8978.h  
