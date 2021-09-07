@@ -203,6 +203,10 @@ NO SOLUTION !!!
  
  the other error should be solved:  sletz: This error "error: 'cerr' is not a member of 'std'" should be fixed in this commit https://github.com/grame-cncm/faust/commit/6275eabbde7bc736c69bf44278bd343d27e90f94  
  I imported the active files.  Hope that everything compiles well CHECK CHECK
+ 
+ CHeck this by comparing the uploaded buildlog.txt  with the newly generated buildlog2.txt
+ 
+ THe cerr is still there! Do you use the correct source?
    
 #### THERE IS A PROBLEM IN ARDUINO WITH RELATIVE PATHS FOR LIB INCLUDES
 #### PUT THE LIBS IN THE SAME FOLDER AS THE .INO FILE AND INCLUDE BETWEEN "   "
