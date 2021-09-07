@@ -53,13 +53,13 @@ As we can run Linux scripts now, milestone 1 does not add anything. The Faust ID
 ### TODO
 
 |  #  | milestone | desrciption                            |    DSP           | Faust script| depends on | status |  
-|-----|-----------|-------------------------------------------------------------------------|------------|--------|
-|  1  |     *     | design command line scripts            |                  |             |            |started |
-|  3  |     2a    | Arduino sketch                         | FaustSawtooth.dsp| faust2esp32 |            |finished|
-|  4  |     2b    | ESP-IDF tutorial_app1                  | FaustSawtooth.dsp| faust2esp32 |     3      |finished|
+|-----|-----------|-------------------------------------------------------------------------|------------|--------|  
+|  1  |     *     | design command line scripts            |                  |             |            |started |  
+|  3  |     2a    | Arduino sketch                         | FaustSawtooth.dsp| faust2esp32 |            |finished|  
+|  4  |     2b    | ESP-IDF tutorial_app1                  | FaustSawtooth.dsp| faust2esp32 |     3      |finished|  
 |  5  |     2c    | ESP-IDF tutorial_app2                  | osc.dsp/ext RAM  | faust2esp32 |     4      |   w    |  
-|  5  |     2c    | ESP-IDF sletz proposed app      osc.dsp/external RAM,       faust2esp32 |     4      |   w    |
-|  6  |     3a    | study and evaluate API documentation (faust2api)                        |            |   w    |
+|  5  |     2c    | ESP-IDF sletz proposed app      osc.dsp/external RAM,       faust2esp32 |     4      |   w    |  
+|  6  |     3a    | study and evaluate API documentation (faust2api)                        |            |   w    |  
 |  7  |     3b    | create main.cpp for using API        (faust2api)                        |    5,6     |started |   
 |  8  |     3b    | run sound generation tests with API  (faust2api)                        |     7      |   w    |   
 
