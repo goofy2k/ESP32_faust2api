@@ -210,7 +210,7 @@ PS C:\Users\Fred\esp_projects\ESP32-with-Faust\sound_engines\FaustSawtooth\cpp\f
 │  │  │  ├─ CMake_stuff    
 ├─ faust2esp32/  
 │  ├─ DSPTemplate/  
-│  ├─ FaustSawtooth/ 
+│  ├─ FaustSawtooth/  
 │  ├─ another_dsp/  
 │  │  ├─ another_dsp.dsp  
 
