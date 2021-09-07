@@ -149,11 +149,11 @@ Use --no-cchache option to prevent build errors with long paths
 
 #### Arduino IDE
 
-IDE cannot directly handle relative paths for includes, so  
+- IDE cannot directly handle relative paths for includes, so  
 lib files must be in same folder as sketch (.ino)
-IDE cannot handle minus sign in paths. Name all folders accordingly.  
-To ease versioning, prevent double copies of libs in project tree  
-Let ESP-IDF include libs from Arduino sketch folder using relative path and environment variable
+- IDE cannot handle minus sign in paths. Name all folders accordingly.  
+- To make versioning easier, prevent double copies of libs in project tree.  
+- Lett ESP-IDF include libs from Arduino sketch folder using relative path and environment variable
 for path to root of project  
 
 
