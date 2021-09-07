@@ -127,7 +127,8 @@ also see:
    - SUCCES ! 
    - Make fimware recognizable to detect if indeed new firmware was flashed: with a version nr printed to the monitor, or better, a sound fingerprint 
      - changed duration of the tones   
-    - SUCCES !!!!! new firmware runs OK    
+    - SUCCES !!!!! new firmware runs OK
+   - CHECK REPAIR BY SLETZ: FILES ALREADY IMPORTED     
  - Debug until success  **NOT YET** 
  
  #### Arduino code 
