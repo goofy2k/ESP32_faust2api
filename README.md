@@ -52,16 +52,16 @@ As we can run Linux scripts now, milestone 1 does not add anything. The Faust ID
 
 ### TODO
 
-|  #  | milestone | desrciption                                                  | depends on | status |
-|-----|-----------|--------------------------------------------------------------|------------|--------|
-|  1  |     *     | design command line structure for smooth dev workflow        |            |started |
-|  2  |     *     | communicate first impression, questions remarks (see issues) |            |started |
-|  3  |     2a    | create main.cpp for Arduino IDE (FaustSawtooth, faust2esp32) |            |started |
-|  4  |     2b    | create main.cpp for ESP-IDF     (FaustSawtooth, faust2esp32) |     3      |        |
-|  5  |     2c    | create main.cpp for ESP-IDF     (large dsp,     faust2esp32) |     4      |        |
-|  6  |     3a    | study and evaluate API documentation (faust2api)             |            |started |
-|  7  |     3b    | create main.cpp for using API        (faust2api)             |    5,6     |   w    |   
-|  8  |     3b    | run sound generation tests with API   (faust2api)            |     7      |   w    |   
+|  #  | milestone | desrciption                                                             | depends on | status |
+|-----|-----------|-------------------------------------------------------------------------|------------|--------|
+|  1  |     *     | design and report command line structure for smooth dev workflow        |            |started |
+|  2  |     *     | communicate first impression, questions remarks (see issues)            |            |started |
+|  3  |     2a    | create main.cpp for Arduino IDE (FaustSawtooth, faust2esp32)            |            |finished|
+|  4  |     2b    | create main.cpp for ESP-IDF     (FaustSawtooth, faust2esp32)            |     3      |finished|
+|  5  |     2c    | create main.cpp for ESP-IDF     (large dsp/external RAM, faust2esp32)   |     4      |   w    |
+|  6  |     3a    | study and evaluate API documentation (faust2api)                        |            |   w    |
+|  7  |     3b    | create main.cpp for using API        (faust2api)                        |    5,6     |started |   
+|  8  |     3b    | run sound generation tests with API   (faust2api)                       |     7      |   w    |   
 
 Activities 6,7,8 are the core and will run in improvement cycles
 User experience vs architecture
