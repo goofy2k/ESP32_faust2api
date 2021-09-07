@@ -8,8 +8,8 @@
  
 It takes a sound engine (.dsp) file generated in an GUI or with a text editor and generates C++ code that can be included in a user's project for creation of firmware for sound genrating application.
 
-![workflow_partial](/images/workflow_general_cropped.png)  
-![folder_structure](images/folder%20structure.jpg)
+![workflow_partial](/images/workflow_general_cropped.png)    
+
  Recently Faust has been used for an ESP32 based board: [Lilygo TTGO TAudio](). See this [article](/documents/smc20_faust_esp32.pdf) and this [tutorial.](https://faustdoc.grame.fr/tutorials/esp32/)
 
  More:  
@@ -186,6 +186,8 @@ PS C:\Users\Fred\esp_projects\ESP32-with-Faust\sound_engines\FaustSawtooth\cpp\f
  ** folder structure generator  https://ascii-tree-generator.com/
  
  
+ ![folder_structure](images/folder%20structure.jpg)  
+ 
  sound_engines/  
 ├─ faust2api/  
 │  ├─ DSPTemplate/  
@@ -200,7 +202,7 @@ PS C:\Users\Fred\esp_projects\ESP32-with-Faust\sound_engines\FaustSawtooth\cpp\f
 │  │  │  ├─ main/  
 │  │  │  │  ├─ main.cpp  
 │  │  │  │  ├─ CMake_stuff  
-│  │  │  │  ├─ DspFaust.cpp/  
+│  │  │  │  ├─ DspFaust.cpp/  Is a file NOT a folder
 │  │  │  │  ├─ DspFaust.h  
 │  │  │  │  ├─ WM8978.cpp  
 │  │  │  │  ├─ WM8978.h  
