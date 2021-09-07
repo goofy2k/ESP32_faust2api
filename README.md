@@ -188,14 +188,14 @@ PS C:\Users\Fred\esp_projects\ESP32-with-Faust\sound_engines\FaustSawtooth\cpp\f
  
  ![folder_structure](images/folder%20structure.jpg)  
  
- sound_engines/                       a sound engine's configuration is defined by: Faust script, .dsp file   
-├─ faust2api/                         each sound engine is implemented in a cpp_code and an arduino_sketch  
+ sound_engines/.......................a sound engine's configuration is defined by: Faust script, .dsp file   
+├─ faust2api/.........................each sound engine is implemented in a cpp_code and an arduino_sketch  
 │  ├─ DSPTemplate/  
 │  ├─ FaustSawtooth/   
 │  │  ├─ FaustSawtooth.dsp  
 │  │  ├─ arduino_sketch/  
 │  │  │  ├─ arduino_sketch.ino  
-│  │  │  ├─ DspFaust.cpp             lib files have to be stored in 2 places (Arduino does not accept relative paths)  
+│  │  │  ├─ DspFaust.cpp.............lib files have to be stored in 2 places (Arduino does not accept relative paths)  
 │  │  │  ├─ DspFaust.h               
 │  │  │  ├─ WM8978.cpp  
 │  │  │  ├─ WM8978.h  
@@ -203,7 +203,7 @@ PS C:\Users\Fred\esp_projects\ESP32-with-Faust\sound_engines\FaustSawtooth\cpp\f
 │  │  │  ├─ main/  
 │  │  │  │  ├─ main.cpp  
 │  │  │  │  ├─ CMake_stuff  
-│  │  │  │  ├─ DspFaust.cpp         must implement relative path to arduino_sketch folder for the libs to prevent double maintenance (risky version control)   
+│  │  │  │  ├─ DspFaust.cpp.........must implement relative path to arduino_sketch folder for the libs to prevent double maintenance (risky version control)   
 │  │  │  │  ├─ DspFaust.h  
 │  │  │  │  ├─ WM8978.cpp  
 │  │  │  │  ├─ WM8978.h  
