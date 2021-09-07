@@ -121,8 +121,9 @@ also see:
    - FAIL: started to build again (why?, because of previous no-ccache?)
      - start over again and use no-cache also in the flash command: PS idf.py --no-ccache -p COM10 flash
    - SUCCES ! 
-   - Make fimware recognizable to detect if indeed new firmware was flashed: with a version nr printed to the monitor, or better, a sound fingerprint   
-     -     
+   - Make fimware recognizable to detect if indeed new firmware was flashed: with a version nr printed to the monitor, or better, a sound fingerprint 
+     - changed duration of the tones   
+    - SUCCES !!!!! new firmware runs OK    
  - Debug until success  **NOT YET** 
  
  #### Arduino code 
