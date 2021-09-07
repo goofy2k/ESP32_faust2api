@@ -1,7 +1,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-
+#define TONE_DURATION 500
 
 // Relative paths DO NOT work
 // #include "../hello_world/main/WM8978.h"
@@ -60,10 +60,48 @@ void setup() {
   wm8978.hpVolSet(40,40);
   wm8978.i2sCfg(2,0);
 
-  faustSawtooth.start();
+ faustSawtooth.start();
 }
 
 void loop() {
-  faustSawtooth.setParamValue("freq",rand()%(2000-50 + 1) + 50);
-  delay(1000);
+  //faustSawtooth.setParamValue("freq",rand()%(2000-50 + 1) + 50);
+  //delay(1000);
+/*
+ int numTones = 10; // the number of tones in the scale
+int tones[] = {261, 277, 294, 311, 330, 349, 370, 392, 415, 440}; // the frequency for each tone
+// mid C C# D D# E F F# G G# A
+*/
+float pitch_shift = 1;
+//faustSawtooth.start();
+faustSawtooth.setParamValue("freq",pitch_shift*220);
+delay(TONE_DURATION);
+faustSawtooth.setParamValue("freq",pitch_shift*261);
+delay(TONE_DURATION);
+faustSawtooth.setParamValue("freq",pitch_shift*277);
+delay(TONE_DURATION);
+faustSawtooth.setParamValue("freq",pitch_shift*294);
+delay(TONE_DURATION);
+faustSawtooth.setParamValue("freq",pitch_shift*311);
+delay(TONE_DURATION);
+faustSawtooth.setParamValue("freq",pitch_shift*330);
+delay(TONE_DURATION);
+faustSawtooth.setParamValue("freq",pitch_shift*349);
+delay(TONE_DURATION);
+faustSawtooth.setParamValue("freq",pitch_shift*370);
+delay(TONE_DURATION);
+faustSawtooth.setParamValue("freq",pitch_shift*392);
+delay(TONE_DURATION);
+faustSawtooth.setParamValue("freq",pitch_shift*415);
+delay(TONE_DURATION);
+faustSawtooth.setParamValue("freq",pitch_shift*440);
+delay(TONE_DURATION);
+//faustSawtooth.stop();
+faustSawtooth.setParamValue("freq",0.01);
+delay(TONE_DURATION);
+delay(2000);
+
+
+
+
+  
 }

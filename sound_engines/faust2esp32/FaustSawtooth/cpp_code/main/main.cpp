@@ -32,6 +32,6 @@ void app_main(void)
 
     while(1) {
         faustSawtooth.setParamValue("freq",rand()%(2000-50 + 1) + 50);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
     }
 }

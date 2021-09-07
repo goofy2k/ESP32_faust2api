@@ -24,14 +24,15 @@ void app_main(void)
     wm8978.spkVolSet(0);
     wm8978.hpVolSet(40,40);
     wm8978.i2sCfg(2,0);
-
+ //   YOU MUST USE faust2api API calls
     int SR = 48000;
     int BS = 8;
-    DspFaust dspFaust(SR,BS);  
-    dspFaust.start();
+   // DspFaust dspFaust(SR,BS);  
+   // dspFaust.start();
 
     while(1) {
-        dspFaust.setParamValue("freq",rand()%(2000-50 + 1) + 50);
+     //   dspFaust.setParamValue("freq",rand()%(2000-50 + 1) + 50);
+     //   YOU MUST USE faust2api API calls
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
