@@ -191,8 +191,8 @@ PS C:\Users\Fred\esp_projects\ESP32-with-Faust\sound_engines\FaustSawtooth\cpp\f
  sound_engines/  
 ├─ faust2api/  
 │  ├─ DSPTemplate/  
-│  ├─ FaustSawtooth/ 
-│  │  ├─ FaustSawtooth.dsp 
+│  ├─ FaustSawtooth/   
+│  │  ├─ FaustSawtooth.dsp  
 │  │  ├─ arduino_sketch/  
 │  │  │  ├─ arduino_sketch.ino  
 │  │  │  ├─ DspFaust.cpp  
