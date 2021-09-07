@@ -60,8 +60,8 @@ As we can run Linux scripts now, milestone 1 does not add anything. The Faust ID
 |  4  |     2c    | ESP-IDF tutorial_app2                  | osc.dsp/ext RAM  | faust2esp32 |     4      |   w    |  
 |  5  |     2c    | ESP-IDF [proposed app](https://github.com/grame-cncm/faust/blob/master-dev/architecture/esp32/esp32.cpp#L159)                | osc.dsp/ext RAM  | faust2esp32 |     4      |   w    |  
 |  6  |     3a    | study and evaluate API documentation   |                  | faust2api   |            |   w    |  
-|  7  |     3b    | ESP-IDF app with implemented API       |      t.b.d       | faust2api   |    5,6     |started |   
-|  8  |     3b    | run sound generation tests with API    |      t.b.d.      | faust2api   |     7      |   w    |   
+|  7  |     3b    | ESP-IDF app with implemented API       | osc.dsp/ext RAM  | faust2api   |    5,6     |started |   
+|  8  |     3b    | run sound generation tests with API    | osc.dsp/ext RAM  | faust2api   |     7      |   w    |   
 
 Activities 6,7,8 are the core and will run in improvement cycles  
 proposed app:  
