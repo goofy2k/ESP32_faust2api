@@ -63,7 +63,11 @@ As we can run Linux scripts now, milestone 1 does not add anything. The Faust ID
 |  7  |     3b    | ESP-IDF app with implemented API       |      t.b.d       | faust2api   |    5,6     |started |   
 |  8  |     3b    | run sound generation tests with API    |      t.b.d.      | faust2api   |     7      |   w    |   
 
-Activities 6,7,8 are the core and will run in improvement cycles
+Activities 6,7,8 are the core and will run in improvement cycles  
+proposed app:  
+- change lines 178  and 179 to use DspFaust object  
+- use extern "C" void app_main()  to convert to cpp app  
+
 User experience vs architecture
 
 **Milestone 2a/b**
