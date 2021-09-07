@@ -138,7 +138,7 @@ also see:
 Must add .cpp lib files to CMakeLists.txt in main folder
 
 ESP-IDF 4.2 Powershell
-from project folder (parent folder of main folder)
+from project folder (parent folder of main folder)  
 PS idf.py set-target -esp32  
 PS idf.py menuconfig  
 PS idf.py **--no-ccache** build  
