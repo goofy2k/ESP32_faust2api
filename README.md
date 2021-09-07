@@ -114,7 +114,15 @@ also see:
  - Compile the app again (see above)  
    - FAIL: undefined references to libs.  Change CMakeLists.txt in the ... folder to contain 
      - **idf_component_register(SRCS "main.cpp" "FaustSawtooth.cpp" "WM8978.cpp"**  or
-     - **idf_component_register(SRCS "main.cpp" "DspFaust.cpp" "WM8978.cpp"**  
+     - **idf_component_register(SRCS "main.cpp" "DspFaust.cpp" "WM8978.cpp"**
+   - FAIL:    
+     - use **idf.py --no-ccache build**
+   - SUCCESS: with warnings about deprecated items (create an issue), but first flash
+   - FAIL: started to build again (why?, because of previous no-ccache?)
+     - start over again and use no-cache also in the flash command: PS idf.py --no-ccache -p COM10 flash
+   - SUCCES ! 
+   - Make fimware recognizable to detect if indeed new firmware was flashed: with a version nr printed to the monitor, or better, a sound fingerprint   
+     -     
  - Debug until success  **NOT YET** 
  
  #### Arduino code 
