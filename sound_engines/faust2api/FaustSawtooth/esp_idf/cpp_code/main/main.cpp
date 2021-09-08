@@ -27,8 +27,8 @@ void app_main(void)
  //   YOU MUST USE faust2api API calls
     int SR = 48000;
     int BS = 8;
-   // DspFaust dspFaust(SR,BS);  
-   // dspFaust.start();
+    DspFaust dspFaust(SR,BS);  
+    //dspFaust.start();
 
     while(1) {
      //   dspFaust.setParamValue("freq",rand()%(2000-50 + 1) + 50);
