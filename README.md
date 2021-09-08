@@ -357,10 +357,18 @@ C:/Users/Fred/esp-idf/components/soc/include/hal/i2s_types.h:71:5: note: declare
  
   ---------------------  
  
+ Both platforms have a 'dynamic_cast' not permitted with -fno-rtti error
+ Arduino  
+ DspFaust.cpp:10886:79:  
+ DspFaust.cpp:11230:59:  
+ DspFaust.cpp:11231:74:   
  
+ https://stackoverflow.com/questions/8469900/cant-downcast-because-class-is-not-polymorphic  
+ RTTI = run-time type information (RTTI)  
+ https://stackoverflow.com/questions/4486609/when-can-compiling-c-without-rtti-cause-problems  !!!  
  
- 
- 
+ COMPILER OPTION FOR RTTI:    CONFIG_COMPILER_CXX_RTTI where to use ?  
+ https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/kconfig.html#config-compiler-cxx-rtti
  
    
 #### THERE IS A PROBLEM IN ARDUINO WITH RELATIVE PATHS FOR LIB INCLUDES
