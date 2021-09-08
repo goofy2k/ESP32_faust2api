@@ -402,8 +402,8 @@ C:/Users/Fred/esp-idf/components/soc/include/hal/i2s_types.h:71:5: note: declare
  - CONFIG_COMPILER_CXX_RTTI=y  
  lead to runtime errors: ?    
  - run time error at only instantiating DspFaust:  CORRUPT HEAP: multi_heap.c:439 detected at 0x3ffb4960  
- 
- 
+ # RESULT
+ OK.  When I toggle the exception handling (without consequences for the throw call, because it is commented out,  the runtime HEAP ERROR stays. Conclusion: we can safely enable exception handling (CONFIG_COMPILER_CXX_EXCEPTIONS=y in sdkconfig) and use the throw call in line 24963 of DspFaust.cpp.
 
    
 #### THERE IS A PROBLEM IN ARDUINO WITH RELATIVE PATHS FOR LIB INCLUDES
