@@ -387,7 +387,8 @@ C:/Users/Fred/esp-idf/components/soc/include/hal/i2s_types.h:71:5: note: declare
  
  instantiate only:  buildlog8.txt
  buildlog8.txt
- 
+ command line now looks:
+ ![as this.](images/command_line_buildlog8.jpg)
  
  
  
