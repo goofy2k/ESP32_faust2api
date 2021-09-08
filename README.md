@@ -372,6 +372,7 @@ C:/Users/Fred/esp-idf/components/soc/include/hal/i2s_types.h:71:5: note: declare
  in sdkconfig  
  set CONFIG_COMPILER_CXX_RTTI=y    
  
+ NOTE this is removed again after running idf.py set-target esp32
    
 #### THERE IS A PROBLEM IN ARDUINO WITH RELATIVE PATHS FOR LIB INCLUDES
 #### PUT THE LIBS IN THE SAME FOLDER AS THE .INO FILE AND INCLUDE BETWEEN "   "
