@@ -379,8 +379,18 @@ C:/Users/Fred/esp-idf/components/soc/include/hal/i2s_types.h:71:5: note: declare
  CONFIG_CXX_EXCEPTIONS=y in sdkconfig
  https://esp32.com/viewtopic.php?t=8575
  
-buildlog7.txt success!!
- now remove lib calls one-by-one
+ success
+ 
+ buildlog7.txt success!! 
+ 
+ instantiated AND started lib >runtime error heap error
+ 
+ instantiate only:  buildlog8.txt
+ buildlog8.txt
+ 
+ 
+ 
+ 
  
  
  
