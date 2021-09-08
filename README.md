@@ -379,9 +379,11 @@ C:/Users/Fred/esp-idf/components/soc/include/hal/i2s_types.h:71:5: note: declare
  CONFIG_CXX_EXCEPTIONS=y in sdkconfig
  https://esp32.com/viewtopic.php?t=8575
  
- success
+  
+**make it "hard" with menuconfig?**  
+ https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/kconfig.html#config-cxx-exceptions
  
- buildlog7.txt success!! 
+ success buildlog7.txt success!! 
  
  instantiated AND started lib >runtime error heap error
  
@@ -390,13 +392,13 @@ C:/Users/Fred/esp-idf/components/soc/include/hal/i2s_types.h:71:5: note: declare
  command line now looks:
  ![as this.](images/command_line_buildlog8.jpg)
  
+ ## Toggle logging run-time output with ctrl L
  
  
  
  
  
-**make it "hard" with menuconfig?**  
- https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/kconfig.html#config-cxx-exceptions
+
    
 #### THERE IS A PROBLEM IN ARDUINO WITH RELATIVE PATHS FOR LIB INCLUDES
 #### PUT THE LIBS IN THE SAME FOLDER AS THE .INO FILE AND INCLUDE BETWEEN "   "
