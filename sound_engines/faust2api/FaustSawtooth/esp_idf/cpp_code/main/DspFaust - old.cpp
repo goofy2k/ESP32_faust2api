@@ -1,4 +1,5 @@
 #define ESP32_DRIVER 1
+#define NVOICES 2
 /* ------------------------------------------------------------
 name: "FaustSawtooth"
 Code generated with Faust 2.34.6 (https://faust.grame.fr)
@@ -29,7 +30,6 @@ Compilation options: -a api/DspFaust.cpp -lang cpp -es 1 -single -ftz 0
 
 #include <cmath>
 #include <cstring>
-#include <stdio.h>
 
 /************************** BEGIN misc.h **************************/
 /************************************************************************
@@ -24959,7 +24959,7 @@ DspFaust::DspFaust(bool auto_connect)
     // JUCE audio device has its own sample rate and buffer size
     driver = new juceaudio();
 #else
-    printf("You are not setting 'sample_rate' and 'buffer_size', but the audio driver needs it !\n");
+    std::cerr << "You are not setting 'sample_rate' and 'buffer_size', but the audio driver needs it !\n";
     throw std::bad_alloc();
 #endif
     init(NULL, driver);
@@ -24978,18 +24978,18 @@ DspFaust::DspFaust(const string& dsp_content, int sample_rate, int buffer_size, 
     // Is dsp_content a filename ?
     fFactory = createDSPFactoryFromFile(dsp_content, 0, NULL, "", error_msg, -1);
     if (!fFactory) {
-        fprintf(stderr, "ERROR : %s", error_msg.c_str());
+        std::cerr << error_msg;
         // Is dsp_content a string ?
         fFactory = createDSPFactoryFromString("FaustDSP", dsp_content, 0, NULL, "", error_msg);
         if (!fFactory) {
-            fprintf(stderr, "ERROR : %s", error_msg.c_str());
+            std::cerr << error_msg;
             throw bad_alloc();
         }
     }
 
     dsp* dsp = fFactory->createDSPInstance();
     if (!dsp) {
-        fprintf(stderr, "Cannot allocate DSP instance\n");
+        std::cerr << "Cannot allocate DSP instance\n";
         throw bad_alloc();
     }
     init(dsp, createDriver(sample_rate, buffer_size, auto_connect));
@@ -25004,13 +25004,13 @@ audio* DspFaust::createDriver(int sample_rate, int buffer_size, bool auto_connec
     audio* driver = new iosaudio(sample_rate, buffer_size);
 #elif ANDROID_DRIVER
     // OBOE has its own and buffer size
-    fprintf(stderr, "You are setting 'buffer_size' with a driver that does not need it !\n");
+    std::cerr << "You are setting 'buffer_size' with a driver that does not need it !\n";
     audio* driver = new oboeaudio(-1);
 #elif ALSA_DRIVER
     audio* driver = new alsaaudio(sample_rate, buffer_size);
 #elif JACK_DRIVER
     // JACK has its own sample rate and buffer size
-    fprintf(stderr, "You are setting 'sample_rate' and 'buffer_size' with a driver that does not need it !\n");
+    std::cerr << "You are setting 'sample_rate' and 'buffer_size' with a driver that does not need it !\n";
 #if MIDICTRL
     audio* driver = new jackaudio_midi(auto_connect);
 #else
@@ -25024,7 +25024,7 @@ audio* DspFaust::createDriver(int sample_rate, int buffer_size, bool auto_connec
     audio* driver = new ofaudio(sample_rate, buffer_size);
 #elif JUCE_DRIVER
     // JUCE audio device has its own sample rate and buffer size
-    fprintf(stderr, "You are setting 'sample_rate' and 'buffer_size' with a driver that does not need it !\n");
+    std::cerr << "You are setting 'sample_rate' and 'buffer_size' with a driver that does not need it !\n";
     audio* driver = new juceaudio();
 #elif DUMMY_DRIVER
     audio* driver = new dummyaudio(sample_rate, buffer_size);
@@ -25124,7 +25124,7 @@ bool DspFaust::start()
 #endif
 #if MIDICTRL
     if (!fMidiInterface->run()) {
-        fprintf(stderr, "MIDI run error...\n");
+        std::cerr << "MIDI run error...\n";
     }
 #endif
 	return fPolyEngine->start();
@@ -25355,7 +25355,7 @@ int main(int argc, char* argv[])
 {
 #ifdef DYNAMIC_DSP
     if (argc == 1) {
-        printf("./dynamic-api <foo.dsp> \n");
+        std::cout << "./dynamic-api <foo.dsp> \n";
         exit(-1);
     }
     DspFaust* dsp = new DspFaust(argv[1], 44100, 512);
@@ -25363,7 +25363,7 @@ int main(int argc, char* argv[])
     DspFaust* dsp = new DspFaust(44100, 512);
 #endif
     dsp->start();
-    printf("Type 'q' to quit\n");
+    std::cout << "Type 'q' to quit\n";
     char c;
     while ((c = getchar()) && (c != 'q')) { usleep(100000); }
     dsp->stop();

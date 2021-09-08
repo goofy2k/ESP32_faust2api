@@ -40,9 +40,14 @@ In case you would like to use the built-in accelerometer or gyroscope of your de
 
 ### Main Parameters
 
+* **0**: `/Polyphonic/Voices/Panic`
+* **1**: `/Polyphonic/Voices/FaustSawtooth/freq`
+* **2**: `/Polyphonic/Voices/FaustSawtooth/gain`
+
+### Independent Voice
+
 * **0**: `/FaustSawtooth/freq`
 * **1**: `/FaustSawtooth/gain`
-
 
 ## API Reference
 
