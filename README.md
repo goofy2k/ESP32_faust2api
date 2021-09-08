@@ -58,11 +58,11 @@ As we can run Linux scripts now, milestone 1 does not add anything. The Faust ID
 |  2  |     2a    | Arduino sketch                         | FaustSawtooth.dsp| faust2esp32 |            |finished|  
 |  3  |     2b    | ESP-IDF tutorial_app1                  | FaustSawtooth.dsp| faust2esp32 |     3      |finished|  
 |  4  |     2c    | ESP-IDF tutorial_app2                  | osc.dsp/ext RAM  | faust2esp32 |     4      |   w    |  
-|  5  |     2c    | ESP-IDF [proposed app](https://github.com/grame-cncm/faust/blob/master-dev/architecture/esp32/esp32.cpp#L159)                | osc.dsp/ext RAM  | faust2esp32 |     4      |   w    |  
-|  6  |     3a    | study and evaluate API documentation   |                  | faust2api   |            |   w    |  
-|  8  |     3b    | ESP-IDF app with implemented API       | FaustSawtooth.dsp| faust2api   |            |   w    | 
-|  8  |     4b    | ESP-IDF app with implemented API       | osc.dsp/ext RAM  | faust2api   |    5,6     |   w    |   
-|  9  |     4b    | run sound generation tests with API    | osc.dsp/ext RAM  | faust2api   |     7      |   w    |   
+|  5  |     3     | ESP-IDF [proposed app](https://github.com/grame-cncm/faust/blob/master-dev/architecture/esp32/esp32.cpp#L159)                | osc.dsp/ext RAM  | faust2esp32 |     4      |   w    |  
+|  6  |     4a    | study and evaluate API documentation   |                  | faust2api   |            |   w    |  
+|  8  |     4b    | ESP-IDF app with implemented API       | FaustSawtooth.dsp| faust2api   |            |   w    | 
+|  8  |     5a    | ESP-IDF app with implemented API       | osc.dsp/ext RAM  | faust2api   |    5,6     |   w    |   
+|  9  |     5b    | run sound generation tests with API    | osc.dsp/ext RAM  | faust2api   |     7      |   w    |   
 
 Activities 6,7,8 are the core and will run in improvement cycles  
 proposed app:  
