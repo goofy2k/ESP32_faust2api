@@ -379,7 +379,12 @@ C:/Users/Fred/esp-idf/components/soc/include/hal/i2s_types.h:71:5: note: declare
  CONFIG_CXX_EXCEPTIONS=y in sdkconfig
  https://esp32.com/viewtopic.php?t=8575
  
- make it "hard" with menuconfig?  
+buildlog7.txt success!!
+ now remove lib calls one-by-one
+ 
+ 
+ 
+**make it "hard" with menuconfig?**  
  https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/kconfig.html#config-cxx-exceptions
    
 #### THERE IS A PROBLEM IN ARDUINO WITH RELATIVE PATHS FOR LIB INCLUDES
