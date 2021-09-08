@@ -57,7 +57,8 @@ As we can run Linux scripts now, milestone 1 does not add anything. The Faust ID
 |  1  |     *     | design command line scripts            |                  |             |            |started |  
 |  2  |     2a    | Arduino sketch                         | FaustSawtooth.dsp| faust2esp32 |            |finished|  
 |  3  |     2b    | ESP-IDF tutorial_app1                  | FaustSawtooth.dsp| faust2esp32 |     3      |finished|  
-|  4  |     2c    | ESP-IDF tutorial_app2                  | osc.dsp/ext RAM  | faust2esp32 |     4      |   w    |  
+|  4  |     2c    | ESP-IDF tutorial_app2                  | osc.dsp/ext RAM  | faust2esp32 |     4      |   w    | 
+|  4  |     2c    | ESP-IDF tutorial_app2                  | FaustSawtooth.dsp| faust2api   |            |build07 | 
 |  5  |     3     | ESP-IDF [proposed app](https://github.com/grame-cncm/faust/blob/master-dev/architecture/esp32/esp32.cpp#L159)                | osc.dsp/ext RAM  | faust2esp32 |     4      |   w    |  
 |  6  |     4a    | study and evaluate API documentation   |                  | faust2api   |            |   w    |  
 |  8  |     4b    | ESP-IDF app with implemented API       | FaustSawtooth.dsp| faust2api   |            |   w    | 
