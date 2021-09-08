@@ -399,8 +399,8 @@ C:/Users/Fred/esp-idf/components/soc/include/hal/i2s_types.h:71:5: note: declare
  - throw  
  require? compiler options:
  - CONFIG_CXX_EXCEPTIONS=y
- - CONFIG_COMPILER_CXX_RTTI=y
- lead to runtime errors: ?  
+ - CONFIG_COMPILER_CXX_RTTI=y  
+ lead to runtime errors: ?    
  - run time error at only instantiating DspFaust:  CORRUPT HEAP: multi_heap.c:439 detected at 0x3ffb4960  
  
  
