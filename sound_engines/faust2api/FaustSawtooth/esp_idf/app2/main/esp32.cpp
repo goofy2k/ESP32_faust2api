@@ -37,7 +37,7 @@
 
 #include "faust/gui/meta.h"
 #include "faust/dsp/dsp.h"
-// #include "faust/gui/MapUI.h"
+#include "faust/gui/MapUI.h"
 #include "faust/audio/esp32-dsp.h"
 
 #ifdef SOUNDFILE

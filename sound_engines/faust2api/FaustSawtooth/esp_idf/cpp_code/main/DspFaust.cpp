@@ -10883,6 +10883,7 @@ struct dsp_voice_group {
             ui_interface->closeBox();
 
             // If not grouped, also add individual voices UI
+            /*
             if (!fGroupControl || dynamic_cast<SoundUIInterface*>(ui_interface)) {
                 for (size_t i = 0; i < fVoiceTable.size(); i++) {
                     char buffer[32];
@@ -10892,6 +10893,7 @@ struct dsp_voice_group {
                     ui_interface->closeBox();
                 }
             }
+        */
 
             ui_interface->closeBox();
         } else {
@@ -11227,10 +11229,12 @@ class mydsp_poly : public dsp_voice_group, public dsp_poly {
         void buildUserInterface(UI* ui_interface)
         {
             // MidiUI ui_interface contains the midi_handler connected to the MIDI driver
+            /*
             if (dynamic_cast<midi_interface*>(ui_interface)) {
                 fMidiHandler = dynamic_cast<midi_interface*>(ui_interface);
                 fMidiHandler->addMidiIn(this);
             }
+            */
             dsp_voice_group::buildUserInterface(ui_interface);
         }
 
