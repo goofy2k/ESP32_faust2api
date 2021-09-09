@@ -413,7 +413,8 @@ C:/Users/Fred/esp-idf/components/soc/include/hal/i2s_types.h:71:5: note: declare
  Get some Sawtooth sound when mono frequency is set to 440 Hz  
  Reboot after a fraction of a second  
  See images with boot info and post-mortem info  after build 26  
- It is about:  lock_acquire_generic  in locks.c   line nr 142 :  **Tried to block on mutex from ISR, couldn't... rewrite your program to avoid libc interactions in ISRs!**
+ It is about:  lock_acquire_generic  in locks.c   line nr 142 :  
+ **Tried to block on mutex from ISR, couldn't... rewrite your program to avoid libc interactions in ISRs!**  
  It is about freertos, semaphore mutexes. Have to read about that! Have to know how freertos and tasking works...
  
  
