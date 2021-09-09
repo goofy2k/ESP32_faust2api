@@ -418,6 +418,9 @@ C:/Users/Fred/esp-idf/components/soc/include/hal/i2s_types.h:71:5: note: declare
  It is about freertos, semaphore mutexes. Have to read about that! Have to know how freertos and tasking works...
  
  
+ Last references point at JSONUI in DspFaust......
+ 
+ 
  ....
    
 #### THERE IS A PROBLEM IN ARDUINO WITH RELATIVE PATHS FOR LIB INCLUDES
