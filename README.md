@@ -16,6 +16,7 @@ It takes a sound engine (.dsp) file generated in an GUI or with a text editor an
  - [this](https://ccrma.stanford.edu/~rmichon/faustMicro/)
  - [Michon site to be found]()
  - https://github.com/grame-cncm/faust/tree/master-dev/architecture/esp32
+ - [Digital Larry's work](https://github.com/HolyCityAudio/ESP32/tree/master/faust)  
 
  The tutorial contains walktrough examples using either the ESP-IDF environment (cli) or the Arduino IDE.
  
