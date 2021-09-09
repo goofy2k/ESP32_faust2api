@@ -32,12 +32,12 @@
  
  ************************************************************************
  ************************************************************************/
-
+/*
 #include "esp32.h"
 
 #include "faust/gui/meta.h"
 #include "faust/dsp/dsp.h"
-// #include "faust/gui/MapUI.h"
+#include "faust/gui/MapUI.h"
 #include "faust/audio/esp32-dsp.h"
 
 #ifdef SOUNDFILE
@@ -55,6 +55,9 @@
 #ifdef NVOICES
 #include "faust/dsp/poly-dsp.h"
 #endif
+
+*/
+#include "DspFaust.h"
 
 #ifdef HAS_MAIN
 #include "WM8978.h"
@@ -87,7 +90,7 @@ list<GUI*> GUI::fGuiList;
 ztimedmap GUI::gTimedZoneMap;
 #endif
 
-AudioFaust::AudioFaust(int sample_rate, int buffer_size)
+DspFaust::DspFaust(int sample_rate, int buffer_size)
 {
 #ifdef NVOICES
     int nvoices = NVOICES;
@@ -114,7 +117,7 @@ AudioFaust::AudioFaust(int sample_rate, int buffer_size)
 #endif
 }
 
-AudioFaust::~AudioFaust()
+DspFaust::~DspFaust()
 {
     delete fDSP;
     delete fUI;
@@ -128,7 +131,7 @@ AudioFaust::~AudioFaust()
 #endif
 }
 
-bool AudioFaust::start()
+bool DspFaust::start()
 {
 #ifdef MIDICTRL
     if (!fMIDIInterface->run()) return false;
@@ -136,7 +139,7 @@ bool AudioFaust::start()
     return fAudio->start();
 }
 
-void AudioFaust::stop()
+void DspFaust::stop()
 {
 #ifdef MIDICTRL
     fMIDIInterface->stop();
@@ -144,19 +147,22 @@ void AudioFaust::stop()
     fAudio->stop();
 }
 
-void AudioFaust::setParamValue(const string& path, float value)
+void DspFaust::setParamValue(const string& path, float value)
 {
     fUI->setParamValue(path, value);
 }
 
-float AudioFaust::getParamValue(const string& path)
+float DspFaust::getParamValue(const string& path)
 {
     return fUI->getParamValue(path);
 }
 
+extern "C" {
+    void app_main(void);
+}
+
 // Entry point
-#ifdef HAS_MAIN
-extern "C" void app_main()
+void app_main()
 {
     // Init audio codec
     WM8978 wm8978;
@@ -175,12 +181,12 @@ extern "C" void app_main()
     wm8978.i2sCfg(2,0);
     
     // Allocate and start Faust DSP
-    AudioFaust* DSP = new AudioFaust(48000, 32);
+    DspFaust* DSP = new DspFaust(48000, 32);
     DSP->start();
     
     // Waiting forever
     vTaskSuspend(nullptr);
 }
-#endif
+
 
 /********************END ARCHITECTURE SECTION (part 2/2)****************/

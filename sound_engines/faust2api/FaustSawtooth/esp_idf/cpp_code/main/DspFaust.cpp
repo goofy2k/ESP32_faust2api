@@ -10883,7 +10883,6 @@ struct dsp_voice_group {
             ui_interface->closeBox();
 
             // If not grouped, also add individual voices UI
-            /*
             if (!fGroupControl || dynamic_cast<SoundUIInterface*>(ui_interface)) {
                 for (size_t i = 0; i < fVoiceTable.size(); i++) {
                     char buffer[32];
@@ -10893,7 +10892,6 @@ struct dsp_voice_group {
                     ui_interface->closeBox();
                 }
             }
-        */
 
             ui_interface->closeBox();
         } else {
@@ -11229,12 +11227,10 @@ class mydsp_poly : public dsp_voice_group, public dsp_poly {
         void buildUserInterface(UI* ui_interface)
         {
             // MidiUI ui_interface contains the midi_handler connected to the MIDI driver
-            /*
             if (dynamic_cast<midi_interface*>(ui_interface)) {
                 fMidiHandler = dynamic_cast<midi_interface*>(ui_interface);
                 fMidiHandler->addMidiIn(this);
             }
-            */
             dsp_voice_group::buildUserInterface(ui_interface);
         }
 
@@ -24962,16 +24958,18 @@ DspFaust::DspFaust(bool auto_connect)
 #elif JUCE_DRIVER
     // JUCE audio device has its own sample rate and buffer size
     driver = new juceaudio();
-//#else
-//    printf("You are not setting 'sample_rate' and 'buffer_size', but the audio driver needs it !\n");
-//    throw std::bad_alloc();
+#else
+    printf("You are not setting 'sample_rate' and 'buffer_size', but the audio driver needs it !\n");
+    throw std::bad_alloc();
 #endif
     init(NULL, driver);
 }
 
 DspFaust::DspFaust(int sample_rate, int buffer_size, bool auto_connect)
 {
-    init(NULL, createDriver(sample_rate, buffer_size, auto_connect));
+     printf("Hello modified (DspFaust init 1) world!\n");
+     init(NULL, createDriver(sample_rate, buffer_size, auto_connect));
+     printf("Hello modified (DspFaust init 2) world!\n");
 }
 
 #if DYNAMIC_DSP
