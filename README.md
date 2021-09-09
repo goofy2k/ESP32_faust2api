@@ -408,6 +408,15 @@ C:/Users/Fred/esp-idf/components/soc/include/hal/i2s_types.h:71:5: note: declare
  OK.  When I toggle the exception handling (without consequences for the throw call, because it is commented out,  the runtime HEAP ERROR stays. Conclusion: we can safely enable exception handling (CONFIG_COMPILER_CXX_EXCEPTIONS=y in sdkconfig) and use the throw call in line 24963 of DspFaust.cpp.
 #COMMENTED OUT THE DYNAMIC_CASTS
  
+ HEAP_ERROR may have disappeared by setting buffer size to 32 (was 8, should be minimal 8).
+ 
+ Get some Sawtooth sound when mono frequency is set to 440 Hz  
+ Reboot after a fraction of a second  
+ See images with boot info and post-mortem info  after build 26  
+ It is about:  lock_acquire_generic  in locks.c   line nr 142 :  **Tried to block on mutex from ISR, couldn't... rewrite your program to avoid libc interactions in ISRs!**
+ It is about freertos, semaphore mutexes. Have to read about that! Have to know how freertos and tasking works...
+ 
+ 
  ....
    
 #### THERE IS A PROBLEM IN ARDUINO WITH RELATIVE PATHS FOR LIB INCLUDES
