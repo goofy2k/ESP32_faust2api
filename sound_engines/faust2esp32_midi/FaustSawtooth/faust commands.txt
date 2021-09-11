@@ -1,0 +1,1 @@
+~/faust/tools/faust2appls$ faust2esp32 -midi -nvoices 2 -wm8978 FaustSawtooth.dsp

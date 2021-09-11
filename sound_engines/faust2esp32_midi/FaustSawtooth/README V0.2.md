@@ -25,3 +25,9 @@ The folder further contains the following items:
 
 
 A description of the complete structure can be found [here.](missing link)
+
+Application specific items:
+
+jdksmidi library   -downloaded from Github
+
+
