@@ -1,6 +1,6 @@
 # Configuration
 
-**This folder contains sound engines compiled using a Faust script (CLI):**  
+**This folder contains a sound engines compiled using a Faust script (CLI):**  
 - Platform: 
 - Architecture:  
 
