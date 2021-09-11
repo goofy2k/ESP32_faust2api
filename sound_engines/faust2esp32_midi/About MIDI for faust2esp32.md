@@ -4,7 +4,7 @@ In the 2020 paper by Michon & Letz et al polyphony for ESP32 was reported using 
 
 On my request, Stephane Letz gave the following instructionss for reproducing those results.
 
-Use: faustesp32 -midi nvoices <num> ....  for generation of the sound engine
+Use: **faustesp32 -midi nvoices num ....**  for generation of the sound engine
 
 I myself found [this information](https://faustdoc.grame.fr/manual/midi/) on MIDI and Polyphony Support  
   
