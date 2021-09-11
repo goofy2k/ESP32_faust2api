@@ -17,6 +17,15 @@ Input by S. Letz:
 
 - Low-level MIDI handler is https://github.com/grame-cncm/faust/blob/master-dev/architecture/faust/midi/esp32-midi.h
 
-- Read here to get an general overview: https://faustdoc.grame.fr/manual/architectures/  
+- Read here to get an general overview: https://faustdoc.grame.fr/manual/architectures/ 
+
+
+Walkthrough for generation of MIDI controlled polyphony:
+
+- Creat the sound engine  
+  - this
+  - that
+- Read info supplied with the compiled sound engine  
+- Apply this in an app (esp_idf,  arduino) 
   
   
