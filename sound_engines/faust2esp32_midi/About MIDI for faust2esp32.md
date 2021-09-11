@@ -23,7 +23,7 @@ Input by S. Letz:
 Walkthrough for generation of MIDI controlled polyphony:
 
 - Creat the sound engine  
-  - this
+  - NOTE:  the low-level MIDI handler REQUIRES JDKSMIDI.....  how to integrate????????
   - that
 - Read info supplied with the compiled sound engine  
 - Apply this in an app (esp_idf,  arduino) 
