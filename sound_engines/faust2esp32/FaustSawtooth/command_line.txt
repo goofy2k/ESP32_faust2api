@@ -1,0 +1,3 @@
+faust2esp32 -lib FaustSawtooth.dsp 
+
+Later add paths to script and input file 
