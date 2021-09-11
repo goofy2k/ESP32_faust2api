@@ -1,0 +1,1 @@
+# About MIDI for faust2esp32
