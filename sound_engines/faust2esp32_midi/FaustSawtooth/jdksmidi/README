@@ -1,3 +1,7 @@
+Hacked version to be used as a midi parser component for esp-idf (esp32). 
+
+
+
 J.D. Koftinoff Software, Ltd's C++ MIDI Library Source Code
 web: www.jdkoftinoff.com
 email: jeffk@jdkoftinoff.com

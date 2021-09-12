@@ -64,7 +64,7 @@ MIDIParser::~MIDIParser()
 }
 
 
-bool MIDIParser::Parse ( uchar b, MIDIMessage *msg )
+bool MIDIParser::Parse ( uchar b, jdksMIDIMessage *msg )
 {
     ENTER ( "MIDIParser::Parse()" );
     //
@@ -110,7 +110,7 @@ bool MIDIParser::Parse ( uchar b, MIDIMessage *msg )
 
 
 
-bool MIDIParser::ParseSystemByte ( uchar b, MIDIMessage *msg )
+bool MIDIParser::ParseSystemByte ( uchar b, jdksMIDIMessage *msg )
 {
     ENTER ( "MIDIParser::ParseSystemByte" );
 
@@ -161,7 +161,7 @@ bool MIDIParser::ParseSystemByte ( uchar b, MIDIMessage *msg )
         //
         sysex->PutEOX();
         //
-        // return a MIDIMessage with status=SYSEX_START
+        // return a jdksMIDIMessage with status=SYSEX_START
         // so calling program can know to look at
         // the sysex buffer with GetSystemExclusive().
         //
@@ -257,7 +257,7 @@ void MIDIParser::ParseStatusByte ( uchar b )
 }
 
 
-bool MIDIParser::ParseDataByte ( uchar b, MIDIMessage *msg )
+bool MIDIParser::ParseDataByte ( uchar b, jdksMIDIMessage *msg )
 {
     ENTER ( "MIDIParser::ParseDataByte" );
 

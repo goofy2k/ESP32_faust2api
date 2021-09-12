@@ -43,7 +43,7 @@
 namespace jdksmidi
 {
 
-const char * MIDIMessage::chan_msg_name[16] =
+const char * jdksMIDIMessage::chan_msg_name[16] =
 {
     "CHANNEL MSG  ERROR 0x00",  // 0x00
     "CHANNEL MSG  ERROR 0x10",  // 0x10
@@ -63,7 +63,7 @@ const char * MIDIMessage::chan_msg_name[16] =
     "CHANNEL MSG  ERROR 0xF0"   // 0xF0
 };
 
-const char * MIDIMessage::sys_msg_name[16] =
+const char * jdksMIDIMessage::sys_msg_name[16] =
 {
     "SYSTEM MSG   SYSEX-N     ",  // 0xF0
     "SYSTEM MSG   MTC         ",  // 0xF1
@@ -83,7 +83,7 @@ const char * MIDIMessage::sys_msg_name[16] =
     "SYSTEM MSG   META-EVENT  "   // 0xFF
 };
 
-const char * MIDIMessage::service_msg_name[] =
+const char * jdksMIDIMessage::service_msg_name[] =
 {
     "SERVICE  ERROR NOT SERVICE", // NOT_SERVICE = 0,
     "SERVICE  BEAT MARKER", // SERVICE_BEAT_MARKER = 1,
@@ -93,7 +93,7 @@ const char * MIDIMessage::service_msg_name[] =
 };
 
 
-const char * MIDIMessage::MsgToText ( char *txt ) const
+const char * jdksMIDIMessage::MsgToText ( char *txt ) const
 {
     char buf[256];
     int len = GetLengthMSG();
@@ -215,12 +215,12 @@ const char * MIDIMessage::MsgToText ( char *txt ) const
     return txt;
 }
 
-MIDIMessage::MIDIMessage()
+jdksMIDIMessage::jdksMIDIMessage()
 {
     Clear();
 }
 
-MIDIMessage::MIDIMessage ( const MIDIMessage &m )
+jdksMIDIMessage::jdksMIDIMessage ( const jdksMIDIMessage &m )
 {
     status = m.status;
     byte1 = m.byte1;
@@ -233,7 +233,7 @@ MIDIMessage::MIDIMessage ( const MIDIMessage &m )
     service_num = m.service_num;
 }
 
-void MIDIMessage::Copy ( const MIDIMessage & m )
+void jdksMIDIMessage::Copy ( const jdksMIDIMessage & m )
 {
     *this = m;
 }
@@ -243,7 +243,7 @@ void MIDIMessage::Copy ( const MIDIMessage & m )
 // The equal operator
 //
 
-const MIDIMessage & MIDIMessage::operator = ( const MIDIMessage &m )
+const jdksMIDIMessage & jdksMIDIMessage::operator = ( const jdksMIDIMessage &m )
 {
     status = m.status;
     byte1 = m.byte1;
@@ -257,7 +257,7 @@ const MIDIMessage & MIDIMessage::operator = ( const MIDIMessage &m )
     return *this;
 }
 
-int MIDIMessage::GetLengthMSG() const
+int jdksMIDIMessage::GetLengthMSG() const
 {
     if ( IsMetaEvent() ) // for all Meta Events
     {
@@ -275,217 +275,217 @@ int MIDIMessage::GetLengthMSG() const
     }
 }
 
-short MIDIMessage::GetBenderValue() const
+short jdksMIDIMessage::GetBenderValue() const
 {
     return ( short ) ( ( ( byte2 << 7 ) | byte1 ) - 8192 );
 }
 
-unsigned short MIDIMessage::GetMetaValue() const
+unsigned short jdksMIDIMessage::GetMetaValue() const
 {
     return ( unsigned short ) ( ( byte3 << 8 ) | byte2 );
 }
 
-unsigned char MIDIMessage::GetTimeSigNumerator() const
+unsigned char jdksMIDIMessage::GetTimeSigNumerator() const
 {
     return byte2;
 }
 
-unsigned char MIDIMessage::GetTimeSigDenominator() const
+unsigned char jdksMIDIMessage::GetTimeSigDenominator() const
 {
     return byte3;
 }
 
-unsigned char MIDIMessage::GetTimeSigDenominatorPower() const
+unsigned char jdksMIDIMessage::GetTimeSigDenominatorPower() const
 {
     return byte4;
 }
 
-signed char MIDIMessage::GetKeySigSharpFlats() const
+signed char jdksMIDIMessage::GetKeySigSharpFlats() const
 {
     return ( signed char ) byte2;
 }
 
-unsigned char MIDIMessage::GetKeySigMajorMinor() const
+unsigned char jdksMIDIMessage::GetKeySigMajorMinor() const
 {
     return byte3;
 }
 
-bool MIDIMessage::IsNoteOn() const
+bool jdksMIDIMessage::IsNoteOn() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( ( status & 0xf0 ) == NOTE_ON );
 }
 
-bool MIDIMessage::IsNoteOff() const
+bool jdksMIDIMessage::IsNoteOff() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( ( status & 0xf0 ) == NOTE_OFF );
 }
 
-bool MIDIMessage::IsPolyPressure() const
+bool jdksMIDIMessage::IsPolyPressure() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( ( status & 0xf0 ) == POLY_PRESSURE );
 }
 
-bool MIDIMessage::IsControlChange() const
+bool jdksMIDIMessage::IsControlChange() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( ( status & 0xf0 ) == CONTROL_CHANGE );
 }
 
-bool MIDIMessage::IsProgramChange() const
+bool jdksMIDIMessage::IsProgramChange() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( ( status & 0xf0 ) == PROGRAM_CHANGE );
 }
 
-bool MIDIMessage::IsChannelPressure() const
+bool jdksMIDIMessage::IsChannelPressure() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( ( status & 0xf0 ) == CHANNEL_PRESSURE );
 }
 
-bool MIDIMessage::IsPitchBend() const
+bool jdksMIDIMessage::IsPitchBend() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( ( status & 0xf0 ) == PITCH_BEND );
 }
 
-bool MIDIMessage::IsSystemMessage() const
+bool jdksMIDIMessage::IsSystemMessage() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status & 0xf0 ) == 0xf0;
 }
 
-bool MIDIMessage::IsSysExN() const
+bool jdksMIDIMessage::IsSysExN() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status == SYSEX_START_N );
 }
 
-bool MIDIMessage::IsSysExURT() const
+bool jdksMIDIMessage::IsSysExURT() const
 {
     return IsSysExN() && ( byte1 == 0x7F );
 }
 
-int MIDIMessage::GetSysExURTdevID() const
+int jdksMIDIMessage::GetSysExURTdevID() const
 {
     return byte2;
 }
 
-int MIDIMessage::GetSysExURTsubID() const
+int jdksMIDIMessage::GetSysExURTsubID() const
 {
     return byte3;
 }
 
-bool MIDIMessage::IsSysExA() const
+bool jdksMIDIMessage::IsSysExA() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status == SYSEX_START_A );
 }
 
-bool MIDIMessage::IsMTC() const
+bool jdksMIDIMessage::IsMTC() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status == MTC );
 }
 
-bool MIDIMessage::IsSongPosition() const
+bool jdksMIDIMessage::IsSongPosition() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status == SONG_POSITION );
 }
 
-bool MIDIMessage::IsSongSelect() const
+bool jdksMIDIMessage::IsSongSelect() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status == SONG_SELECT );
 }
 
-bool  MIDIMessage::IsTuneRequest() const
+bool  jdksMIDIMessage::IsTuneRequest() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status == TUNE_REQUEST );
 }
 
-bool MIDIMessage::IsMetaEvent() const
+bool jdksMIDIMessage::IsMetaEvent() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status == META_EVENT );
 }
 
-bool MIDIMessage::IsChannelMsg() const
+bool jdksMIDIMessage::IsChannelMsg() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status >= 0x80 ) && ( status < 0xF0 );
 }
 
-bool MIDIMessage::IsTextEvent() const
+bool jdksMIDIMessage::IsTextEvent() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status == META_EVENT ) &&
            ( byte1 >= 0x01 && byte1 <= 0x0F );
 }
 
-bool MIDIMessage::IsAllNotesOff() const
+bool jdksMIDIMessage::IsAllNotesOff() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( ( status & 0xf0 ) == CONTROL_CHANGE )
            && ( byte1 >= C_ALL_NOTES_OFF );
 }
 
-bool MIDIMessage::IsChannelPrefix() const
+bool jdksMIDIMessage::IsChannelPrefix() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status == META_EVENT ) &&
            ( byte1 == META_CHANNEL_PREFIX );
 }
 
-bool MIDIMessage::IsTempo() const
+bool jdksMIDIMessage::IsTempo() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status == META_EVENT ) &&
            ( byte1 == META_TEMPO );
 }
 
-bool MIDIMessage::IsDataEnd() const
+bool jdksMIDIMessage::IsDataEnd() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status == META_EVENT ) &&
            ( byte1 == META_END_OF_TRACK );
 }
 
-bool MIDIMessage::IsTimeSig() const
+bool jdksMIDIMessage::IsTimeSig() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status == META_EVENT ) &&
            ( byte1 == META_TIMESIG );
 }
 
-bool MIDIMessage::IsKeySig() const
+bool jdksMIDIMessage::IsKeySig() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status == META_EVENT ) &&
            ( byte1 == META_KEYSIG );
 }
 
-bool  MIDIMessage::IsUserAppMarker() const
+bool  jdksMIDIMessage::IsUserAppMarker() const
 {
     return ( service_num == SERVICE_USERAPP_MARKER );
 }
 
-bool MIDIMessage::IsBeatMarker() const
+bool jdksMIDIMessage::IsBeatMarker() const
 {
     return ( service_num == SERVICE_BEAT_MARKER );
 }
 
-unsigned long MIDIMessage::GetTempo() const
+unsigned long jdksMIDIMessage::GetTempo() const
 {
     return MIDIFile::To32Bit ( 0, byte2, byte3, byte4 );
 }
 
-unsigned long MIDIMessage::GetTempo32() const
+unsigned long jdksMIDIMessage::GetTempo32() const
 {
     // tempo is in microseconds per beat
     unsigned long tempo = GetTempo();
@@ -501,30 +501,30 @@ unsigned long MIDIMessage::GetTempo32() const
     return tempo_bpm_times_32;
 }
 
-unsigned short MIDIMessage::GetLoopNumber() const
+unsigned short jdksMIDIMessage::GetLoopNumber() const
 {
     return GetMetaValue();
 }
 
-void MIDIMessage::SetBenderValue ( short v )
+void jdksMIDIMessage::SetBenderValue ( short v )
 {
     short x = ( short ) ( v + 8192 );
     byte1 = ( unsigned char ) ( x & 0x7f );
     byte2 = ( unsigned char ) ( ( x >> 7 ) & 0x7f );
 }
 
-void MIDIMessage::SetMetaType ( unsigned char t )
+void jdksMIDIMessage::SetMetaType ( unsigned char t )
 {
     byte1 = t;
 }
 
-void MIDIMessage::SetMetaValue ( unsigned short v )
+void jdksMIDIMessage::SetMetaValue ( unsigned short v )
 {
     byte2 = ( unsigned char ) ( v & 0xff );
     byte3 = ( unsigned char ) ( ( v >> 8 ) & 0xff );
 }
 
-void MIDIMessage::SetNoteOn ( unsigned char chan, unsigned char note, unsigned char vel )
+void jdksMIDIMessage::SetNoteOn ( unsigned char chan, unsigned char note, unsigned char vel )
 {
     Clear();
     status = ( unsigned char ) ( chan | NOTE_ON );
@@ -532,7 +532,7 @@ void MIDIMessage::SetNoteOn ( unsigned char chan, unsigned char note, unsigned c
     byte2 = vel;
 }
 
-void MIDIMessage::SetNoteOff ( unsigned char chan, unsigned char note, unsigned char vel )
+void jdksMIDIMessage::SetNoteOff ( unsigned char chan, unsigned char note, unsigned char vel )
 {
     Clear();
     status = ( unsigned char ) ( chan | NOTE_OFF );
@@ -540,7 +540,7 @@ void MIDIMessage::SetNoteOff ( unsigned char chan, unsigned char note, unsigned 
     byte2 = vel;
 }
 
-void MIDIMessage::SetPolyPressure ( unsigned char chan, unsigned char note, unsigned char pres )
+void jdksMIDIMessage::SetPolyPressure ( unsigned char chan, unsigned char note, unsigned char pres )
 {
     Clear();
     status = ( unsigned char ) ( chan | POLY_PRESSURE );
@@ -548,7 +548,7 @@ void MIDIMessage::SetPolyPressure ( unsigned char chan, unsigned char note, unsi
     byte2 = pres;
 }
 
-void MIDIMessage::SetControlChange ( unsigned char chan, unsigned char ctrl, unsigned char val )
+void jdksMIDIMessage::SetControlChange ( unsigned char chan, unsigned char ctrl, unsigned char val )
 {
     Clear();
     status = ( unsigned char ) ( chan | CONTROL_CHANGE );
@@ -556,14 +556,14 @@ void MIDIMessage::SetControlChange ( unsigned char chan, unsigned char ctrl, uns
     byte2 = val;
 }
 
-double MIDIMessage::GetPan()
+double jdksMIDIMessage::GetPan()
 {
     int val = GetControllerValue(); // 0 = leftmost, 64 = centre, 127 = rightmost
     if (val == 127) val = 128;
     return (val-64)/64.;
 }
 
-void MIDIMessage::SetPan( unsigned char chan, double pan )
+void jdksMIDIMessage::SetPan( unsigned char chan, double pan )
 {
     //     leftmost  centre   rightmost
     //  pan = -1 ...    0 ...    +1
@@ -576,29 +576,29 @@ void MIDIMessage::SetPan( unsigned char chan, double pan )
 
     SetControlChange( chan, C_PAN, pan_msb );
 //  Russian (windows 1251):
-//  ê ñîæàëåíèþ ëþáîå pan_lsb ñáðàñûâàåò ïàíîðàìó â öåíòð ïðè ïðîèãðûâàíèè midi
-//  è ÷åðåç MediaPlayer è äàæå ÷åðåç Timidity, ïîýòîìó íå äåëàåì óñòàíîâêó lsb
+//  Ãª Ã±Ã®Ã¦Ã Ã«Ã¥Ã­Ã¨Ã¾ Ã«Ã¾Ã¡Ã®Ã¥ pan_lsb Ã±Ã¡Ã°Ã Ã±Ã»Ã¢Ã Ã¥Ã² Ã¯Ã Ã­Ã®Ã°Ã Ã¬Ã³ Ã¢ Ã¶Ã¥Ã­Ã²Ã° Ã¯Ã°Ã¨ Ã¯Ã°Ã®Ã¨Ã£Ã°Ã»Ã¢Ã Ã­Ã¨Ã¨ midi
+//  Ã¨ Ã·Ã¥Ã°Ã¥Ã§ MediaPlayer Ã¨ Ã¤Ã Ã¦Ã¥ Ã·Ã¥Ã°Ã¥Ã§ Timidity, Ã¯Ã®Ã½Ã²Ã®Ã¬Ã³ Ã­Ã¥ Ã¤Ã¥Ã«Ã Ã¥Ã¬ Ã³Ã±Ã²Ã Ã­Ã®Ã¢ÃªÃ³ lsb
 //  English:
 //  unfortunately any pan_lsb drops panorama to the center with the playback of midi file
 //  through MediaPlayer and even through Timidity; therefore we do not make the set of lsb
 //  SetControlChange( chan, C_PAN + C_LSB, pan_lsb ); // don't work...
 }
 
-void MIDIMessage::SetProgramChange ( unsigned char chan, unsigned char val )
+void jdksMIDIMessage::SetProgramChange ( unsigned char chan, unsigned char val )
 {
     Clear();
     status = ( unsigned char ) ( chan | PROGRAM_CHANGE );
     byte1 = val;
 }
 
-void MIDIMessage::SetChannelPressure ( unsigned char chan, unsigned char val )
+void jdksMIDIMessage::SetChannelPressure ( unsigned char chan, unsigned char val )
 {
     Clear();
     status = ( unsigned char ) ( chan | CHANNEL_PRESSURE );
     byte1 = val;
 }
 
-void MIDIMessage::SetPitchBend ( unsigned char chan, short val )
+void jdksMIDIMessage::SetPitchBend ( unsigned char chan, short val )
 {
     Clear();
     status = ( unsigned char ) ( chan | PITCH_BEND );
@@ -607,7 +607,7 @@ void MIDIMessage::SetPitchBend ( unsigned char chan, short val )
     byte2 = ( unsigned char ) ( ( val >> 7 ) & 0x7f );
 }
 
-void MIDIMessage::SetPitchBend ( unsigned char chan, unsigned char low, unsigned char high )
+void jdksMIDIMessage::SetPitchBend ( unsigned char chan, unsigned char low, unsigned char high )
 {
     Clear();
     status = ( unsigned char ) ( chan | PITCH_BEND );
@@ -615,20 +615,20 @@ void MIDIMessage::SetPitchBend ( unsigned char chan, unsigned char low, unsigned
     byte2 = ( unsigned char ) ( high );
 }
 
-void MIDIMessage::SetSysEx( unsigned char type )
+void jdksMIDIMessage::SetSysEx( unsigned char type )
 {
     Clear();
     status = type; // SYSEX_START or SYSEX_START_A
 }
 
-void MIDIMessage::SetMTC ( unsigned char field, unsigned char v )
+void jdksMIDIMessage::SetMTC ( unsigned char field, unsigned char v )
 {
     Clear();
     status = MTC;
     byte1 = ( unsigned char ) ( ( field << 4 ) | v );
 }
 
-void MIDIMessage::SetSongPosition ( short pos )
+void jdksMIDIMessage::SetSongPosition ( short pos )
 {
     Clear();
     status = SONG_POSITION;
@@ -636,20 +636,20 @@ void MIDIMessage::SetSongPosition ( short pos )
     byte2 = ( unsigned char ) ( ( pos >> 7 ) & 0x7f );
 }
 
-void MIDIMessage::SetSongSelect ( unsigned char sng )
+void jdksMIDIMessage::SetSongSelect ( unsigned char sng )
 {
     Clear();
     status = SONG_SELECT;
     byte1 = sng;
 }
 
-void MIDIMessage::SetTuneRequest()
+void jdksMIDIMessage::SetTuneRequest()
 {
     Clear();
     status = TUNE_REQUEST;
 }
 
-void MIDIMessage::SetMetaEvent ( unsigned char type, unsigned char v1, unsigned char v2 )
+void jdksMIDIMessage::SetMetaEvent ( unsigned char type, unsigned char v1, unsigned char v2 )
 {
     Clear();
     status = META_EVENT;
@@ -658,14 +658,14 @@ void MIDIMessage::SetMetaEvent ( unsigned char type, unsigned char v1, unsigned 
     byte3 = v2;
 }
 
-void MIDIMessage::SetMetaEvent ( unsigned char type, unsigned short v )
+void jdksMIDIMessage::SetMetaEvent ( unsigned char type, unsigned short v )
 {
     unsigned char v1 = ( unsigned char ) ( v & 0xff );
     unsigned char v2 = ( unsigned char ) ( ( v >> 8 ) & 0xff );
     SetMetaEvent ( type, v1, v2 );
 }
 
-void MIDIMessage::SetAllNotesOff (unsigned char chan, unsigned char type, unsigned char mode)
+void jdksMIDIMessage::SetAllNotesOff (unsigned char chan, unsigned char type, unsigned char mode)
 {
     Clear();
     status = ( unsigned char ) ( chan | CONTROL_CHANGE );
@@ -674,7 +674,7 @@ void MIDIMessage::SetAllNotesOff (unsigned char chan, unsigned char type, unsign
 //  byte2 = 0x7f; // was
 }
 
-void MIDIMessage::SetLocal ( unsigned char chan, unsigned char v )
+void jdksMIDIMessage::SetLocal ( unsigned char chan, unsigned char v )
 {
     Clear();
     status = ( unsigned char ) ( chan | CONTROL_CHANGE );
@@ -682,7 +682,7 @@ void MIDIMessage::SetLocal ( unsigned char chan, unsigned char v )
     byte2 = v;
 }
 
-void MIDIMessage::SetTempo ( unsigned long tempo )
+void jdksMIDIMessage::SetTempo ( unsigned long tempo )
 {
     int a, b, c;
     c = tempo & 0xFF;
@@ -692,23 +692,23 @@ void MIDIMessage::SetTempo ( unsigned long tempo )
     SetByte4( c );
 }
 
-void MIDIMessage::SetTempo32 ( unsigned long tempo_times_32 )
+void jdksMIDIMessage::SetTempo32 ( unsigned long tempo_times_32 )
 {
     unsigned long tempo = (unsigned long) ( 0.5 + (32*60*1e6) / ( double ) tempo_times_32 );
     SetTempo ( tempo );
 }
 
-void MIDIMessage::SetText ( unsigned short text_num, unsigned char type )
+void jdksMIDIMessage::SetText ( unsigned short text_num, unsigned char type )
 {
     SetMetaEvent ( type, text_num );
 }
 
-void MIDIMessage::SetDataEnd()
+void jdksMIDIMessage::SetDataEnd()
 {
     SetMetaEvent ( META_END_OF_TRACK, 0 );
 }
 
-void MIDIMessage::SetTimeSig (
+void jdksMIDIMessage::SetTimeSig (
     unsigned char numerator,
     unsigned char denominator_power,
     unsigned char midi_clocks_per_metronome,
@@ -723,18 +723,18 @@ void MIDIMessage::SetTimeSig (
     SetByte6( num_32nd_per_midi_quarter_note );
 }
 
-void MIDIMessage::SetKeySig ( signed char sharp_flats, unsigned char major_minor )
+void jdksMIDIMessage::SetKeySig ( signed char sharp_flats, unsigned char major_minor )
 {
     SetMetaEvent ( META_KEYSIG, sharp_flats, major_minor );
 }
 
-void MIDIMessage::SetBeatMarker()
+void jdksMIDIMessage::SetBeatMarker()
 {
     Clear();
     service_num = SERVICE_BEAT_MARKER;
 }
 
-void MIDIMessage::SetUserAppMarker()
+void jdksMIDIMessage::SetUserAppMarker()
 {
     Clear();
     service_num = SERVICE_USERAPP_MARKER;
@@ -749,7 +749,7 @@ MIDIBigMessage::MIDIBigMessage()
 
 MIDIBigMessage::MIDIBigMessage ( const MIDIBigMessage &m )
     :
-    MIDIMessage ( m ),
+    jdksMIDIMessage ( m ),
     sysex ( 0 )
 {
     if ( m.sysex )
@@ -758,16 +758,16 @@ MIDIBigMessage::MIDIBigMessage ( const MIDIBigMessage &m )
     }
 }
 
-MIDIBigMessage::MIDIBigMessage ( const MIDIMessage &m )
+MIDIBigMessage::MIDIBigMessage ( const jdksMIDIMessage &m )
     :
-    MIDIMessage ( m ),
+    jdksMIDIMessage ( m ),
     sysex ( 0 )
 {
 }
 
-MIDIBigMessage::MIDIBigMessage ( const MIDIMessage &m, const MIDISystemExclusive *e )
+MIDIBigMessage::MIDIBigMessage ( const jdksMIDIMessage &m, const MIDISystemExclusive *e )
     :
-    MIDIMessage ( m ),
+    jdksMIDIMessage ( m ),
     sysex ( 0 )
 {
     CopySysEx( e );
@@ -776,7 +776,7 @@ MIDIBigMessage::MIDIBigMessage ( const MIDIMessage &m, const MIDISystemExclusive
 void MIDIBigMessage::Clear()
 {
     ClearSysEx();
-    MIDIMessage::Clear();
+    jdksMIDIMessage::Clear();
 }
 
 //
@@ -799,19 +799,19 @@ const MIDIBigMessage &MIDIBigMessage::operator = ( const MIDIBigMessage &m )
     if ( m.sysex )
         sysex = new MIDISystemExclusive ( *m.sysex );
 
-    MIDIMessage::operator = ( m );
+    jdksMIDIMessage::operator = ( m );
     return *this;
 }
 
-const MIDIBigMessage &MIDIBigMessage::operator = ( const MIDIMessage &m )
+const MIDIBigMessage &MIDIBigMessage::operator = ( const jdksMIDIMessage &m )
 {
     delete sysex;
     sysex = 0;
-    MIDIMessage::operator = ( m );
+    jdksMIDIMessage::operator = ( m );
     return *this;
 }
 
-void MIDIBigMessage::Copy ( const MIDIMessage &m )
+void MIDIBigMessage::Copy ( const jdksMIDIMessage &m )
 {
     *this = m;
 }
@@ -876,19 +876,19 @@ MIDITimedMessage::MIDITimedMessage()
 }
 
 MIDITimedMessage::MIDITimedMessage ( const MIDITimedMessage &m )
-    : MIDIMessage ( m ), time ( m.GetTime() )
+    : jdksMIDIMessage ( m ), time ( m.GetTime() )
 {
 }
 
-MIDITimedMessage::MIDITimedMessage ( const MIDIMessage &m )
-    : MIDIMessage ( m ), time ( 0 )
+MIDITimedMessage::MIDITimedMessage ( const jdksMIDIMessage &m )
+    : jdksMIDIMessage ( m ), time ( 0 )
 {
 }
 
 void MIDITimedMessage::Clear()
 {
     time = 0;
-    MIDIMessage::Clear();
+    jdksMIDIMessage::Clear();
 }
 
 void MIDITimedMessage::Copy ( const MIDITimedMessage &m )
@@ -903,14 +903,14 @@ void MIDITimedMessage::Copy ( const MIDITimedMessage &m )
 const MIDITimedMessage &MIDITimedMessage::operator = ( const MIDITimedMessage & m )
 {
     time = m.GetTime();
-    MIDIMessage::operator = ( m );
+    jdksMIDIMessage::operator = ( m );
     return *this;
 }
 
-const MIDITimedMessage &MIDITimedMessage::operator = ( const MIDIMessage & m )
+const MIDITimedMessage &MIDITimedMessage::operator = ( const jdksMIDIMessage & m )
 {
     time = 0;
-    MIDIMessage::operator = ( m );
+    jdksMIDIMessage::operator = ( m );
     return *this;
 }
 
@@ -981,25 +981,25 @@ MIDIDeltaTimedMessage::MIDIDeltaTimedMessage()
 }
 
 MIDIDeltaTimedMessage::MIDIDeltaTimedMessage ( const MIDIDeltaTimedMessage &m )
-    : MIDIMessage ( m ), dtime ( m.GetDeltaTime() )
+    : jdksMIDIMessage ( m ), dtime ( m.GetDeltaTime() )
 {
 }
 
-MIDIDeltaTimedMessage::MIDIDeltaTimedMessage ( const MIDIMessage &m )
-    : MIDIMessage ( m ), dtime ( 0 )
+MIDIDeltaTimedMessage::MIDIDeltaTimedMessage ( const jdksMIDIMessage &m )
+    : jdksMIDIMessage ( m ), dtime ( 0 )
 {
 }
 
 void MIDIDeltaTimedMessage::Clear()
 {
     dtime = 0;
-    MIDIMessage::Clear();
+    jdksMIDIMessage::Clear();
 }
 
 void MIDIDeltaTimedMessage::Copy ( const MIDIDeltaTimedMessage &m )
 {
     dtime = m.GetDeltaTime();
-    MIDIMessage::Copy ( m );
+    jdksMIDIMessage::Copy ( m );
 }
 
 //
@@ -1009,14 +1009,14 @@ void MIDIDeltaTimedMessage::Copy ( const MIDIDeltaTimedMessage &m )
 const MIDIDeltaTimedMessage &MIDIDeltaTimedMessage::operator = ( const MIDIDeltaTimedMessage &m )
 {
     dtime = m.GetDeltaTime();
-    MIDIMessage::operator = ( m );
+    jdksMIDIMessage::operator = ( m );
     return *this;
 }
 
-const MIDIDeltaTimedMessage &MIDIDeltaTimedMessage::operator = ( const MIDIMessage &m )
+const MIDIDeltaTimedMessage &MIDIDeltaTimedMessage::operator = ( const jdksMIDIMessage &m )
 {
     dtime = 0;
-    MIDIMessage::operator = ( m );
+    jdksMIDIMessage::operator = ( m );
     return *this;
 }
 
@@ -1066,7 +1066,7 @@ MIDITimedBigMessage::MIDITimedBigMessage ( const MIDITimedMessage &m )
 {
 }
 
-MIDITimedBigMessage::MIDITimedBigMessage ( const MIDIMessage &m )
+MIDITimedBigMessage::MIDITimedBigMessage ( const jdksMIDIMessage &m )
     : MIDIBigMessage ( m ),
       time ( 0 )
 {
@@ -1112,7 +1112,7 @@ const MIDITimedBigMessage &MIDITimedBigMessage::operator = ( const MIDITimedMess
     return *this;
 }
 
-const MIDITimedBigMessage &MIDITimedBigMessage::operator = ( const MIDIMessage & m )
+const MIDITimedBigMessage &MIDITimedBigMessage::operator = ( const jdksMIDIMessage & m )
 {
     time = 0;
     MIDIBigMessage::operator = ( m );
@@ -1199,7 +1199,7 @@ MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage ( const MIDIBigMessage &m )
 {
 }
 
-MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage ( const MIDIMessage &m )
+MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage ( const jdksMIDIMessage &m )
     : MIDIBigMessage ( m ), dtime ( 0 )
 {
 }
@@ -1245,7 +1245,7 @@ const MIDIDeltaTimedBigMessage &MIDIDeltaTimedBigMessage::operator = ( const MID
     return *this;
 }
 
-const MIDIDeltaTimedBigMessage &MIDIDeltaTimedBigMessage::operator = ( const MIDIMessage &m )
+const MIDIDeltaTimedBigMessage &MIDIDeltaTimedBigMessage::operator = ( const jdksMIDIMessage &m )
 {
     dtime = 0;
     MIDIBigMessage::operator = ( m );
@@ -1273,7 +1273,7 @@ void MIDIDeltaTimedBigMessage::SetDeltaTime ( MIDIClockTime t )
 
 // friend operators
 
-bool operator == ( const MIDIMessage &m1, const MIDIMessage &m2 )
+bool operator == ( const jdksMIDIMessage &m1, const jdksMIDIMessage &m2 )
 {
     if ( m1.GetServiceNum() != m2.GetServiceNum() ) return false;
     // else equal service_num values
@@ -1295,7 +1295,7 @@ bool operator == ( const MIDITimedMessage &m1, const MIDITimedMessage &m2 )
     if ( m1.GetTime() != m2.GetTime() )
         return false;
 
-    return ( (MIDIMessage) m1 ) == ( (MIDIMessage) m2 );
+    return ( (jdksMIDIMessage) m1 ) == ( (jdksMIDIMessage) m2 );
 }
 
 bool operator == ( const MIDIBigMessage &m1, const MIDIBigMessage &m2 )
@@ -1320,7 +1320,7 @@ bool operator == ( const MIDIBigMessage &m1, const MIDIBigMessage &m2 )
             return false;
     }
 
-    return ( (MIDIMessage) m1 ) == ( (MIDIMessage) m2 );
+    return ( (jdksMIDIMessage) m1 ) == ( (jdksMIDIMessage) m2 );
 }
 
 bool operator == ( const MIDITimedBigMessage &m1, const MIDITimedBigMessage &m2 )
