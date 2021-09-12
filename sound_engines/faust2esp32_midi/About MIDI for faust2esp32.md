@@ -16,6 +16,7 @@ Input by S. Letz:
 - MIDI code is activated here: https://github.com/grame-cncm/faust/blob/master-dev/architecture/esp32/esp32.cpp#L111
 
 - Low-level MIDI handler is https://github.com/grame-cncm/faust/blob/master-dev/architecture/faust/midi/esp32-midi.h
+  - uses this midi library: https://github.com/thopman/jdksmidi (a hack of the original: https://github.com/jdkoftinoff/jdksmidi  ) 
 
 - Read here to get an general overview: https://faustdoc.grame.fr/manual/architectures/ 
 
