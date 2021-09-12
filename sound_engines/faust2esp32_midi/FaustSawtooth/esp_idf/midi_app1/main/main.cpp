@@ -5,7 +5,7 @@
 #include "esp_spi_flash.h"
 
 #include "WM8978/include/WM8978.h"
-#include "FaustSawtooth/include/FaustSawtooth.h"
+#include "FaustDsp/include/FaustSawtooth.h"
 
 extern "C" {
     void app_main(void);
