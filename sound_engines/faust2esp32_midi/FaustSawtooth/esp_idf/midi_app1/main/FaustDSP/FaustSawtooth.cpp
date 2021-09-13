@@ -46,7 +46,7 @@ Compilation options: -a /usr/local/share/faust/esp32/esp32.cpp -lang cpp -es 1 -
  ************************************************************************
  ************************************************************************/
 
-#include "FaustSawtooth.h"
+#include "include/FaustSawtooth.h"
 
 /************************** BEGIN meta.h **************************/
 /************************************************************************
@@ -7077,11 +7077,11 @@ class MidiUI : public GUI, public midi, public midi_interface, public MetaDataUI
 
 #include "driver/uart.h"
 
-#include "jdksmidi/world.h"
-#include "jdksmidi/midi.h"
-#include "jdksmidi/msg.h"
-#include "jdksmidi/sysex.h"
-#include "jdksmidi/parser.h"
+#include "../jdksmidi/world.h"
+#include "../jdksmidi/midi.h"
+#include "../jdksmidi/msg.h"
+#include "../jdksmidi/sysex.h"
+#include "../jdksmidi/parser.h"
 
 
 using namespace jdksmidi;

@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
-#include "WM8978.h"
+#include "include/WM8978.h"
 #include "driver/i2c.h"
 
 static uint16_t WM8978_REGVAL_TBL[58]=
