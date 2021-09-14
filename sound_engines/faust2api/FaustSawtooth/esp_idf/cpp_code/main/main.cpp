@@ -31,13 +31,13 @@ void app_main(void)
     int BS = 32; //was 8
     //DspFaust dspFaust(SR,BS);
      //dspFaust.start();
-    printf("Hello modified 1x world!\n");
+    printf("Hello modified CHECK 1 world!\n");
     DspFaust* DSP = new DspFaust(SR,BS); 
-    printf("Hello modified 2x world!\n");
+    //printf("Hello modified 2x world!\n");
     DSP->start();
     printf("Hello modified 3x world!\n");
     while(1) {
-        printf("Hello modified 4x world!\n");
+        //printf("Hello modified 4x world!\n");
        // dspFaust.setParamValue("freq",rand()%(2000-50 + 1) + 50);
        DSP->setParamValue("freq",440);
      //   YOU MUST USE faust2api API calls
