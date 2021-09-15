@@ -30,12 +30,12 @@ void app_main(void)
     int SR = 48000;
     int BS = 32; //was 8
     //DspFaust dspFaust(SR,BS);
-     //dspFaust.start();
-    printf("Hello modified CHECK 1 world!\n");
+    //dspFaust.start();
+    printf("Hello modified CHECKIT 1 world!\n");
     DspFaust* DSP = new DspFaust(SR,BS); 
     //printf("Hello modified 2x world!\n");
     DSP->start();
-    printf("Hello modified 3x world!\n");
+    //printf("Hello modified 3x world!\n");
     DSP->setParamValue("freq",440);
     
     /*

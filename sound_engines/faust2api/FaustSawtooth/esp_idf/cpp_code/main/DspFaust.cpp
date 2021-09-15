@@ -5320,7 +5320,7 @@ class JSONUIReal : public PathBuilder, public Meta, public UIReal<REAL>
         {
             init("", "", inputs, outputs, -1, "", "","", "", std::vector<std::string>(), std::vector<std::string>(), -1, std::map<std::string, int>());
         }
-        
+        //FCKX runtime error in line 5325
         JSONUIReal()
         {
             init("", "", -1, -1, -1, "", "", "", "", std::vector<std::string>(), std::vector<std::string>(), -1, std::map<std::string, int>());
@@ -5649,7 +5649,7 @@ struct JSONUI : public JSONUIReal<FAUSTFLOAT>, public UI
     
     JSONUI(int inputs, int outputs):JSONUIReal<FAUSTFLOAT>(inputs, outputs)
     {}
-    
+    //FCKX runtime error in line 5653
     JSONUI():JSONUIReal<FAUSTFLOAT>()
     {}
 
@@ -8821,7 +8821,7 @@ struct MidiMeta : public Meta, public std::map<std::string, std::string> {
     }
     
     static void analyse(dsp* mono_dsp, bool& midi_sync, int& nvoices)
-    {
+    {   ////FCKX runtime error in line 8825
         JSONUI jsonui;
         mono_dsp->buildUserInterface(&jsonui);
         std::string json = jsonui.JSON();
@@ -25031,6 +25031,7 @@ audio* DspFaust::createDriver(int sample_rate, int buffer_size, bool auto_connec
 #elif DUMMY_DRIVER
     audio* driver = new dummyaudio(sample_rate, buffer_size);
 #elif ESP32_DRIVER
+    printf("BREADCRUMB ESP32_DRIVER 25033\n");
     audio* driver = new esp32audio(sample_rate, buffer_size);
 #elif DUMMY_DRIVER
     audio* driver = new dummyaudio(sample_rate, buffer_size);
@@ -25040,27 +25041,41 @@ audio* DspFaust::createDriver(int sample_rate, int buffer_size, bool auto_connec
 
 void DspFaust::init(dsp* mono_dsp, audio* driver)
 {
+    printf("BREADCRUMB DspFaust init ENTRY 25044\n");
 #if MIDICTRL
+    printf("BREADCRUMB DspFaust init MIDICTRL 25046\n");
     midi_handler* handler;
+    
+
 #if JACK_DRIVER
+    printf("BREADCRUMB DspFaust init JACK_DRIVER 25048\n");
     handler = static_cast<jackaudio_midi*>(driver);
     fMidiInterface = new MidiUI(handler);
 #elif JUCE_DRIVER
+    printf("BREADCRUMB DspFaust init JUCE_DRIVER 25052\n");
     handler = new juce_midi();
     fMidiInterface = new MidiUI(handler, true);
 #elif TEENSY_DRIVER
+    printf("BREADCRUMB DspFaust init TEENSY_DRIVER 25056\n");
     handler = new teensy_midi();
     fMidiInterface = new MidiUI(handler, true);
 #elif ESP32_DRIVER
+
+    printf("BREADCRUMB ESP32_DRIVER 25055\n");
     handler = new esp32_midi();
     fMidiInterface = new MidiUI(handler, true);
+
 #else
+    printf("BREADCRUMB DspFaust init ELSE 25062\n");
     handler = new rt_midi();
     fMidiInterface = new MidiUI(handler, true);
 #endif
+
+    printf("BREADCRUMB DspFaust init fPolyEngine 25066\n");
     fPolyEngine = new FaustPolyEngine(mono_dsp, driver, handler);
     fPolyEngine->buildUserInterface(fMidiInterface);
 #else
+    printf("BREADCRUMB fPolyEngine ELSE 25070) world!\n");
     fPolyEngine = new FaustPolyEngine(mono_dsp, driver);
 #endif
 
