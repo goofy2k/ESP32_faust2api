@@ -36,6 +36,9 @@ void app_main(void)
     //printf("Hello modified 2x world!\n");
     DSP->start();
     printf("Hello modified 3x world!\n");
+    DSP->setParamValue("freq",440);
+    
+    /*
     while(1) {
         //printf("Hello modified 4x world!\n");
        // dspFaust.setParamValue("freq",rand()%(2000-50 + 1) + 50);
@@ -43,4 +46,8 @@ void app_main(void)
      //   YOU MUST USE faust2api API calls
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
+    */
+    // Waiting forever
+    vTaskSuspend(nullptr);
+    
 }
