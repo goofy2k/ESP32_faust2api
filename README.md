@@ -382,8 +382,10 @@ C:/Users/Fred/esp-idf/components/soc/include/hal/i2s_types.h:71:5: note: declare
  https://esp32.com/viewtopic.php?t=8575
  
   
-**make it "hard" with menuconfig?**  
+### **make it "hard" with menuconfig?** in Compiler options 
  https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/kconfig.html#config-cxx-exceptions
+ 
+ 
  
  success buildlog7.txt success!! 
  
