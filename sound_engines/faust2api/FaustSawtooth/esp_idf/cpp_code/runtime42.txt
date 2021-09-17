@@ -1,0 +1,1233 @@
+PS C:\Users\Fred\esp_projects\ESP32_faust2api\sound_engines\faust2api\FaustSawtooth\esp_idf\cpp_code> idf.py --no-ccache -p COM10 monitor
+Executing action: monitor
+Running idf_monitor in directory c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code
+Executing "C:\Users\Fred\.espressif\python_env\idf4.2_py3.8_env\Scripts\python.exe C:\Users\Fred\esp-idf\tools/idf_monitor.py -p COM10 -b 115200 --toolchain-prefix xtensa-esp32-elf- c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build\FaustTutorial.elf -m 'C:\Users\Fred\.espressif\python_env\idf4.2_py3.8_env\Scripts\python.exe' 'C:\Users\Fred\esp-idf\tools\idf.py' '--no-ccache' '-p' 'COM10'"...
+--- WARNING: GDB cannot open serial ports accessed as COMx
+--- Using \\.\COM10 instead...
+--- idf_monitor on \\.\COM10 115200 ---
+--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H ---
+ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:4
+load:0x3fff0034,len:7068
+load:0x40078000,len:13212
+ho 0 tail 12 room 4
+load:0x40080400,len:4568
+0x40080400: _init at ??:?
+
+entry 0x400806f4
+I (31) boot: ESP-IDF v4.2-dirty 2nd stage bootloader
+I (31) boot: compile time 22:18:29
+I (31) boot: chip revision: 3
+I (34) boot_comm: chip revision: 3, min. bootloader chip revision: 0
+I (41) boot.esp32: SPI Speed      : 40MHz
+I (46) boot.esp32: SPI Mode       : DIO
+I (51) boot.esp32: SPI Flash Size : 2MB
+I (55) boot: Enabling RNG early entropy source...
+I (60) boot: Partition Table:
+I (64) boot: ## Label            Usage          Type ST Offset   Length
+I (71) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (79) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (86) boot:  2 factory          factory app      00 00 00010000 00100000
+I (94) boot: End of partition table
+I (98) boot_comm: chip revision: 3, min. application chip revision: 0
+I (105) esp_image: segment 0: paddr=0x00010020 vaddr=0x3f400020 size=0x21ebc (138940) map
+I (167) esp_image: segment 1: paddr=0x00031ee4 vaddr=0x3ffb0000 size=0x021e0 (  8672) load
+I (171) esp_image: segment 2: paddr=0x000340cc vaddr=0x40080000 size=0x00404 (  1028) load
+0x40080000: _WindowOverflow4 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1730
+
+I (174) esp_image: segment 3: paddr=0x000344d8 vaddr=0x40080404 size=0x0b760 ( 46944) load
+I (203) esp_image: segment 4: paddr=0x0003fc40 vaddr=0x00000000 size=0x003d8 (   984)
+I (204) esp_image: segment 5: paddr=0x00040020 vaddr=0x400d0020 size=0x5e9fc (387580) map
+0x400d0020: _stext at ??:?
+
+I (364) boot: Loaded app from partition at offset 0x10000
+I (364) boot: Disabling RNG early entropy source...
+I (364) cpu_start: Pro cpu up.
+I (368) cpu_start: Application information:
+I (373) cpu_start: Project name:     FaustTutorial
+I (378) cpu_start: App version:      9c80bba-dirty
+I (384) cpu_start: Compile time:     Sep 17 2021 22:17:28
+I (390) cpu_start: ELF file SHA256:  e41cf0c80185d937...
+I (396) cpu_start: ESP-IDF:          v4.2-dirty
+I (401) cpu_start: Starting app cpu, entry point is 0x40081924
+0x40081924: call_start_cpu1 at C:/Users/Fred/esp-idf/components/esp32/cpu_start.c:287
+
+I (0) cpu_start: App cpu up.
+I (411) heap_init: Initializing. RAM available for dynamic allocation:
+I (418) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (424) heap_init: At 3FFB3B90 len 0002C470 (177 KiB): DRAM
+I (430) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (437) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (443) heap_init: At 4008BB64 len 0001449C (81 KiB): IRAM
+I (449) cpu_start: Pro cpu start user code
+I (468) spi_flash: detected chip: gd
+I (469) spi_flash: flash io: dio
+W (469) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (479) cpu_start: Starting scheduler on PRO CPU.
+I (0) cpu_start: Starting scheduler on APP CPU.
+Hello modified CHECKIT 1 world!
+Hello modified (DspFaust init 1) world!
+BREADCRUMB ESP32_DRIVER 25033
+I (524) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (524) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (534) I2S: PLL_D2: Req RATE: 48000, real rate: 48076.000, BITS: 32, CLKM: 13, BCK: 4, MCLK: 12292917.167, SCLK: 3076864.000000, diva: 64, divb: 1
+BREADCRUMB DspFaust init ENTRY 25044
+BREADCRUMB fPolyEngine ELSE 25070) world!
+C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (xTaskRemoveFromEventList)- assert failed!
+
+abort() was called at PC 0x40086fc6 on core 0
+0x40086fc6: xTaskRemoveFromEventList at C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (discriminator 1)
+
+
+Backtrace:0x400855eb:0x3ffb0660 0x40085c89:0x3ffb0680 0x400894a2:0x3ffb06a0 0x40086fc6:0x3ffb0710 0x400886ef:0x3ffb0730 0x40084355:0x3ffb0750 0x400827f5:0x3ffb0780 0x4010616b:0x3ffb48d0 0x400f58de:0x3ffb48f0 0x400f5ec0:0x3ffb4930 0x400d264d:0x3ffb4950 0x400f5ee1:0x3ffb4970 0x400f5efe:0x3ffb4990 0x400fbb8d:0x3ffb49c0 0x400f939d:0x3ffb49e0 0x401082b3:0x3ffb4a00 0x400e5da2:0x3ffb4a20 0x400e6139:0x3ffb4b70 0x400eaf06:0x3ffb4ef0 0x400eb815:0x3ffb5a30 0x400eb895:0x3ffb5a90 0x400d42f6:0x3ffb5ab0 0x400d2bea:0x3ffb5ae0 0x40085c91:0x3ffb5b10
+0x400855eb: panic_abort at C:/Users/Fred/esp-idf/components/esp_system/panic.c:330
+
+0x40085c89: esp_system_abort at C:/Users/Fred/esp-idf/components/esp_system/system_api.c:106
+
+0x400894a2: abort at C:/Users/Fred/esp-idf/components/newlib/abort.c:46
+
+0x40086fc6: xTaskRemoveFromEventList at C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (discriminator 1)
+
+0x400886ef: xQueueReceiveFromISR at C:/Users/Fred/esp-idf/components/freertos/queue.c:1653
+
+0x40084355: i2s_intr_handler_default at C:/Users/Fred/esp-idf/components/driver/i2s.c:546
+
+0x400827f5: _xt_lowint1 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1105
+
+0x4010616b: std::ctype<char>::ctype(char const*, bool, unsigned int) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/src/c++11/ctype_configure_char.cc:58
+
+0x400f58de: std::locale::_Impl::_Impl(unsigned int) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:480
+
+0x400f5ec0: std::locale::_S_initialize_once() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:307
+
+0x400d264d: pthread_once at C:/Users/Fred/esp-idf/components/pthread/pthread.c:519 (discriminator 15)
+
+0x400f5ee1: __gthread_once at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/xtensa-esp32-elf/bits/gthr-default.h:712
+ (inlined by) std::locale::_S_initialize() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:317
+
+0x400f5efe: std::locale::locale() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:250
+
+0x400fbb8d: std::ios_base::ios_base() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++11/ios.cc:79 (discriminator 2)
+
+0x400f939d: std::basic_ios<char, std::char_traits<char> >::basic_ios() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/bits/basic_ios.h:462
+
+0x401082b3: std::__cxx11::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::basic_stringstream(std::_Ios_Openmode) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/sstream:705
+ (inlined by) std::__cxx11::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::basic_stringstream(std::_Ios_Openmode) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/sstream:706
+
+0x400e5da2: JSONUIReal<float>::JSONUIReal() at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:5325
+
+0x400e6139: MidiMeta::analyse(dsp*, bool&, int&) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:5653
+ (inlined by) MidiMeta::analyse(dsp*, bool&, int&) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:8825
+
+0x400eaf06: FaustPolyEngine::init(dsp*, audio*, midi_handler*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:11640
+
+0x400eb815: DspFaust::init(dsp*, audio*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:11711
+ (inlined by) DspFaust::init(dsp*, audio*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:25079
+
+0x400eb895: DspFaust::DspFaust(int, int, bool) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:24971
+
+0x400d42f6: app_main at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/main.cpp:35
+
+0x400d2bea: main_task at C:/Users/Fred/esp-idf/components/esp32/cpu_start.c:600 (discriminator 2)
+
+0x40085c91: vPortTaskWrapper at C:/Users/Fred/esp-idf/components/freertos/xtensa/port.c:143
+
+
+
+ELF file SHA256: e41cf0c80185d937
+
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:4
+load:0x3fff0034,len:7068
+load:0x40078000,len:13212
+ho 0 tail 12 room 4
+load:0x40080400,len:4568
+0x40080400: _init at ??:?
+
+entry 0x400806f4
+I (31) boot: ESP-IDF v4.2-dirty 2nd stage bootloader
+I (31) boot: compile time 22:18:29
+I (31) boot: chip revision: 3
+I (34) boot_comm: chip revision: 3, min. bootloader chip revision: 0
+I (41) boot.esp32: SPI Speed      : 40MHz
+I (46) boot.esp32: SPI Mode       : DIO
+I (50) boot.esp32: SPI Flash Size : 2MB
+I (55) boot: Enabling RNG early entropy source...
+I (60) boot: Partition Table:
+I (64) boot: ## Label            Usage          Type ST Offset   Length
+I (71) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (79) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (86) boot:  2 factory          factory app      00 00 00010000 00100000
+I (94) boot: End of partition table
+I (98) boot_comm: chip revision: 3, min. application chip revision: 0
+I (105) esp_image: segment 0: paddr=0x00010020 vaddr=0x3f400020 size=0x21ebc (138940) map
+I (167) esp_image: segment 1: paddr=0x00031ee4 vaddr=0x3ffb0000 size=0x021e0 (  8672) load
+I (171) esp_image: segment 2: paddr=0x000340cc vaddr=0x40080000 size=0x00404 (  1028) load
+0x40080000: _WindowOverflow4 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1730
+
+I (174) esp_image: segment 3: paddr=0x000344d8 vaddr=0x40080404 size=0x0b760 ( 46944) load
+I (203) esp_image: segment 4: paddr=0x0003fc40 vaddr=0x00000000 size=0x003d8 (   984)
+I (204) esp_image: segment 5: paddr=0x00040020 vaddr=0x400d0020 size=0x5e9fc (387580) map
+0x400d0020: _stext at ??:?
+
+I (363) boot: Loaded app from partition at offset 0x10000
+I (364) boot: Disabling RNG early entropy source...
+I (364) cpu_start: Pro cpu up.
+I (368) cpu_start: Application information:
+I (372) cpu_start: Project name:     FaustTutorial
+I (378) cpu_start: App version:      9c80bba-dirty
+I (383) cpu_start: Compile time:     Sep 17 2021 22:17:28
+I (389) cpu_start: ELF file SHA256:  e41cf0c80185d937...
+I (395) cpu_start: ESP-IDF:          v4.2-dirty
+I (401) cpu_start: Starting app cpu, entry point is 0x40081924
+0x40081924: call_start_cpu1 at C:/Users/Fred/esp-idf/components/esp32/cpu_start.c:287
+
+I (392) cpu_start: App cpu up.
+I (411) heap_init: Initializing. RAM available for dynamic allocation:
+I (418) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (424) heap_init: At 3FFB3B90 len 0002C470 (177 KiB): DRAM
+I (430) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (437) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (443) heap_init: At 4008BB64 len 0001449C (81 KiB): IRAM
+I (449) cpu_start: Pro cpu start user code
+I (468) spi_flash: detected chip: gd
+I (469) spi_flash: flash io: dio
+W (469) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (479) cpu_start: Starting scheduler on PRO CPU.
+I (0) cpu_start: Starting scheduler on APP CPU.
+Hello modified CHECKIT 1 world!
+Hello modified (DspFaust init 1) world!
+BREADCRUMB ESP32_DRIVER 25033
+I (524) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (524) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (534) I2S: PLL_D2: Req RATE: 48000, real rate: 48076.000, BITS: 32, CLKM: 13, BCK: 4, MCLK: 12292917.167, SCLK: 3076864.000000, diva: 64, divb: 1
+BREADCRUMB DspFaust init ENTRY 25044
+BREADCRUMB fPolyEngine ELSE 25070) world!
+C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (xTaskRemoveFromEventList)- assert failed!
+ets Jul 29 2019 12:21:46
+
+rst:0x8 (TG1WDT_SYS_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:4
+load:0x3fff0034,len:7068
+load:0x40078000,len:13212
+ho 0 tail 12 room 4
+load:0x40080400,len:4568
+0x40080400: _init at ??:?
+
+entry 0x400806f4
+I (62) boot: ESP-IDF v4.2-dirty 2nd stage bootloader
+I (62) boot: compile time 22:18:29
+I (62) boot: chip revision: 3
+I (65) boot_comm: chip revision: 3, min. bootloader chip revision: 0
+I (72) boot.esp32: SPI Speed      : 40MHz
+I (77) boot.esp32: SPI Mode       : DIO
+I (82) boot.esp32: SPI Flash Size : 2MB
+W (86) boot.esp32: PRO CPU has been reset by WDT.
+W (92) boot.esp32: WDT reset info: PRO CPU PC=0x40081122
+0x40081122: xt_highint4 at C:/Users/Fred/esp-idf/components/esp_system/port/esp32/dport_panic_highint_hdl.S:91
+
+W (98) boot.esp32: WDT reset info: APP CPU PC=0x40086c03
+0x40086c03: compare_and_set_native at C:/Users/Fred/esp-idf/components/soc/include/soc/compare_set.h:28
+ (inlined by) spinlock_acquire at C:/Users/Fred/esp-idf/components/soc/include/soc/spinlock.h:97
+ (inlined by) vPortCPUAcquireMutex at C:/Users/Fred/esp-idf/components/freertos/xtensa/include/freertos/portmacro.h:202
+ (inlined by) vTaskSwitchContext at C:/Users/Fred/esp-idf/components/freertos/tasks.c:2780
+
+I (104) boot: Enabling RNG early entropy source...
+I (109) boot: Partition Table:
+I (113) boot: ## Label            Usage          Type ST Offset   Length
+I (120) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (128) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (135) boot:  2 factory          factory app      00 00 00010000 00100000
+I (143) boot: End of partition table
+I (147) boot_comm: chip revision: 3, min. application chip revision: 0
+I (154) esp_image: segment 0: paddr=0x00010020 vaddr=0x3f400020 size=0x21ebc (138940) map
+I (216) esp_image: segment 1: paddr=0x00031ee4 vaddr=0x3ffb0000 size=0x021e0 (  8672) load
+I (220) esp_image: segment 2: paddr=0x000340cc vaddr=0x40080000 size=0x00404 (  1028) load
+0x40080000: _WindowOverflow4 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1730
+
+I (223) esp_image: segment 3: paddr=0x000344d8 vaddr=0x40080404 size=0x0b760 ( 46944) load
+I (253) esp_image: segment 4: paddr=0x0003fc40 vaddr=0x00000000 size=0x003d8 (   984)
+I (253) esp_image: segment 5: paddr=0x00040020 vaddr=0x400d0020 size=0x5e9fc (387580) map
+0x400d0020: _stext at ??:?
+
+I (413) boot: Loaded app from partition at offset 0x10000
+I (413) boot: Disabling RNG early entropy source...
+I (413) cpu_start: Pro cpu up.
+I (417) cpu_start: Application information:
+I (422) cpu_start: Project name:     FaustTutorial
+I (427) cpu_start: App version:      9c80bba-dirty
+I (433) cpu_start: Compile time:     Sep 17 2021 22:17:28
+I (439) cpu_start: ELF file SHA256:  e41cf0c80185d937...
+I (445) cpu_start: ESP-IDF:          v4.2-dirty
+I (450) cpu_start: Starting app cpu, entry point is 0x40081924
+0x40081924: call_start_cpu1 at C:/Users/Fred/esp-idf/components/esp32/cpu_start.c:287
+
+I (0) cpu_start: App cpu up.
+I (460) heap_init: Initializing. RAM available for dynamic allocation:
+I (467) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (473) heap_init: At 3FFB3B90 len 0002C470 (177 KiB): DRAM
+I (480) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (486) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (492) heap_init: At 4008BB64 len 0001449C (81 KiB): IRAM
+I (499) cpu_start: Pro cpu start user code
+I (517) spi_flash: detected chip: gd
+I (518) spi_flash: flash io: dio
+W (518) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (528) cpu_start: Starting scheduler on PRO CPU.
+I (0) cpu_start: Starting scheduler on APP CPU.
+Hello modified CHECKIT 1 world!
+Hello modified (DspFaust init 1) world!
+BREADCRUMB ESP32_DRIVER 25033
+I (574) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (574) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (584) I2S: PLL_D2: Req RATE: 48000, real rate: 48076.000, BITS: 32, CLKM: 13, BCK: 4, MCLK: 12292917.167, SCLK: 3076864.000000, diva: 64, divb: 1
+BREADCRUMB DspFaust init ENTRY 25044
+BREADCRUMB fPolyEngine ELSE 25070) world!
+C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (xTaskRemoveFromEventList)- assert failed!
+
+abort() was called at PC 0x40086fc6 on core 0
+0x40086fc6: xTaskRemoveFromEventList at C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (discriminator 1)
+
+
+Backtrace:0x400855eb:0x3ffb0660 0x40085c89:0x3ffb0680 0x400894a2:0x3ffb06a0 0x40086fc6:0x3ffb0710 0x400886ef:0x3ffb0730 0x40084355:0x3ffb0750 0x400827f5:0x3ffb0780 0x4010616b:0x3ffb48d0 0x400f58de:0x3ffb48f0 0x400f5ec0:0x3ffb4930 0x400d264d:0x3ffb4950 0x400f5ee1:0x3ffb4970 0x400f5efe:0x3ffb4990 0x400fbb8d:0x3ffb49c0 0x400f939d:0x3ffb49e0 0x401082b3:0x3ffb4a00 0x400e5da2:0x3ffb4a20 0x400e6139:0x3ffb4b70 0x400eaf06:0x3ffb4ef0 0x400eb815:0x3ffb5a30 0x400eb895:0x3ffb5a90 0x400d42f6:0x3ffb5ab0 0x400d2bea:0x3ffb5ae0 0x40085c91:0x3ffb5b10
+0x400855eb: panic_abort at C:/Users/Fred/esp-idf/components/esp_system/panic.c:330
+
+0x40085c89: esp_system_abort at C:/Users/Fred/esp-idf/components/esp_system/system_api.c:106
+
+0x400894a2: abort at C:/Users/Fred/esp-idf/components/newlib/abort.c:46
+
+0x40086fc6: xTaskRemoveFromEventList at C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (discriminator 1)
+
+0x400886ef: xQueueReceiveFromISR at C:/Users/Fred/esp-idf/components/freertos/queue.c:1653
+
+0x40084355: i2s_intr_handler_default at C:/Users/Fred/esp-idf/components/driver/i2s.c:546
+
+0x400827f5: _xt_lowint1 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1105
+
+0x4010616b: std::ctype<char>::ctype(char const*, bool, unsigned int) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/src/c++11/ctype_configure_char.cc:58
+
+0x400f58de: std::locale::_Impl::_Impl(unsigned int) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:480
+
+0x400f5ec0: std::locale::_S_initialize_once() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:307
+
+0x400d264d: pthread_once at C:/Users/Fred/esp-idf/components/pthread/pthread.c:519 (discriminator 15)
+
+0x400f5ee1: __gthread_once at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/xtensa-esp32-elf/bits/gthr-default.h:712
+ (inlined by) std::locale::_S_initialize() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:317
+
+0x400f5efe: std::locale::locale() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:250
+
+0x400fbb8d: std::ios_base::ios_base() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++11/ios.cc:79 (discriminator 2)
+
+0x400f939d: std::basic_ios<char, std::char_traits<char> >::basic_ios() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/bits/basic_ios.h:462
+
+0x401082b3: std::__cxx11::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::basic_stringstream(std::_Ios_Openmode) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/sstream:705
+ (inlined by) std::__cxx11::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::basic_stringstream(std::_Ios_Openmode) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/sstream:706
+
+0x400e5da2: JSONUIReal<float>::JSONUIReal() at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:5325
+
+0x400e6139: MidiMeta::analyse(dsp*, bool&, int&) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:5653
+ (inlined by) MidiMeta::analyse(dsp*, bool&, int&) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:8825
+
+0x400eaf06: FaustPolyEngine::init(dsp*, audio*, midi_handler*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:11640
+
+0x400eb815: DspFaust::init(dsp*, audio*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:11711
+ (inlined by) DspFaust::init(dsp*, audio*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:25079
+
+0x400eb895: DspFaust::DspFaust(int, int, bool) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:24971
+
+0x400d42f6: app_main at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/main.cpp:35
+
+0x400d2bea: main_task at C:/Users/Fred/esp-idf/components/esp32/cpu_start.c:600 (discriminator 2)
+
+0x40085c91: vPortTaskWrapper at C:/Users/Fred/esp-idf/components/freertos/xtensa/port.c:143
+
+
+
+ELF file SHA256: e41cf0c80185d937
+
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:4
+load:0x3fff0034,len:7068
+load:0x40078000,len:13212
+ho 0 tail 12 room 4
+load:0x40080400,len:4568
+0x40080400: _init at ??:?
+
+entry 0x400806f4
+I (31) boot: ESP-IDF v4.2-dirty 2nd stage bootloader
+I (31) boot: compile time 22:18:29
+I (31) boot: chip revision: 3
+I (34) boot_comm: chip revision: 3, min. bootloader chip revision: 0
+I (41) boot.esp32: SPI Speed      : 40MHz
+I (46) boot.esp32: SPI Mode       : DIO
+I (50) boot.esp32: SPI Flash Size : 2MB
+I (55) boot: Enabling RNG early entropy source...
+I (60) boot: Partition Table:
+I (64) boot: ## Label            Usage          Type ST Offset   Length
+I (71) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (79) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (86) boot:  2 factory          factory app      00 00 00010000 00100000
+I (94) boot: End of partition table
+I (98) boot_comm: chip revision: 3, min. application chip revision: 0
+I (105) esp_image: segment 0: paddr=0x00010020 vaddr=0x3f400020 size=0x21ebc (138940) map
+I (167) esp_image: segment 1: paddr=0x00031ee4 vaddr=0x3ffb0000 size=0x021e0 (  8672) load
+I (171) esp_image: segment 2: paddr=0x000340cc vaddr=0x40080000 size=0x00404 (  1028) load
+0x40080000: _WindowOverflow4 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1730
+
+I (174) esp_image: segment 3: paddr=0x000344d8 vaddr=0x40080404 size=0x0b760 ( 46944) load
+I (203) esp_image: segment 4: paddr=0x0003fc40 vaddr=0x00000000 size=0x003d8 (   984)
+I (204) esp_image: segment 5: paddr=0x00040020 vaddr=0x400d0020 size=0x5e9fc (387580) map
+0x400d0020: _stext at ??:?
+
+I (363) boot: Loaded app from partition at offset 0x10000
+I (364) boot: Disabling RNG early entropy source...
+I (364) cpu_start: Pro cpu up.
+I (368) cpu_start: Application information:
+I (372) cpu_start: Project name:     FaustTutorial
+I (378) cpu_start: App version:      9c80bba-dirty
+I (383) cpu_start: Compile time:     Sep 17 2021 22:17:28
+I (389) cpu_start: ELF file SHA256:  e41cf0c80185d937...
+I (395) cpu_start: ESP-IDF:          v4.2-dirty
+I (401) cpu_start: Starting app cpu, entry point is 0x40081924
+0x40081924: call_start_cpu1 at C:/Users/Fred/esp-idf/components/esp32/cpu_start.c:287
+
+I (392) cpu_start: App cpu up.
+I (411) heap_init: Initializing. RAM available for dynamic allocation:
+I (418) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (424) heap_init: At 3FFB3B90 len 0002C470 (177 KiB): DRAM
+I (430) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (437) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (443) heap_init: At 4008BB64 len 0001449C (81 KiB): IRAM
+I (449) cpu_start: Pro cpu start user code
+I (468) spi_flash: detected chip: gd
+I (469) spi_flash: flash io: dio
+W (469) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (479) cpu_start: Starting scheduler on PRO CPU.
+I (0) cpu_start: Starting scheduler on APP CPU.
+Hello modified CHECKIT 1 world!
+Hello modified (DspFaust init 1) world!
+BREADCRUMB ESP32_DRIVER 25033
+I (524) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (524) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (534) I2S: PLL_D2: Req RATE: 48000, real rate: 48076.000, BITS: 32, CLKM: 13, BCK: 4, MCLK: 12292917.167, SCLK: 3076864.000000, diva: 64, divb: 1
+BREADCRUMB DspFaust init ENTRY 25044
+BREADCRUMB fPolyEngine ELSE 25070) world!
+C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (xTaskRemoveFromEventList)- assert failed!
+
+abort() was called at PC 0x40086fc6 on core 0
+0x40086fc6: xTaskRemoveFromEventList at C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (discriminator 1)
+
+
+Backtrace:0x400855eb:0x3ffb0660 0x40085c89:0x3ffb0680 0x400894a2:0x3ffb06a0 0x40086fc6:0x3ffb0710 0x400886ef:0x3ffb0730 0x40084355:0x3ffb0750 0x400827f5:0x3ffb0780 0x4010616b:0x3ffb48d0 0x400f58de:0x3ffb48f0 0x400f5ec0:0x3ffb4930 0x400d264d:0x3ffb4950 0x400f5ee1:0x3ffb4970 0x400f5efe:0x3ffb4990 0x400fbb8d:0x3ffb49c0 0x400f939d:0x3ffb49e0 0x401082b3:0x3ffb4a00 0x400e5da2:0x3ffb4a20 0x400e6139:0x3ffb4b70 0x400eaf06:0x3ffb4ef0 0x400eb815:0x3ffb5a30 0x400eb895:0x3ffb5a90 0x400d42f6:0x3ffb5ab0 0x400d2bea:0x3ffb5ae0 0x40085c91:0x3ffb5b10
+0x400855eb: panic_abort at C:/Users/Fred/esp-idf/components/esp_system/panic.c:330
+
+0x40085c89: esp_system_abort at C:/Users/Fred/esp-idf/components/esp_system/system_api.c:106
+
+0x400894a2: abort at C:/Users/Fred/esp-idf/components/newlib/abort.c:46
+
+0x40086fc6: xTaskRemoveFromEventList at C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (discriminator 1)
+
+0x400886ef: xQueueReceiveFromISR at C:/Users/Fred/esp-idf/components/freertos/queue.c:1653
+
+0x40084355: i2s_intr_handler_default at C:/Users/Fred/esp-idf/components/driver/i2s.c:546
+
+0x400827f5: _xt_lowint1 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1105
+
+0x4010616b: std::ctype<char>::ctype(char const*, bool, unsigned int) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/src/c++11/ctype_configure_char.cc:58
+
+0x400f58de: std::locale::_Impl::_Impl(unsigned int) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:480
+
+0x400f5ec0: std::locale::_S_initialize_once() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:307
+
+0x400d264d: pthread_once at C:/Users/Fred/esp-idf/components/pthread/pthread.c:519 (discriminator 15)
+
+0x400f5ee1: __gthread_once at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/xtensa-esp32-elf/bits/gthr-default.h:712
+ (inlined by) std::locale::_S_initialize() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:317
+
+0x400f5efe: std::locale::locale() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:250
+
+0x400fbb8d: std::ios_base::ios_base() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++11/ios.cc:79 (discriminator 2)
+
+0x400f939d: std::basic_ios<char, std::char_traits<char> >::basic_ios() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/bits/basic_ios.h:462
+
+0x401082b3: std::__cxx11::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::basic_stringstream(std::_Ios_Openmode) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/sstream:705
+ (inlined by) std::__cxx11::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::basic_stringstream(std::_Ios_Openmode) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/sstream:706
+
+0x400e5da2: JSONUIReal<float>::JSONUIReal() at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:5325
+
+0x400e6139: MidiMeta::analyse(dsp*, bool&, int&) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:5653
+ (inlined by) MidiMeta::analyse(dsp*, bool&, int&) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:8825
+
+0x400eaf06: FaustPolyEngine::init(dsp*, audio*, midi_handler*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:11640
+
+0x400eb815: DspFaust::init(dsp*, audio*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:11711
+ (inlined by) DspFaust::init(dsp*, audio*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:25079
+
+0x400eb895: DspFaust::DspFaust(int, int, bool) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:24971
+
+0x400d42f6: app_main at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/main.cpp:35
+
+0x400d2bea: main_task at C:/Users/Fred/esp-idf/components/esp32/cpu_start.c:600 (discriminator 2)
+
+0x40085c91: vPortTaskWrapper at C:/Users/Fred/esp-idf/components/freertos/xtensa/port.c:143
+
+
+
+ELF file SHA256: e41cf0c80185d937
+
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:4
+load:0x3fff0034,len:7068
+load:0x40078000,len:13212
+ho 0 tail 12 room 4
+load:0x40080400,len:4568
+0x40080400: _init at ??:?
+
+entry 0x400806f4
+I (31) boot: ESP-IDF v4.2-dirty 2nd stage bootloader
+I (31) boot: compile time 22:18:29
+I (31) boot: chip revision: 3
+I (34) boot_comm: chip revision: 3, min. bootloader chip revision: 0
+I (41) boot.esp32: SPI Speed      : 40MHz
+I (46) boot.esp32: SPI Mode       : DIO
+I (50) boot.esp32: SPI Flash Size : 2MB
+I (55) boot: Enabling RNG early entropy source...
+I (60) boot: Partition Table:
+I (64) boot: ## Label            Usage          Type ST Offset   Length
+I (71) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (79) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (86) boot:  2 factory          factory app      00 00 00010000 00100000
+I (94) boot: End of partition table
+I (98) boot_comm: chip revision: 3, min. application chip revision: 0
+I (105) esp_image: segment 0: paddr=0x00010020 vaddr=0x3f400020 size=0x21ebc (138940) map
+I (167) esp_image: segment 1: paddr=0x00031ee4 vaddr=0x3ffb0000 size=0x021e0 (  8672) load
+I (171) esp_image: segment 2: paddr=0x000340cc vaddr=0x40080000 size=0x00404 (  1028) load
+0x40080000: _WindowOverflow4 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1730
+
+I (174) esp_image: segment 3: paddr=0x000344d8 vaddr=0x40080404 size=0x0b760 ( 46944) load
+I (203) esp_image: segment 4: paddr=0x0003fc40 vaddr=0x00000000 size=0x003d8 (   984)
+I (204) esp_image: segment 5: paddr=0x00040020 vaddr=0x400d0020 size=0x5e9fc (387580) map
+0x400d0020: _stext at ??:?
+
+I (363) boot: Loaded app from partition at offset 0x10000
+I (364) boot: Disabling RNG early entropy source...
+I (364) cpu_start: Pro cpu up.
+I (368) cpu_start: Application information:
+I (372) cpu_start: Project name:     FaustTutorial
+I (378) cpu_start: App version:      9c80bba-dirty
+I (383) cpu_start: Compile time:     Sep 17 2021 22:17:28
+I (389) cpu_start: ELF file SHA256:  e41cf0c80185d937...
+I (395) cpu_start: ESP-IDF:          v4.2-dirty
+I (401) cpu_start: Starting app cpu, entry point is 0x40081924
+0x40081924: call_start_cpu1 at C:/Users/Fred/esp-idf/components/esp32/cpu_start.c:287
+
+I (392) cpu_start: App cpu up.
+I (411) heap_init: Initializing. RAM available for dynamic allocation:
+I (418) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (424) heap_init: At 3FFB3B90 len 0002C470 (177 KiB): DRAM
+I (430) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (437) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (443) heap_init: At 4008BB64 len 0001449C (81 KiB): IRAM
+I (449) cpu_start: Pro cpu start user code
+I (468) spi_flash: detected chip: gd
+I (469) spi_flash: flash io: dio
+W (469) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (479) cpu_start: Starting scheduler on PRO CPU.
+I (0) cpu_start: Starting scheduler on APP CPU.
+Hello modified CHECKIT 1 world!
+Hello modified (DspFaust init 1) world!
+BREADCRUMB ESP32_DRIVER 25033
+I (524) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (524) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (534) I2S: PLL_D2: Req RATE: 48000, real rate: 48076.000, BITS: 32, CLKM: 13, BCK: 4, MCLK: 12292917.167, SCLK: 3076864.000000, diva: 64, divb: 1
+BREADCRUMB DspFaust init ENTRY 25044
+BREADCRUMB fPolyEngine ELSE 25070) world!
+C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (xTaskRemoveFromEventList)- assert failed!
+
+abort() was called at PC 0x40086fc6 on core 0
+0x40086fc6: xTaskRemoveFromEventList at C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (discriminator 1)
+
+
+Backtrace:0x400855eb:0x3ffb0660 0x40085c89:0x3ffb0680 0x400894a2:0x3ffb06a0 0x40086fc6:0x3ffb0710 0x400886ef:0x3ffb0730 0x40084355:0x3ffb0750 0x400827f5:0x3ffb0780 0x4010616b:0x3ffb48d0 0x400f58de:0x3ffb48f0 0x400f5ec0:0x3ffb4930 0x400d264d:0x3ffb4950 0x400f5ee1:0x3ffb4970 0x400f5efe:0x3ffb4990 0x400fbb8d:0x3ffb49c0 0x400f939d:0x3ffb49e0 0x401082b3:0x3ffb4a00 0x400e5da2:0x3ffb4a20 0x400e6139:0x3ffb4b70 0x400eaf06:0x3ffb4ef0 0x400eb815:0x3ffb5a30 0x400eb895:0x3ffb5a90 0x400d42f6:0x3ffb5ab0 0x400d2bea:0x3ffb5ae0 0x40085c91:0x3ffb5b10
+0x400855eb: panic_abort at C:/Users/Fred/esp-idf/components/esp_system/panic.c:330
+
+0x40085c89: esp_system_abort at C:/Users/Fred/esp-idf/components/esp_system/system_api.c:106
+
+0x400894a2: abort at C:/Users/Fred/esp-idf/components/newlib/abort.c:46
+
+0x40086fc6: xTaskRemoveFromEventList at C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (discriminator 1)
+
+0x400886ef: xQueueReceiveFromISR at C:/Users/Fred/esp-idf/components/freertos/queue.c:1653
+
+0x40084355: i2s_intr_handler_default at C:/Users/Fred/esp-idf/components/driver/i2s.c:546
+
+0x400827f5: _xt_lowint1 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1105
+
+0x4010616b: std::ctype<char>::ctype(char const*, bool, unsigned int) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/src/c++11/ctype_configure_char.cc:58
+
+0x400f58de: std::locale::_Impl::_Impl(unsigned int) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:480
+
+0x400f5ec0: std::locale::_S_initialize_once() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:307
+
+0x400d264d: pthread_once at C:/Users/Fred/esp-idf/components/pthread/pthread.c:519 (discriminator 15)
+
+0x400f5ee1: __gthread_once at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/xtensa-esp32-elf/bits/gthr-default.h:712
+ (inlined by) std::locale::_S_initialize() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:317
+
+0x400f5efe: std::locale::locale() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:250
+
+0x400fbb8d: std::ios_base::ios_base() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++11/ios.cc:79 (discriminator 2)
+
+0x400f939d: std::basic_ios<char, std::char_traits<char> >::basic_ios() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/bits/basic_ios.h:462
+
+0x401082b3: std::__cxx11::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::basic_stringstream(std::_Ios_Openmode) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/sstream:705
+ (inlined by) std::__cxx11::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::basic_stringstream(std::_Ios_Openmode) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/sstream:706
+
+0x400e5da2: JSONUIReal<float>::JSONUIReal() at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:5325
+
+0x400e6139: MidiMeta::analyse(dsp*, bool&, int&) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:5653
+ (inlined by) MidiMeta::analyse(dsp*, bool&, int&) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:8825
+
+0x400eaf06: FaustPolyEngine::init(dsp*, audio*, midi_handler*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:11640
+
+0x400eb815: DspFaust::init(dsp*, audio*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:11711
+ (inlined by) DspFaust::init(dsp*, audio*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:25079
+
+0x400eb895: DspFaust::DspFaust(int, int, bool) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:24971
+
+0x400d42f6: app_main at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/main.cpp:35
+
+0x400d2bea: main_task at C:/Users/Fred/esp-idf/components/esp32/cpu_start.c:600 (discriminator 2)
+
+0x40085c91: vPortTaskWrapper at C:/Users/Fred/esp-idf/components/freertos/xtensa/port.c:143
+
+
+
+ELF file SHA256: e41cf0c80185d937
+
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:4
+load:0x3fff0034,len:7068
+load:0x40078000,len:13212
+ho 0 tail 12 room 4
+load:0x40080400,len:4568
+0x40080400: _init at ??:?
+
+entry 0x400806f4
+I (31) boot: ESP-IDF v4.2-dirty 2nd stage bootloader
+I (31) boot: compile time 22:18:29
+I (31) boot: chip revision: 3
+I (34) boot_comm: chip revision: 3, min. bootloader chip revision: 0
+I (41) boot.esp32: SPI Speed      : 40MHz
+I (46) boot.esp32: SPI Mode       : DIO
+I (50) boot.esp32: SPI Flash Size : 2MB
+I (55) boot: Enabling RNG early entropy source...
+I (60) boot: Partition Table:
+I (64) boot: ## Label            Usage          Type ST Offset   Length
+I (71) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (79) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (86) boot:  2 factory          factory app      00 00 00010000 00100000
+I (94) boot: End of partition table
+I (98) boot_comm: chip revision: 3, min. application chip revision: 0
+I (105) esp_image: segment 0: paddr=0x00010020 vaddr=0x3f400020 size=0x21ebc (138940) map
+I (167) esp_image: segment 1: paddr=0x00031ee4 vaddr=0x3ffb0000 size=0x021e0 (  8672) load
+I (171) esp_image: segment 2: paddr=0x000340cc vaddr=0x40080000 size=0x00404 (  1028) load
+0x40080000: _WindowOverflow4 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1730
+
+I (174) esp_image: segment 3: paddr=0x000344d8 vaddr=0x40080404 size=0x0b760 ( 46944) load
+I (203) esp_image: segment 4: paddr=0x0003fc40 vaddr=0x00000000 size=0x003d8 (   984)
+I (204) esp_image: segment 5: paddr=0x00040020 vaddr=0x400d0020 size=0x5e9fc (387580) map
+0x400d0020: _stext at ??:?
+
+I (363) boot: Loaded app from partition at offset 0x10000
+I (364) boot: Disabling RNG early entropy source...
+I (364) cpu_start: Pro cpu up.
+I (368) cpu_start: Application information:
+I (372) cpu_start: Project name:     FaustTutorial
+I (378) cpu_start: App version:      9c80bba-dirty
+I (383) cpu_start: Compile time:     Sep 17 2021 22:17:28
+I (389) cpu_start: ELF file SHA256:  e41cf0c80185d937...
+I (395) cpu_start: ESP-IDF:          v4.2-dirty
+I (401) cpu_start: Starting app cpu, entry point is 0x40081924
+0x40081924: call_start_cpu1 at C:/Users/Fred/esp-idf/components/esp32/cpu_start.c:287
+
+I (392) cpu_start: App cpu up.
+I (411) heap_init: Initializing. RAM available for dynamic allocation:
+I (418) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (424) heap_init: At 3FFB3B90 len 0002C470 (177 KiB): DRAM
+I (430) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (437) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (443) heap_init: At 4008BB64 len 0001449C (81 KiB): IRAM
+I (449) cpu_start: Pro cpu start user code
+I (468) spi_flash: detected chip: gd
+I (469) spi_flash: flash io: dio
+W (469) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (479) cpu_start: Starting scheduler on PRO CPU.
+I (0) cpu_start: Starting scheduler on APP CPU.
+Hello modified CHECKIT 1 world!
+Hello modified (DspFaust init 1) world!
+BREADCRUMB ESP32_DRIVER 25033
+I (524) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (524) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (534) I2S: PLL_D2: Req RATE: 48000, real rate: 48076.000, BITS: 32, CLKM: 13, BCK: 4, MCLK: 12292917.167, SCLK: 3076864.000000, diva: 64, divb: 1
+BREADCRUMB DspFaust init ENTRY 25044
+BREADCRUMB fPolyEngine ELSE 25070) world!
+C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (xTaskRemoveFromEventList)- assert failed!
+
+abort() was called at PC 0x40086fc6 on core 0
+0x40086fc6: xTaskRemoveFromEventList at C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (discriminator 1)
+
+
+Backtrace:0x400855eb:0x3ffb0660 0x40085c89:0x3ffb0680 0x400894a2:0x3ffb06a0 0x40086fc6:0x3ffb0710 0x400886ef:0x3ffb0730 0x40084355:0x3ffb0750 0x400827f5:0x3ffb0780 0x4010616b:0x3ffb48d0 0x400f58de:0x3ffb48f0 0x400f5ec0:0x3ffb4930 0x400d264d:0x3ffb4950 0x400f5ee1:0x3ffb4970 0x400f5efe:0x3ffb4990 0x400fbb8d:0x3ffb49c0 0x400f939d:0x3ffb49e0 0x401082b3:0x3ffb4a00 0x400e5da2:0x3ffb4a20 0x400e6139:0x3ffb4b70 0x400eaf06:0x3ffb4ef0 0x400eb815:0x3ffb5a30 0x400eb895:0x3ffb5a90 0x400d42f6:0x3ffb5ab0 0x400d2bea:0x3ffb5ae0 0x40085c91:0x3ffb5b10
+0x400855eb: panic_abort at C:/Users/Fred/esp-idf/components/esp_system/panic.c:330
+
+0x40085c89: esp_system_abort at C:/Users/Fred/esp-idf/components/esp_system/system_api.c:106
+
+0x400894a2: abort at C:/Users/Fred/esp-idf/components/newlib/abort.c:46
+
+0x40086fc6: xTaskRemoveFromEventList at C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (discriminator 1)
+
+0x400886ef: xQueueReceiveFromISR at C:/Users/Fred/esp-idf/components/freertos/queue.c:1653
+
+0x40084355: i2s_intr_handler_default at C:/Users/Fred/esp-idf/components/driver/i2s.c:546
+
+0x400827f5: _xt_lowint1 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1105
+
+0x4010616b: std::ctype<char>::ctype(char const*, bool, unsigned int) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/src/c++11/ctype_configure_char.cc:58
+
+0x400f58de: std::locale::_Impl::_Impl(unsigned int) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:480
+
+0x400f5ec0: std::locale::_S_initialize_once() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:307
+
+0x400d264d: pthread_once at C:/Users/Fred/esp-idf/components/pthread/pthread.c:519 (discriminator 15)
+
+0x400f5ee1: __gthread_once at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/xtensa-esp32-elf/bits/gthr-default.h:712
+ (inlined by) std::locale::_S_initialize() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:317
+
+0x400f5efe: std::locale::locale() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:250
+
+0x400fbb8d: std::ios_base::ios_base() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++11/ios.cc:79 (discriminator 2)
+
+0x400f939d: std::basic_ios<char, std::char_traits<char> >::basic_ios() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/bits/basic_ios.h:462
+
+0x401082b3: std::__cxx11::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::basic_stringstream(std::_Ios_Openmode) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/sstream:705
+ (inlined by) std::__cxx11::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::basic_stringstream(std::_Ios_Openmode) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/sstream:706
+
+0x400e5da2: JSONUIReal<float>::JSONUIReal() at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:5325
+
+0x400e6139: MidiMeta::analyse(dsp*, bool&, int&) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:5653
+ (inlined by) MidiMeta::analyse(dsp*, bool&, int&) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:8825
+
+0x400eaf06: FaustPolyEngine::init(dsp*, audio*, midi_handler*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:11640
+
+0x400eb815: DspFaust::init(dsp*, audio*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:11711
+ (inlined by) DspFaust::init(dsp*, audio*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:25079
+
+0x400eb895: DspFaust::DspFaust(int, int, bool) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:24971
+
+0x400d42f6: app_main at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/main.cpp:35
+
+0x400d2bea: main_task at C:/Users/Fred/esp-idf/components/esp32/cpu_start.c:600 (discriminator 2)
+
+0x40085c91: vPortTaskWrapper at C:/Users/Fred/esp-idf/components/freertos/xtensa/port.c:143
+
+
+
+ELF file SHA256: e41cf0c80185d937
+
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:4
+load:0x3fff0034,len:7068
+load:0x40078000,len:13212
+ho 0 tail 12 room 4
+load:0x40080400,len:4568
+0x40080400: _init at ??:?
+
+entry 0x400806f4
+I (31) boot: ESP-IDF v4.2-dirty 2nd stage bootloader
+I (31) boot: compile time 22:18:29
+I (31) boot: chip revision: 3
+I (34) boot_comm: chip revision: 3, min. bootloader chip revision: 0
+I (41) boot.esp32: SPI Speed      : 40MHz
+I (46) boot.esp32: SPI Mode       : DIO
+I (50) boot.esp32: SPI Flash Size : 2MB
+I (55) boot: Enabling RNG early entropy source...
+I (60) boot: Partition Table:
+I (64) boot: ## Label            Usage          Type ST Offset   Length
+I (71) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (79) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (86) boot:  2 factory          factory app      00 00 00010000 00100000
+I (94) boot: End of partition table
+I (98) boot_comm: chip revision: 3, min. application chip revision: 0
+I (105) esp_image: segment 0: paddr=0x00010020 vaddr=0x3f400020 size=0x21ebc (138940) map
+I (167) esp_image: segment 1: paddr=0x00031ee4 vaddr=0x3ffb0000 size=0x021e0 (  8672) load
+I (171) esp_image: segment 2: paddr=0x000340cc vaddr=0x40080000 size=0x00404 (  1028) load
+0x40080000: _WindowOverflow4 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1730
+
+I (174) esp_image: segment 3: paddr=0x000344d8 vaddr=0x40080404 size=0x0b760 ( 46944) load
+I (203) esp_image: segment 4: paddr=0x0003fc40 vaddr=0x00000000 size=0x003d8 (   984)
+I (204) esp_image: segment 5: paddr=0x00040020 vaddr=0x400d0020 size=0x5e9fc (387580) map
+0x400d0020: _stext at ??:?
+
+I (363) boot: Loaded app from partition at offset 0x10000
+I (364) boot: Disabling RNG early entropy source...
+I (364) cpu_start: Pro cpu up.
+I (368) cpu_start: Application information:
+I (372) cpu_start: Project name:     FaustTutorial
+I (378) cpu_start: App version:      9c80bba-dirty
+I (383) cpu_start: Compile time:     Sep 17 2021 22:17:28
+I (389) cpu_start: ELF file SHA256:  e41cf0c80185d937...
+I (395) cpu_start: ESP-IDF:          v4.2-dirty
+I (401) cpu_start: Starting app cpu, entry point is 0x40081924
+0x40081924: call_start_cpu1 at C:/Users/Fred/esp-idf/components/esp32/cpu_start.c:287
+
+I (392) cpu_start: App cpu up.
+I (411) heap_init: Initializing. RAM available for dynamic allocation:
+I (418) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (424) heap_init: At 3FFB3B90 len 0002C470 (177 KiB): DRAM
+I (430) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (437) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (443) heap_init: At 4008BB64 len 0001449C (81 KiB): IRAM
+I (449) cpu_start: Pro cpu start user code
+I (468) spi_flash: detected chip: gd
+I (469) spi_flash: flash io: dio
+W (469) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (479) cpu_start: Starting scheduler on PRO CPU.
+I (0) cpu_start: Starting scheduler on APP CPU.
+Hello modified CHECKIT 1 world!
+Hello modified (DspFaust init 1) world!
+BREADCRUMB ESP32_DRIVER 25033
+I (524) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (524) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (534) I2S: PLL_D2: Req RATE: 48000, real rate: 48076.000, BITS: 32, CLKM: 13, BCK: 4, MCLK: 12292917.167, SCLK: 3076864.000000, diva: 64, divb: 1
+BREADCRUMB DspFaust init ENTRY 25044
+BREADCRUMB fPolyEngine ELSE 25070) world!
+C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (xTaskRemoveFromEventList)- assert failed!
+ets Jul 29 2019 12:21:46
+
+rst:0x8 (TG1WDT_SYS_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:4
+load:0x3fff0034,len:7068
+load:0x40078000,len:13212
+ho 0 tail 12 room 4
+load:0x40080400,len:4568
+0x40080400: _init at ??:?
+
+entry 0x400806f4
+I (62) boot: ESP-IDF v4.2-dirty 2nd stage bootloader
+I (62) boot: compile time 22:18:29
+I (62) boot: chip revision: 3
+I (65) boot_comm: chip revision: 3, min. bootloader chip revision: 0
+I (72) boot.esp32: SPI Speed      : 40MHz
+I (77) boot.esp32: SPI Mode       : DIO
+I (82) boot.esp32: SPI Flash Size : 2MB
+W (86) boot.esp32: PRO CPU has been reset by WDT.
+W (92) boot.esp32: WDT reset info: PRO CPU PC=0x40081122
+0x40081122: xt_highint4 at C:/Users/Fred/esp-idf/components/esp_system/port/esp32/dport_panic_highint_hdl.S:91
+
+W (98) boot.esp32: WDT reset info: APP CPU PC=0x40086c03
+0x40086c03: compare_and_set_native at C:/Users/Fred/esp-idf/components/soc/include/soc/compare_set.h:28
+ (inlined by) spinlock_acquire at C:/Users/Fred/esp-idf/components/soc/include/soc/spinlock.h:97
+ (inlined by) vPortCPUAcquireMutex at C:/Users/Fred/esp-idf/components/freertos/xtensa/include/freertos/portmacro.h:202
+ (inlined by) vTaskSwitchContext at C:/Users/Fred/esp-idf/components/freertos/tasks.c:2780
+
+I (104) boot: Enabling RNG early entropy source...
+I (109) boot: Partition Table:
+I (113) boot: ## Label            Usage          Type ST Offset   Length
+I (120) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (128) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (135) boot:  2 factory          factory app      00 00 00010000 00100000
+I (143) boot: End of partition table
+I (147) boot_comm: chip revision: 3, min. application chip revision: 0
+I (154) esp_image: segment 0: paddr=0x00010020 vaddr=0x3f400020 size=0x21ebc (138940) map
+I (216) esp_image: segment 1: paddr=0x00031ee4 vaddr=0x3ffb0000 size=0x021e0 (  8672) load
+I (220) esp_image: segment 2: paddr=0x000340cc vaddr=0x40080000 size=0x00404 (  1028) load
+0x40080000: _WindowOverflow4 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1730
+
+I (223) esp_image: segment 3: paddr=0x000344d8 vaddr=0x40080404 size=0x0b760 ( 46944) load
+I (253) esp_image: segment 4: paddr=0x0003fc40 vaddr=0x00000000 size=0x003d8 (   984)
+I (253) esp_image: segment 5: paddr=0x00040020 vaddr=0x400d0020 size=0x5e9fc (387580) map
+0x400d0020: _stext at ??:?
+
+I (413) boot: Loaded app from partition at offset 0x10000
+I (413) boot: Disabling RNG early entropy source...
+I (413) cpu_start: Pro cpu up.
+I (417) cpu_start: Application information:
+I (422) cpu_start: Project name:     FaustTutorial
+I (427) cpu_start: App version:      9c80bba-dirty
+I (433) cpu_start: Compile time:     Sep 17 2021 22:17:28
+I (439) cpu_start: ELF file SHA256:  e41cf0c80185d937...
+I (445) cpu_start: ESP-IDF:          v4.2-dirty
+I (450) cpu_start: Starting app cpu, entry point is 0x40081924
+0x40081924: call_start_cpu1 at C:/Users/Fred/esp-idf/components/esp32/cpu_start.c:287
+
+I (0) cpu_start: App cpu up.
+I (460) heap_init: Initializing. RAM available for dynamic allocation:
+I (467) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (473) heap_init: At 3FFB3B90 len 0002C470 (177 KiB): DRAM
+I (480) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (486) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (492) heap_init: At 4008BB64 len 0001449C (81 KiB): IRAM
+I (499) cpu_start: Pro cpu start user code
+I (517) spi_flash: detected chip: gd
+I (518) spi_flash: flash io: dio
+W (518) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (528) cpu_start: Starting scheduler on PRO CPU.
+I (0) cpu_start: Starting scheduler on APP CPU.
+Hello modified CHECKIT 1 world!
+Hello modified (DspFaust init 1) world!
+BREADCRUMB ESP32_DRIVER 25033
+I (574) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (574) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (584) I2S: PLL_D2: Req RATE: 48000, real rate: 48076.000, BITS: 32, CLKM: 13, BCK: 4, MCLK: 12292917.167, SCLK: 3076864.000000, diva: 64, divb: 1
+BREADCRUMB DspFaust init ENTRY 25044
+BREADCRUMB fPolyEngine ELSE 25070) world!
+C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (xTaskRemoveFromEventList)- assert failed!
+ets Jul 29 2019 12:21:46
+
+rst:0x8 (TG1WDT_SYS_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:4
+load:0x3fff0034,len:7068
+load:0x40078000,len:13212
+ho 0 tail 12 room 4
+load:0x40080400,len:4568
+0x40080400: _init at ??:?
+
+entry 0x400806f4
+I (62) boot: ESP-IDF v4.2-dirty 2nd stage bootloader
+I (62) boot: compile time 22:18:29
+I (62) boot: chip revision: 3
+I (65) boot_comm: chip revision: 3, min. bootloader chip revision: 0
+I (72) boot.esp32: SPI Speed      : 40MHz
+I (77) boot.esp32: SPI Mode       : DIO
+I (82) boot.esp32: SPI Flash Size : 2MB
+W (86) boot.esp32: PRO CPU has been reset by WDT.
+W (92) boot.esp32: WDT reset info: PRO CPU PC=0x40081122
+0x40081122: xt_highint4 at C:/Users/Fred/esp-idf/components/esp_system/port/esp32/dport_panic_highint_hdl.S:91
+
+W (98) boot.esp32: WDT reset info: APP CPU PC=0x40086c03
+0x40086c03: compare_and_set_native at C:/Users/Fred/esp-idf/components/soc/include/soc/compare_set.h:28
+ (inlined by) spinlock_acquire at C:/Users/Fred/esp-idf/components/soc/include/soc/spinlock.h:97
+ (inlined by) vPortCPUAcquireMutex at C:/Users/Fred/esp-idf/components/freertos/xtensa/include/freertos/portmacro.h:202
+ (inlined by) vTaskSwitchContext at C:/Users/Fred/esp-idf/components/freertos/tasks.c:2780
+
+I (104) boot: Enabling RNG early entropy source...
+I (109) boot: Partition Table:
+I (113) boot: ## Label            Usage          Type ST Offset   Length
+I (120) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (128) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (135) boot:  2 factory          factory app      00 00 00010000 00100000
+I (143) boot: End of partition table
+I (147) boot_comm: chip revision: 3, min. application chip revision: 0
+I (154) esp_image: segment 0: paddr=0x00010020 vaddr=0x3f400020 size=0x21ebc (138940) map
+I (216) esp_image: segment 1: paddr=0x00031ee4 vaddr=0x3ffb0000 size=0x021e0 (  8672) load
+I (220) esp_image: segment 2: paddr=0x000340cc vaddr=0x40080000 size=0x00404 (  1028) load
+0x40080000: _WindowOverflow4 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1730
+
+I (223) esp_image: segment 3: paddr=0x000344d8 vaddr=0x40080404 size=0x0b760 ( 46944) load
+I (253) esp_image: segment 4: paddr=0x0003fc40 vaddr=0x00000000 size=0x003d8 (   984)
+I (253) esp_image: segment 5: paddr=0x00040020 vaddr=0x400d0020 size=0x5e9fc (387580) map
+0x400d0020: _stext at ??:?
+
+I (413) boot: Loaded app from partition at offset 0x10000
+I (413) boot: Disabling RNG early entropy source...
+I (413) cpu_start: Pro cpu up.
+I (417) cpu_start: Application information:
+I (422) cpu_start: Project name:     FaustTutorial
+I (427) cpu_start: App version:      9c80bba-dirty
+I (433) cpu_start: Compile time:     Sep 17 2021 22:17:28
+I (439) cpu_start: ELF file SHA256:  e41cf0c80185d937...
+I (445) cpu_start: ESP-IDF:          v4.2-dirty
+I (450) cpu_start: Starting app cpu, entry point is 0x40081924
+0x40081924: call_start_cpu1 at C:/Users/Fred/esp-idf/components/esp32/cpu_start.c:287
+
+I (0) cpu_start: App cpu up.
+I (460) heap_init: Initializing. RAM available for dynamic allocation:
+I (467) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (473) heap_init: At 3FFB3B90 len 0002C470 (177 KiB): DRAM
+I (480) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (486) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (492) heap_init: At 4008BB64 len 0001449C (81 KiB): IRAM
+I (499) cpu_start: Pro cpu start user code
+I (517) spi_flash: detected chip: gd
+I (518) spi_flash: flash io: dio
+W (518) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (528) cpu_start: Starting scheduler on PRO CPU.
+I (0) cpu_start: Starting scheduler on APP CPU.
+Hello modified CHECKIT 1 world!
+Hello modified (DspFaust init 1) world!
+BREADCRUMB ESP32_DRIVER 25033
+I (574) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (574) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (584) I2S: PLL_D2: Req RATE: 48000, real rate: 48076.000, BITS: 32, CLKM: 13, BCK: 4, MCLK: 12292917.167, SCLK: 3076864.000000, diva: 64, divb: 1
+BREADCRUMB DspFaust init ENTRY 25044
+BREADCRUMB fPolyEngine ELSE 25070) world!
+C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (xTaskRemoveFromEventList)- assert failed!
+
+abort() was called at PC 0x40086fc6 on core 0
+0x40086fc6: xTaskRemoveFromEventList at C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (discriminator 1)
+
+
+Backtrace:0x400855eb:0x3ffb0660 0x40085c89:0x3ffb0680 0x400894a2:0x3ffb06a0 0x40086fc6:0x3ffb0710 0x400886ef:0x3ffb0730 0x40084355:0x3ffb0750 0x400827f5:0x3ffb0780 0x4010616b:0x3ffb48d0 0x400f58de:0x3ffb48f0 0x400f5ec0:0x3ffb4930 0x400d264d:0x3ffb4950 0x400f5ee1:0x3ffb4970 0x400f5efe:0x3ffb4990 0x400fbb8d:0x3ffb49c0 0x400f939d:0x3ffb49e0 0x401082b3:0x3ffb4a00 0x400e5da2:0x3ffb4a20 0x400e6139:0x3ffb4b70 0x400eaf06:0x3ffb4ef0 0x400eb815:0x3ffb5a30 0x400eb895:0x3ffb5a90 0x400d42f6:0x3ffb5ab0 0x400d2bea:0x3ffb5ae0 0x40085c91:0x3ffb5b10
+0x400855eb: panic_abort at C:/Users/Fred/esp-idf/components/esp_system/panic.c:330
+
+0x40085c89: esp_system_abort at C:/Users/Fred/esp-idf/components/esp_system/system_api.c:106
+
+0x400894a2: abort at C:/Users/Fred/esp-idf/components/newlib/abort.c:46
+
+0x40086fc6: xTaskRemoveFromEventList at C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (discriminator 1)
+
+0x400886ef: xQueueReceiveFromISR at C:/Users/Fred/esp-idf/components/freertos/queue.c:1653
+
+0x40084355: i2s_intr_handler_default at C:/Users/Fred/esp-idf/components/driver/i2s.c:546
+
+0x400827f5: _xt_lowint1 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1105
+
+0x4010616b: std::ctype<char>::ctype(char const*, bool, unsigned int) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/src/c++11/ctype_configure_char.cc:58
+
+0x400f58de: std::locale::_Impl::_Impl(unsigned int) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:480
+
+0x400f5ec0: std::locale::_S_initialize_once() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:307
+
+0x400d264d: pthread_once at C:/Users/Fred/esp-idf/components/pthread/pthread.c:519 (discriminator 15)
+
+0x400f5ee1: __gthread_once at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/xtensa-esp32-elf/bits/gthr-default.h:712
+ (inlined by) std::locale::_S_initialize() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:317
+
+0x400f5efe: std::locale::locale() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++98/locale_init.cc:250
+
+0x400fbb8d: std::ios_base::ios_base() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/gcc/libstdc++-v3/src/c++11/ios.cc:79 (discriminator 2)
+
+0x400f939d: std::basic_ios<char, std::char_traits<char> >::basic_ios() at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/bits/basic_ios.h:462
+
+0x401082b3: std::__cxx11::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::basic_stringstream(std::_Ios_Openmode) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/sstream:705
+ (inlined by) std::__cxx11::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >::basic_stringstream(std::_Ios_Openmode) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/build/build-cc-gcc-final/xtensa-esp32-elf/libstdc++-v3/include/sstream:706
+
+0x400e5da2: JSONUIReal<float>::JSONUIReal() at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:5325
+
+0x400e6139: MidiMeta::analyse(dsp*, bool&, int&) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:5653
+ (inlined by) MidiMeta::analyse(dsp*, bool&, int&) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:8825
+
+0x400eaf06: FaustPolyEngine::init(dsp*, audio*, midi_handler*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:11640
+
+0x400eb815: DspFaust::init(dsp*, audio*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:11711
+ (inlined by) DspFaust::init(dsp*, audio*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:25079
+
+0x400eb895: DspFaust::DspFaust(int, int, bool) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/DspFaust.cpp:24971
+
+0x400d42f6: app_main at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\faustsawtooth\esp_idf\cpp_code\build/../main/main.cpp:35
+
+0x400d2bea: main_task at C:/Users/Fred/esp-idf/components/esp32/cpu_start.c:600 (discriminator 2)
+
+0x40085c91: vPortTaskWrapper at C:/Users/Fred/esp-idf/components/freertos/xtensa/port.c:143
+
+
+
+ELF file SHA256: e41cf0c80185d937
+
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:4
+load:0x3fff0034,len:7068
+load:0x40078000,len:13212
+ho 0 tail 12 room 4
+load:0x40080400,len:4568
+0x40080400: _init at ??:?
+
+entry 0x400806f4
+I (31) boot: ESP-IDF v4.2-dirty 2nd stage bootloader
+I (31) boot: compile time 22:18:29
+I (31) boot: chip revision: 3
+I (34) boot_comm: chip revision: 3, min. bootloader chip revision: 0
+I (41) boot.esp32: SPI Speed      : 40MHz
+I (46) boot.esp32: SPI Mode       : DIO
+I (50) boot.esp32: SPI Flash Size : 2MB
+I (55) boot: Enabling RNG early entropy source...
+I (60) boot: Partition Table:
+I (64) boot: ## Label            Usage          Type ST Offset   Length
+I (71) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (79) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (86) boot:  2 factory          factory app      00 00 00010000 00100000
+I (94) boot: End of partition table
+I (98) boot_comm: chip revision: 3, min. application chip revision: 0
+I (105) esp_image: segment 0: paddr=0x00010020 vaddr=0x3f400020 size=0x21ebc (138940) map
+I (167) esp_image: segment 1: paddr=0x00031ee4 vaddr=0x3ffb0000 size=0x021e0 (  8672) load
+I (171) esp_image: segment 2: paddr=0x000340cc vaddr=0x40080000 size=0x00404 (  1028) load
+0x40080000: _WindowOverflow4 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1730
+
+I (174) esp_image: segment 3: paddr=0x000344d8 vaddr=0x40080404 size=0x0b760 ( 46944) load
+I (203) esp_image: segment 4: paddr=0x0003fc40 vaddr=0x00000000 size=0x003d8 (   984)
+I (204) esp_image: segment 5: paddr=0x00040020 vaddr=0x400d0020 size=0x5e9fc (387580) map
+0x400d0020: _stext at ??:?
+
+I (363) boot: Loaded app from partition at offset 0x10000
+I (364) boot: Disabling RNG early entropy source...
+I (364) cpu_start: Pro cpu up.
+I (368) cpu_start: Application information:
+I (372) cpu_start: Project name:     FaustTutorial
+I (378) cpu_start: App version:      9c80bba-dirty
+I (383) cpu_start: Compile time:     Sep 17 2021 22:17:28
+I (389) cpu_start: ELF file SHA256:  e41cf0c80185d937...
+I (395) cpu_start: ESP-IDF:          v4.2-dirty
+I (401) cpu_start: Starting app cpu, entry point is 0x40081924
+0x40081924: call_start_cpu1 at C:/Users/Fred/esp-idf/components/esp32/cpu_start.c:287
+
+I (392) cpu_start: App cpu up.
+I (411) heap_init: Initializing. RAM available for dynamic allocation:
+I (418) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (424) heap_init: At 3FFB3B90 len 0002C470 (177 KiB): DRAM
+I (430) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (437) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (443) heap_init: At 4008BB64 len 0001449C (81 KiB): IRAM
+I (449) cpu_start: Pro cpu start user code
+I (468) spi_flash: detected chip: gd
+I (469) spi_flash: flash io: dio
+W (469) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (479) cpu_start: Starting scheduler on PRO CPU.
+I (0) cpu_start: Starting scheduler on APP CPU.
+Hello modified CHECKIT 1 world!
+Hello modified (DspFaust init 1) world!
+BREADCRUMB ESP32_DRIVER 25033
+I (524) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (524) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (534) I2S: PLL_D2: Req RATE: 48000, real rate: 48076.000, BITS: 32, CLKM: 13, BCK: 4, MCLK: 12292917.167, SCLK: 3076864.000000, diva: 64, divb: 1
+BREADCRUMB DspFaust init ENTRY 25044
+BREADCRUMB fPolyEngine ELSE 25070) world!
+C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (xTaskRemoveFromEventList)- assert failed!
+ets Jul 29 2019 12:21:46
+
+rst:0x8 (TG1WDT_SYS_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:4
+load:0x3fff0034,len:7068
+load:0x40078000,len:13212
+ho 0 tail 12 room 4
+load:0x40080400,len:4568
+0x40080400: _init at ??:?
+
+entry 0x400806f4
+I (62) boot: ESP-IDF v4.2-dirty 2nd stage bootloader
+I (62) boot: compile time 22:18:29
+I (62) boot: chip revision: 3
+I (65) boot_comm: chip revision: 3, min. bootloader chip revision: 0
+I (72) boot.esp32: SPI Speed      : 40MHz
+I (77) boot.esp32: SPI Mode       : DIO
+I (82) boot.esp32: SPI Flash Size : 2MB
+W (86) boot.esp32: PRO CPU has been reset by WDT.
+W (92) boot.esp32: WDT reset info: PRO CPU PC=0x40081122
+0x40081122: xt_highint4 at C:/Users/Fred/esp-idf/components/esp_system/port/esp32/dport_panic_highint_hdl.S:91
+
+W (98) boot.esp32: WDT reset info: APP CPU PC=0x40086c03
+0x40086c03: compare_and_set_native at C:/Users/Fred/esp-idf/components/soc/include/soc/compare_set.h:28
+ (inlined by) spinlock_acquire at C:/Users/Fred/esp-idf/components/soc/include/soc/spinlock.h:97
+ (inlined by) vPortCPUAcquireMutex at C:/Users/Fred/esp-idf/components/freertos/xtensa/include/freertos/portmacro.h:202
+ (inlined by) vTaskSwitchContext at C:/Users/Fred/esp-idf/components/freertos/tasks.c:2780
+
+I (104) boot: Enabling RNG early entropy source...
+I (109) boot: Partition Table:
+I (113) boot: ## Label            Usage          Type ST Offset   Length
+I (120) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (128) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (135) boot:  2 factory          factory app      00 00 00010000 00100000
+I (143) boot: End of partition table
+I (147) boot_comm: chip revision: 3, min. application chip revision: 0
+I (154) esp_image: segment 0: paddr=0x00010020 vaddr=0x3f400020 size=0x21ebc (138940) map
+I (216) esp_image: segment 1: paddr=0x00031ee4 vaddr=0x3ffb0000 size=0x021e0 (  8672) load
+I (220) esp_image: segment 2: paddr=0x000340cc vaddr=0x40080000 size=0x00404 (  1028) load
+0x40080000: _WindowOverflow4 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1730
+
+I (223) esp_image: segment 3: paddr=0x000344d8 vaddr=0x40080404 size=0x0b760 ( 46944) load
+I (253) esp_image: segment 4: paddr=0x0003fc40 vaddr=0x00000000 size=0x003d8 (   984)
+I (253) esp_image: segment 5: paddr=0x00040020 vaddr=0x400d0020 size=0x5e9fc (387580) map
+0x400d0020: _stext at ??:?
+
+I (413) boot: Loaded app from partition at offset 0x10000
+I (413) boot: Disabling RNG early entropy source...
+I (413) cpu_start: Pro cpu up.
+I (417) cpu_start: Application information:
+I (422) cpu_start: Project name:     FaustTutorial
+I (427) cpu_start: App version:      9c80bba-dirty
+I (433) cpu_start: Compile time:     Sep 17 2021 22:17:28
+I (439) cpu_start: ELF file SHA256:  e41cf0c80185d937...
+I (445) cpu_start: ESP-IDF:          v4.2-dirty
+I (450) cpu_start: Starting app cpu, entry point is 0x40081924
+0x40081924: call_start_cpu1 at C:/Users/Fred/esp-idf/components/esp32/cpu_start.c:287
+
+I (0) cpu_start: App cpu up.
+I (460) heap_init: Initializing. RAM available for dynamic allocation:
+I (467) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (473) heap_init: At 3FFB3B90 len 0002C470 (177 KiB): DRAM
+I (480) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (486) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (492) heap_init: At 4008BB64 len 0001449C (81 KiB): IRAM
+I (499) cpu_start: Pro cpu start user code
+I (517) spi_flash: detected chip: gd
+I (518) spi_flash: flash io: dio
+W (518) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (528) cpu_start: Starting scheduler on PRO CPU.
+I (0) cpu_start: Starting scheduler on APP CPU.
+Hello modified CHECKIT 1 world!
+Hello modified (DspFaust init 1) world!
+BREADCRUMB ESP32_DRIVER 25033
+I (574) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (574) I2S: DMA Malloc info, datalen=blocksize=256, dma_buf_count=3
+I (584) I2S: PLL_D2: Req RATE: 48000, real rate: 48076.000, BITS: 32, CLKM: 13, BCK: 4, MCLK: 12292917.167, SCLK: 3076864.000000, diva: 64, divb: 1
+BREADCRUMB DspFaust init ENTRY 25044
+BREADCRUMB fPolyEngine ELSE 25070) world!
+C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (xTaskRemoveFromEventList)- assert failed!
+
+abort() was called at PC 0x40086fc6 on core 0
+0x40086fc6: xTaskRemoveFromEventList at C:/Users/Fred/esp-idf/components/freertos/tasks.c:3095 (discriminator 1)
+

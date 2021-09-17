@@ -29,14 +29,18 @@ void app_main(void)
  //   YOU MUST USE faust2api API calls
     int SR = 48000;
     int BS = 32; //was 8
-    //DspFaust dspFaust(SR,BS);
-    //dspFaust.start();
+    DspFaust dspFaust(SR,BS);
+      if (dspFaust.isRunning()) {printf("BEFORE START RUNNING\n");} else {printf("BEFORE START NOT RUNNING\n");} ;
+    dspFaust.start();
+    
+    if (dspFaust.isRunning()) {printf("AFTER START RUNNING\n");} else {printf("AFTER START NOT RUNNING\n");} ;
+    
     printf("Hello modified CHECKIT 1 world!\n");
-    DspFaust* DSP = new DspFaust(SR,BS); 
+    //DspFaust* DSP = new DspFaust(SR,BS); 
     //printf("Hello modified 2x world!\n");
-    DSP->start();
+    //DSP->start();
     //printf("Hello modified 3x world!\n");
-    DSP->setParamValue("freq",440);
+    //DSP->setParamValue("freq",440);
     
     /*
     while(1) {
