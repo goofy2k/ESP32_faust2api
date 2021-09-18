@@ -422,6 +422,13 @@ C:/Users/Fred/esp-idf/components/soc/include/hal/i2s_types.h:71:5: note: declare
  
  Last references point at JSONUI in DspFaust......
  
+ #### Issue solved by commenting out the line MidiMeta::analyse(mono_dsp, midi_sync, nvoices); (around line 11644 in DspFaust.cpp)
+ This is in the instatiation part of the sound machine.
+ Apparently I can do without
+ 
+ #### Testing some API calls:
+ 
+ -- DSP->isRunning()  OK
  
  ....
    
