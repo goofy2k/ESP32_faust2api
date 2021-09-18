@@ -534,7 +534,7 @@ Constructor.
 
 
 ### `bool start()`
-Start the audio processing.
+Start the audio processing.   :white_check_mark:
 
 
 
