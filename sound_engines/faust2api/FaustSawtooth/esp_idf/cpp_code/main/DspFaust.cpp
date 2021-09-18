@@ -5321,10 +5321,12 @@ class JSONUIReal : public PathBuilder, public Meta, public UIReal<REAL>
             init("", "", inputs, outputs, -1, "", "","", "", std::vector<std::string>(), std::vector<std::string>(), -1, std::map<std::string, int>());
         }
         //FCKX runtime error in line 5325
+        //printf("Hello modified (DspFaust init 6) world!\n");
         JSONUIReal()
         {
             init("", "", -1, -1, -1, "", "", "", "", std::vector<std::string>(), std::vector<std::string>(), -1, std::map<std::string, int>());
         }
+        //printf("Hello modified (DspFaust init 7) world!\n");
  
         virtual ~JSONUIReal() {}
         
@@ -5650,6 +5652,7 @@ struct JSONUI : public JSONUIReal<FAUSTFLOAT>, public UI
     JSONUI(int inputs, int outputs):JSONUIReal<FAUSTFLOAT>(inputs, outputs)
     {}
     //FCKX runtime error in line 5653
+    //printf("Hello modified (DspFaust init 5) world!\n");
     JSONUI():JSONUIReal<FAUSTFLOAT>()
     {}
 
@@ -8822,6 +8825,7 @@ struct MidiMeta : public Meta, public std::map<std::string, std::string> {
     
     static void analyse(dsp* mono_dsp, bool& midi_sync, int& nvoices)
     {   ////FCKX runtime error in line 8825
+        printf("Hola modified (DspFaust init 5) world!\n");
         JSONUI jsonui;
         mono_dsp->buildUserInterface(&jsonui);
         std::string json = jsonui.JSON();
@@ -11636,8 +11640,8 @@ class FaustPolyEngine {
             bool midi_sync = false;
             int nvoices = 0;
             fRunning = false;
-            
-            MidiMeta::analyse(mono_dsp, midi_sync, nvoices);
+            printf("Hello modified (DspFaust init 4) world! COMMENTED OUT CODE\n");
+            //MidiMeta::analyse(mono_dsp, midi_sync, nvoices);
             
             // Getting the UI JSON
             JSONUI jsonui1(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
@@ -11708,6 +11712,7 @@ class FaustPolyEngine {
     
         FaustPolyEngine(dsp* mono_dsp, audio* driver = NULL, midi_handler* midi = NULL):fMidiUI(&fMidiHandler)
         {
+            printf("Hello modified (DspFaust init 3) world!\n");
             init(((mono_dsp) ? mono_dsp : new mydsp()), driver, midi);
         }
     
@@ -24969,7 +24974,7 @@ DspFaust::DspFaust(int sample_rate, int buffer_size, bool auto_connect)
 {
      printf("Hello modified (DspFaust init 1) world!\n");
      init(NULL, createDriver(sample_rate, buffer_size, auto_connect));
-     printf("Hello modified (DspFaust init 2) world!\n");
+     printf("Hello modified (DspFaust init uit) world!\n");
 }
 
 #if DYNAMIC_DSP
