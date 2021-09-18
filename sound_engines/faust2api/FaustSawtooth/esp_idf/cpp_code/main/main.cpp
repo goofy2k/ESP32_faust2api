@@ -48,8 +48,10 @@ void app_main(void)
     //DSP->setParamValue("freq",220);
     //DSP->keyOn(50,50);
     DSP->allNotesOff();
-    uintptr_t myvoice0 = DSP->newVoice();
-     uintptr_t myvoice1 = DSP->newVoice();
+
+
+
+    
      float CPULoad = DSP->getCPULoad();
      printf("CPULoad %7.5f \n",CPULoad);
      
@@ -66,17 +68,40 @@ void app_main(void)
      printf("max1 = %7.5f \n",max1);
      printf("init1 = %7.5f \n",init1);
 
-    float freq0 = DSP-> getVoiceParamValue(0, 0);
-    float gain0 = DSP-> getVoiceParamValue(1, 0);
-    float freq1 = DSP-> getVoiceParamValue(0, 1);
-    float gain1 = DSP-> getVoiceParamValue(1, 1);
+    uintptr_t myvoice0 = DSP->newVoice();
+    printf("myvoice0 = %u \n",myvoice0);
+    
+    //printf("myvoice0: %" PRIxPTR "\n", myvoice0);
+    
+    uintptr_t myvoice1 = DSP->newVoice();
+    printf("myvoice1 = %u \n",myvoice1);
+    //printf("myvoice1: %" PRIxPTR "\n", myvoice1);
+    //printf("myvoice1: %PRIxPTR \n", myvoice1);
+    //printf("The address of i is 0x%lx.\n", myvoice1);
+    if (myvoice0 != 0) {
+    DSP->setVoiceParamValue(0,myvoice0,220);  
+    float freq0 = DSP-> getVoiceParamValue(0, myvoice0);
     printf("freq0 = %7.5f \n",freq0);
+    float gain0 = DSP-> getVoiceParamValue(1, myvoice0);
     printf("gain0 = %7.5f \n",gain0);
+    float freq1 = DSP-> getVoiceParamValue(0, myvoice1);
     printf("freq1 = %7.5f \n",freq1);
+    float gain1 = DSP-> getVoiceParamValue(1, myvoice1);
     printf("gain1 = %7.5f \n",gain1);
+    
+    } else {
+        printf("NO POLYPHONY \n");
+        
+        };
 
 
-    //DSP->setVoiceParamValue(0,myvoice0,220);  //RUNTIME ERROR
+
+
+
+    
+
+
+
     /*
     while(1) {
         //printf("Hello modified 4x world!\n");
