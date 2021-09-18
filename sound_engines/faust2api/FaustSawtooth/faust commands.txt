@@ -1,2 +1,0 @@
- wsl ~/faust/tools/faust2appls/faust2api -h > faust2api_help.txt
- wsl ~/faust/tools/faust2appls/faust2api -esp32 -nvoices 2 -effect auto FaustSawtooth.dsp
