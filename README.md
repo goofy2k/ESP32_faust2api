@@ -552,7 +552,7 @@ Stop the audio processing.
 
 
 ### `bool isRunning()`
-Returns `true` if audio is running.
+Returns `true` if audio is running.   :white_check_mark:
 
 
 ---
