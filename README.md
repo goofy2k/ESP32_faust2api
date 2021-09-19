@@ -629,7 +629,7 @@ provided before compilation.
 
 
 ### `const char* getJSONUI()`
-Returns the JSON description of the UI of the Faust object.
+Returns the JSON description of the UI of the Faust object.   :white_check_mark:
 
 
 ---
