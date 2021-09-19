@@ -93,16 +93,38 @@ void app_main(void)
         printf("NO POLYPHONY \n");
         
         };
-
-
-
+/*
+Main Parameters
+0: /Polyphonic/Voices/Panic
+1: /Polyphonic/Voices/elecGuitar/midi/freq
+2: /Polyphonic/Voices/elecGuitar/midi/bend
+3: /Polyphonic/Voices/elecGuitar/midi/gain
+4: /Polyphonic/Voices/elecGuitar/midi/sustain
+5: /Polyphonic/Voices/elecGuitar/pluckPosition
+6: /Polyphonic/Voices/elecGuitar/outGain
+7: /Polyphonic/Voices/elecGuitar/gate
+Independent Voice
+0: /elecGuitar/gate
+1: /elecGuitar/midi/bend
+2: /elecGuitar/midi/freq
+3: /elecGuitar/midi/gain
+4: /elecGuitar/midi/sustain
+5: /elecGuitar/outGain
+6: /elecGuitar/pluckPosition
+*/
 
 while(1) {
         printf("Loop \n");
+        /*
         DSP->setParamValue("freq",rand()%(2000-50 + 1) + 50);
         DSP->setParamValue("gain",0.1);
+        */
+        DSP->setParamValue("/elecGuitar/midi/freq",rand()%(2000-50 + 1) + 50);
+        DSP->setParamValue("/elecGuitar/gate",1);
         vTaskDelay(500 / portTICK_PERIOD_MS);
-        DSP->setParamValue("gain",0);
+        printf("%s \n",DSP->getJSONUI());
+        //DSP->setParamValue("gain",0);
+        DSP->setParamValue("/elecGuitar/gate",0);
         vTaskDelay(500 / portTICK_PERIOD_MS);
 };
 
