@@ -10,15 +10,16 @@ It takes a sound engine (.dsp) file generated in an GUI or with a text editor an
 
 ![workflow_partial](/images/workflow_general_cropped.png)    
 
- Recently Faust has been used for an ESP32 based board: [Lilygo TTGO TAudio](). See this [article](/documents/smc20_faust_esp32.pdf) and this [tutorial.](https://faustdoc.grame.fr/tutorials/esp32/)
+ Recently Faust has been used for an ESP32 based board: [Lilygo TTGO TAudio](). See this [article](/documents/smc20_faust_esp32.pdf) and this [tutorial](https://faustdoc.grame.fr/tutorials/esp32/) that contains walktrough examples using either the ESP-IDF environment (cli) or the Arduino IDE.
 
  More:  
  - [this](https://ccrma.stanford.edu/~rmichon/faustMicro/)
  - [More in-depth tutorials / applications by Michon](https://ccrma.stanford.edu/~rmichon/faustTutorials/#using-built-in-sensors-and-implementing-xy-controllers-making-sound-toys)
  - https://github.com/grame-cncm/faust/tree/master-dev/architecture/esp32
- - [Digital Larry's work](https://github.com/HolyCityAudio/ESP32/tree/master/faust)  
+ - [Digital Larry's work](https://github.com/HolyCityAudio/ESP32/tree/master/faust)
+ - [In depth info on using faust2api (Michon)](https://ccrma.stanford.edu/~rmichon/faust2api/)  
 
- The tutorial contains walktrough examples using either the ESP-IDF environment (cli) or the Arduino IDE.
+ 
  
  The **objective of this project** is to learn explore the workflows for creating applications for the ESP32 TTGO TAudio board. The ultimate goal is to:  
  1. contribute to the Faust project in making the faust2api script suitable for ESP32 applications 
