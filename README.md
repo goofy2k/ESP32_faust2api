@@ -10,15 +10,16 @@ It takes a sound engine (.dsp) file generated in an GUI or with a text editor an
 
 ![workflow_partial](/images/workflow_general_cropped.png)    
 
- Recently Faust has been used for an ESP32 based board: [Lilygo TTGO TAudio](). See this [article](/documents/smc20_faust_esp32.pdf) and this [tutorial.](https://faustdoc.grame.fr/tutorials/esp32/)
+Recently Faust has been used for an ESP32 based board: [Lilygo TTGO TAudio](). See this [article](/documents/smc20_faust_esp32.pdf) for genneral information on the capabilities of Faust on the TTGO TAudio board and this [tutorial](https://faustdoc.grame.fr/tutorials/esp32/) that contains walktrough examples using either the ESP-IDF environment (cli) or the Arduino IDE.
 
  More:  
  - [this](https://ccrma.stanford.edu/~rmichon/faustMicro/)
- - [Michon site to be found]()
+ - [More in-depth tutorials / applications by Michon](https://ccrma.stanford.edu/~rmichon/faustTutorials/#using-built-in-sensors-and-implementing-xy-controllers-making-sound-toys)
  - https://github.com/grame-cncm/faust/tree/master-dev/architecture/esp32
- - [Digital Larry's work](https://github.com/HolyCityAudio/ESP32/tree/master/faust)  
+ - [Digital Larry's work](https://github.com/HolyCityAudio/ESP32/tree/master/faust)
+ - [In depth info on using faust2api (Michon)](https://ccrma.stanford.edu/~rmichon/faust2api/)  
 
- The tutorial contains walktrough examples using either the ESP-IDF environment (cli) or the Arduino IDE.
+ 
  
  The **objective of this project** is to learn explore the workflows for creating applications for the ESP32 TTGO TAudio board. The ultimate goal is to:  
  1. contribute to the Faust project in making the faust2api script suitable for ESP32 applications 
@@ -327,14 +328,19 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
    - polyphony commands do not work (newVoice command gives result 0, no polyphony)
      - create and test sound engine with polyphony enabled
 	
-2. Repair JSONUI failure  	
+2. Repair JSONUI failure (Midimeta::analyze)  
+   - this interacts with activation of polyphony
+	
+3. External communication (UI), e.g. with:
+   - Nodered (via WIFI)
+   - Browser (via USB/serial)	
 	
  
  #### Testing some API calls:
  
  -- DSP->isRunning()  OK
  
- # Faust API
+ # Faust API (taken from README generated with FaustSawtooth)
 
 This API allows to interact with a Faust object and its associated audio engine at a high level. The idea is that all the audio part of the app is implemented in Faust allowing developers to focus on the design of the application itself. 
 
@@ -372,7 +378,7 @@ This is particularly useful when making applications where each finger of the us
 
 In case you would like to use the built-in accelerometer or gyroscope of your device to control some of the parameters of your Faust object, all you have to do is to send the raw accelerometer data to it by using the `propagateAcc` or `propagateGyr` for the gyroscope. After that, mappings can be configured directly from the Faust code using [this technique](#using-built-in-sensors-to-control-parameters) or using the `setAccConverter` and `setGyrConverter` method.  https://ccrma.stanford.edu/~rmichon/faustTutorials/
 
-## Parameters List
+## Parameters List  (taken from README generated with FaustSawtooth)
 
 ### Main Parameters
 
