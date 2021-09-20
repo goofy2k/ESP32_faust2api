@@ -39,10 +39,10 @@ void app_main(void)
     printf("Hello modified CHECKIT 1 world!\n");
     DspFaust* DSP = new DspFaust(SR,BS); 
     //printf("Hello modified 2x world!\n");
-    if (DSP->isRunning()) {printf("BEFORE START RUNNING\n");} else {printf("BEFORE START NOT RUNNING\n");} ;
+    if (DSP->isRunning()) {printf("BEFORE START RUNNINGa\n");} else {printf("BEFORE START NOT RUNNINGb\n");} ;
 
     DSP->start();
-    if (DSP->isRunning()) {printf("AFTER START RUNNING\n");} else {printf("AFTER START NOT RUNNING\n");} ;
+    if (DSP->isRunning()) {printf("AFTER START RUNNINGc\n");} else {printf("AFTER START NOT RUNNINGd\n");} ;
   
     //printf("Hello modified 3x world!\n");
     //DSP->setParamValue("freq",220);
@@ -79,6 +79,7 @@ void app_main(void)
     //printf("myvoice1: %PRIxPTR \n", myvoice1);
     //printf("The address of i is 0x%lx.\n", myvoice1);
     if (myvoice0 != 0) {
+        printf("myvoice0 created\n");
     DSP->setVoiceParamValue(0,myvoice0,220);  
     float freq0 = DSP-> getVoiceParamValue(0, myvoice0);
     printf("freq0 = %7.5f \n",freq0);
@@ -90,20 +91,41 @@ void app_main(void)
     printf("gain1 = %7.5f \n",gain1);
     
     } else {
-        printf("NO POLYPHONY \n");
+        printf("Could not create myvoice0 \n");
         
         };
-
-//DSP->setAccConverter(0, 0, 0, 0.1, 0.3, 1.1);
-
+/*
+Main Parameters
+0: /Polyphonic/Voices/Panic
+1: /Polyphonic/Voices/elecGuitar/midi/freq
+2: /Polyphonic/Voices/elecGuitar/midi/bend
+3: /Polyphonic/Voices/elecGuitar/midi/gain
+4: /Polyphonic/Voices/elecGuitar/midi/sustain
+5: /Polyphonic/Voices/elecGuitar/pluckPosition
+6: /Polyphonic/Voices/elecGuitar/outGain
+7: /Polyphonic/Voices/elecGuitar/gate
+Independent Voice
+0: /elecGuitar/gate
+1: /elecGuitar/midi/bend
+2: /elecGuitar/midi/freq
+3: /elecGuitar/midi/gain
+4: /elecGuitar/midi/sustain
+5: /elecGuitar/outGain
+6: /elecGuitar/pluckPosition
+*/
 
 while(1) {
         printf("Loop \n");
-  //      DSP->propagateAcc(0, rand()*1.0);
+        /*
         DSP->setParamValue("freq",rand()%(2000-50 + 1) + 50);
         DSP->setParamValue("gain",0.1);
+        */
+        DSP->setParamValue("/elecGuitar/midi/freq",rand()%(2000-50 + 1) + 50);
+        DSP->setParamValue("/elecGuitar/gate",1);
         vTaskDelay(500 / portTICK_PERIOD_MS);
-        DSP->setParamValue("gain",0);
+        printf("%s \n",DSP->getJSONUI());
+        //DSP->setParamValue("gain",0);
+        DSP->setParamValue("/elecGuitar/gate",0);
         vTaskDelay(500 / portTICK_PERIOD_MS);
 };
 
@@ -122,58 +144,3 @@ while(1) {
     vTaskSuspend(nullptr);
     
 }
-
-
-/*
-void propagateAcc(int acc, float v)
-Propagate the RAW value of a specific accelerometer
-
-axis to the Faust object.
-
-Arguments
-acc: the accelerometer axis (0: x, 1: y, 2: z)
-
-v: the RAW acceleromter value in m/s
-
-void setAccConverter(int p, int acc, int curve, float amin, float amid, float amax)
-Set the conversion curve for the accelerometer. https://ccrma.stanford.edu/~rmichon/faustTutorials/
-
-Arguments
-id: the UI parameter id
-
-acc: the accelerometer axis (0: x, 1: y, 2: z)
-
-curve: the curve (0: up, 1: down, 2: up and down)
-
-amin: mapping min point
-
-amid: mapping middle point
-
-amax: mapping max point
-
-void propagateGyr(int gyr, float v)
-Propagate the RAW value of a specific gyroscope
-
-axis to the Faust object.
-
-Arguments
-gyr: the gyroscope axis (0: x, 1: y, 2: z)
-
-v: the RAW accelerometer value in m/s
-
-void setGyrConverter(int p, int gyr, int curve, float amin, float amid, float amax)
-Set the conversion curve for the gyroscope.
-
-Arguments
-id: the UI parameter id
-
-gyr: the gyroscope axis (0: x, 1: y, 2: z)
-
-curve: the curve (0: up, 1: down, 2: up and down)
-
-amin: mapping min point
-
-amid: mapping middle point
-
-amax: mapping max point
-*/
