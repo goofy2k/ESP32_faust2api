@@ -10,7 +10,7 @@ It takes a sound engine (.dsp) file generated in an GUI or with a text editor an
 
 ![workflow_partial](/images/workflow_general_cropped.png)    
 
- Recently Faust has been used for an ESP32 based board: [Lilygo TTGO TAudio](). See this [article](/documents/smc20_faust_esp32.pdf) and this [tutorial](https://faustdoc.grame.fr/tutorials/esp32/) that contains walktrough examples using either the ESP-IDF environment (cli) or the Arduino IDE.
+Recently Faust has been used for an ESP32 based board: [Lilygo TTGO TAudio](). See this [article](/documents/smc20_faust_esp32.pdf) for genneral information on the capabilities of Faust on the TTGO TAudio board and this [tutorial](https://faustdoc.grame.fr/tutorials/esp32/) that contains walktrough examples using either the ESP-IDF environment (cli) or the Arduino IDE.
 
  More:  
  - [this](https://ccrma.stanford.edu/~rmichon/faustMicro/)
