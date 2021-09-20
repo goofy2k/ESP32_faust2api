@@ -327,7 +327,12 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
    - polyphony commands do not work (newVoice command gives result 0, no polyphony)
      - create and test sound engine with polyphony enabled
 	
-2. Repair JSONUI failure  	
+2. Repair JSONUI failure (Midimeta::analyze)  
+   - this interacts with activation of polyphony
+	
+3. External communication (UI), e.g. with:
+   - Nodered (via WIFI)
+   - Browser (via USB/serial)	
 	
  
  #### Testing some API calls:
