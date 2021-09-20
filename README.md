@@ -340,7 +340,7 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
  
  -- DSP->isRunning()  OK
  
- # Faust API
+ # Faust API (taken from README generated with FaustSawtooth)
 
 This API allows to interact with a Faust object and its associated audio engine at a high level. The idea is that all the audio part of the app is implemented in Faust allowing developers to focus on the design of the application itself. 
 
@@ -378,7 +378,7 @@ This is particularly useful when making applications where each finger of the us
 
 In case you would like to use the built-in accelerometer or gyroscope of your device to control some of the parameters of your Faust object, all you have to do is to send the raw accelerometer data to it by using the `propagateAcc` or `propagateGyr` for the gyroscope. After that, mappings can be configured directly from the Faust code using [this technique](#using-built-in-sensors-to-control-parameters) or using the `setAccConverter` and `setGyrConverter` method.  https://ccrma.stanford.edu/~rmichon/faustTutorials/
 
-## Parameters List
+## Parameters List  (taken from README generated with FaustSawtooth)
 
 ### Main Parameters
 
