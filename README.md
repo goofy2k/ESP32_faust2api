@@ -14,7 +14,7 @@ It takes a sound engine (.dsp) file generated in an GUI or with a text editor an
 
  More:  
  - [this](https://ccrma.stanford.edu/~rmichon/faustMicro/)
- - [Michon site to be found]()
+ - [Michon in depht applications](https://ccrma.stanford.edu/~rmichon/faustTutorials/#using-built-in-sensors-and-implementing-xy-controllers-making-sound-toys)
  - https://github.com/grame-cncm/faust/tree/master-dev/architecture/esp32
  - [Digital Larry's work](https://github.com/HolyCityAudio/ESP32/tree/master/faust)  
 
