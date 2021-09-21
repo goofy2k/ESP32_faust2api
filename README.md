@@ -17,7 +17,8 @@ Recently Faust has been used for an ESP32 based board: [Lilygo TTGO TAudio](). S
  - [More in-depth tutorials / applications by Michon](https://ccrma.stanford.edu/~rmichon/faustTutorials/#using-built-in-sensors-and-implementing-xy-controllers-making-sound-toys)
  - https://github.com/grame-cncm/faust/tree/master-dev/architecture/esp32
  - [Digital Larry's work](https://github.com/HolyCityAudio/ESP32/tree/master/faust)
- - [In depth info on using faust2api (Michon)](https://ccrma.stanford.edu/~rmichon/faust2api/)  
+ - [In depth info on using faust2api (Michon)](https://ccrma.stanford.edu/~rmichon/faust2api/)
+ - [The gramophone.](https://www.amstramgrame.fr/)
 
  
  
