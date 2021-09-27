@@ -331,6 +331,9 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
 	
 2. Repair JSONUI failure (Midimeta::analyze)  
    - this interacts with activation of polyphony
+	POSSIBLE CLUE:   unset SPI_MASTER_ISR_IN_IRAM  
+	menuconfig / Component config / Driver config / SPI config   
+	Google: Cache disabled but cached memory region accessed
 	
 3. External communication (UI), e.g. with:
    - Nodered (via WIFI)
