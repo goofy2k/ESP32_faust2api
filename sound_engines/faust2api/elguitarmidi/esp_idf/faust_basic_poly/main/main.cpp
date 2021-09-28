@@ -361,6 +361,7 @@ void app_main(void)
   */
   
      //loop basic midi sequence....
+    /* 
     while (1) {
     //DSP->setParamValue("freq",220);
         for (int ii = 30; ii<80; ii++) {
@@ -370,9 +371,20 @@ void app_main(void)
         //DSP->allNotesOff();
         vTaskDelay(500/ portTICK_PERIOD_MS);
         }
-        
     };
   //DSP->allNotesOff();
+  */
+  DSP->setAccConverter(0, 0, 1, 0.5, 1.1, 3.0);
+  while(1) {
+        DSP->propagateAcc(0, 2.0);
+    vTaskDelay(500/ portTICK_PERIOD_MS);
+        DSP->propagateAcc(0, 1.5);
+    vTaskDelay(500/ portTICK_PERIOD_MS);
+        DSP->propagateAcc(0, 1.3);
+    vTaskDelay(500/ portTICK_PERIOD_MS);
+        DSP->propagateAcc(0, 2.2);
+    vTaskDelay(500/ portTICK_PERIOD_MS);
+  };
      /*
      float CPULoad = DSP->getCPULoad();
      printf("CPULoad %7.5f \n",CPULoad);
