@@ -333,10 +333,11 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
    - this interacts with activation of polyphony
 	POSSIBLE CLUE:   unset SPI_MASTER_ISR_IN_IRAM  
 	menuconfig / Component config / Driver config / SPI config   
-	Google: Cache disabled but cached memory region accessed
-	https://blog.espressif.com/esp32-programmers-memory-model-259444d89387
-	https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/api-guides/memory-types.html
-	REMOVED more UI functionality. 
+	Google: Cache disabled but cached memory region accessed  
+	https://blog.espressif.com/esp32-programmers-memory-model-259444d89387  
+	https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/api-guides/memory-types.html  
+	REMOVED more UI functionality.   
+	disabled watchdog timer on IDLEtask CPU0, to prevent runtime error
 	
 3. External communication (UI), e.g. with:
    - Nodered (via WIFI)
@@ -344,7 +345,13 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
    NEED tot solve memory issues, e.g. by:
 	- setting low requirements for logging (esp-idf reduce firmware size)
 	- using a less memory-hungry connection method (e.g wired UART/I2C to peer ESP32 as hub) 
+
+4. Use external RAM	
+   - https://faustdoc.grame.fr/tutorials/esp32/ (this is about static data..)
+   - https://docs.espressif.com/projects/esp-idf/en/release-v3.3/api-guides/external-ram.html (Note: this link is for esp-idf V3.3)	
+   - https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/performance/size.html (use this to see % used) 
 	
+![external ram options](/images/external_ram.png)  	
  
  #### Testing some API calls:
  
