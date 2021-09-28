@@ -333,10 +333,10 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
    - this interacts with activation of polyphony
 	POSSIBLE CLUE:   unset SPI_MASTER_ISR_IN_IRAM  
 	menuconfig / Component config / Driver config / SPI config   
-	Google: Cache disabled but cached memory region accessed
-	https://blog.espressif.com/esp32-programmers-memory-model-259444d89387
-	https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/api-guides/memory-types.html
-	REMOVED more UI functionality. 
+	Google: Cache disabled but cached memory region accessed  
+	https://blog.espressif.com/esp32-programmers-memory-model-259444d89387  
+	https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/api-guides/memory-types.html  
+	REMOVED more UI functionality.   
 	
 3. External communication (UI), e.g. with:
    - Nodered (via WIFI)
