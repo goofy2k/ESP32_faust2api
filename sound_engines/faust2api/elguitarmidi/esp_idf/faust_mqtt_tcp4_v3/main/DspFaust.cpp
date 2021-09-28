@@ -9110,26 +9110,18 @@ struct MidiMeta : public Meta, public std::map<std::string, std::string> {
     
     static void analyse(dsp* mono_dsp, bool& midi_sync, int& nvoices)
     {
-        
         JSONUI jsonui;
-    
         mono_dsp->buildUserInterface(&jsonui);
         std::string json = jsonui.JSON();
-        
-        //FCKX
-        midi_sync = true; // added, to replace the code below
-        
-/*    
-    midi_sync = ((json.find("midi") != std::string::npos) &&
+        midi_sync = ((json.find("midi") != std::string::npos) &&
                      ((json.find("start") != std::string::npos) ||
                       (json.find("stop") != std::string::npos) ||
                       (json.find("clock") != std::string::npos) ||
                       (json.find("timestamp") != std::string::npos)));
-    */
     
     #if defined(NVOICES) && NVOICES!=NUM_VOICES
         nvoices = NVOICES;
-    #else        
+    #else
         MidiMeta meta;
         mono_dsp->metadata(&meta);
         bool found_voices = false;
@@ -9150,11 +9142,7 @@ struct MidiMeta : public Meta, public std::map<std::string, std::string> {
             nvoices = std::atoi(numVoices.c_str());
         }
         nvoices = std::max<int>(0, nvoices);
-        
     #endif
-    
-    
-    
     }
     
     static bool checkPolyphony(dsp* mono_dsp)
@@ -11943,30 +11931,23 @@ class FaustPolyEngine {
                 printf("checkPolyphony 1: false \n");
             };
             //FCKX
-            //MidiMeta::analyse(mono_dsp, midi_sync, nvoices);
-            nvoices = 2; //FCKX
-            midi_sync = true;//FCKX
-            
+            MidiMeta::analyse(mono_dsp, midi_sync, nvoices);
             if (MidiMeta::checkPolyphony(mono_dsp)) {
                printf("checkPolyphony 2: true \n");    
             }
             else {
                 printf("checkPolyphony 2: false \n");
             };            
-       
-
-/*
             // Getting the UI JSON
             JSONUI jsonui1(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
             mono_dsp->buildUserInterface(&jsonui1);
             fJSONUI = jsonui1.JSON();
-*/
-/*            
+            
             // Getting the metadata JSON
             JSONUI jsonui1M(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
             mono_dsp->metadata(&jsonui1M);
             fJSONMeta = jsonui1M.JSON();
-*/            
+            
             if (nvoices > 0) {
                 
                 fPolyDSP = new mydsp_poly(mono_dsp, nvoices, true);
@@ -11976,7 +11957,7 @@ class FaustPolyEngine {
             #else
                 fFinalDSP = fPolyDSP;
             #endif
-            /*    
+                
                 // Update JSONs with Poly version
                 JSONUI jsonui2(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
                 fFinalDSP->buildUserInterface(&jsonui2);
@@ -11985,15 +11966,15 @@ class FaustPolyEngine {
                 JSONUI jsonui2M(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
                 fFinalDSP->metadata(&jsonui2M);
                 fJSONMeta = jsonui2M.JSON();
-             */   
+                
             } else {
                 fPolyDSP = NULL;
                 fFinalDSP = mono_dsp;
             }
-            /*
+            
             fFinalDSP->buildUserInterface(&fMidiUI);
             fFinalDSP->buildUserInterface(&fAPIUI);
-            */
+            
             // Retrieving DSP object name
             struct MyMeta : public Meta
             {
@@ -25278,7 +25259,8 @@ DspFaust::DspFaust(bool auto_connect)
     driver = new juceaudio();
 #else
     printf("You are not setting 'sample_rate' and 'buffer_size', but the audio driver needs it !\n");
-    throw std::bad_alloc();
+    //throw std::bad_alloc();
+    
 #endif
     init(NULL, driver);
 }

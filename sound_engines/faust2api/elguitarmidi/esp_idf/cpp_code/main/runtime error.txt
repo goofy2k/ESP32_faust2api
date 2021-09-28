@@ -1,0 +1,64 @@
+DspFaust 18345
+xTaskCreatePinnedToCore(audioTaskHandler, "Faust DSP Task", 4096, (void*)this, 24, &fHandle, 0) == pdPASS
+Is it necessary to configure IDLE0 task? Or is it implicitly configured when configuring others
+
+https://stackoverflow.com/questions/61561650/downloading-file-on-esp32-using-wificlient-client-read-fails-task-watchdog
+
+https://github.com/espressif/esp-idf/issues/1646#issue-299097720
+
+
+
+E (5863) task_wdt: Task watchdog got triggered. The following tasks did not reset the watchdog in time:
+E (5863) task_wdt:  - IDLE0 (CPU 0)
+E (5863) task_wdt: Tasks currently running:
+E (5863) task_wdt: CPU 0: Faust DSP Task
+E (5863) task_wdt: CPU 1: IDLE1
+E (5863) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace:0x400D3904:0x3FFB0760 0x40082669:0x3FFB0780 0x400E50AD:0x3FFDEA30 0x400E5975:0x3FFDEA50 0x400D2441:0x3FFDEA70 0x4000BD83:0x3FFDEA90 0x4000117D:0x3FFDEAB0 0x400592FE:0x3FFDEAD0 0x4005937A:0x3FFDEAF0 0x40058BBF:0x3FFDEB10 0x40111DEF:0x3FFDEB40 0x401173D3:0x3FFDEB70 0x40117555:0x3FFDEE80 0x401263FE:0x3FFDEEB0 0x40088385:0x3FFDEEE0 0x400E7C2B:0x3FFDEF30 0x400D8715:0x3FFDEF70 0x400D8B8F:0x3FFDF0A0
+0x400d3904: task_wdt_isr at C:/Users/Fred/esp-idf/components/esp_common/src/task_wdt.c:187
+
+0x40082669: _xt_lowint1 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1105
+
+0x400e50ad: uart_tx_char at C:/Users/Fred/esp-idf/components/vfs/vfs_uart.c:163
+
+0x400e5975: uart_write at C:/Users/Fred/esp-idf/components/vfs/vfs_uart.c:221
+
+0x400d2441: esp_vfs_write at C:/Users/Fred/esp-idf/components/vfs/vfs.c:420 (discriminator 4)
+
+0x40111def: __sprint_r at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/newlib/newlib/libc/stdio/vfprintf.c:433
+ (inlined by) __sprint_r at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/newlib/newlib/libc/stdio/vfprintf.c:403
+
+0x401173d3: _vfprintf_r at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/newlib/newlib/libc/stdio/vfprintf.c:1781 (discriminator 1)
+
+0x40117555: vprintf at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp32-elf/src/newlib/newlib/libc/stdio/vprintf.c:34 (discriminator 5)
+
+0x401263fe: esp_log_writev at C:/Users/Fred/esp-idf/components/log/log.c:189
+
+0x40088385: esp_log_write at C:/Users/Fred/esp-idf/components/log/log.c:199
+
+0x400e7c2b: i2s_write at C:/Users/Fred/esp-idf/components/driver/i2s.c:1050 (discriminator 9)
+
+0x400d8715: void esp32audio::audioTask<0, 2>() at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\elguitarmidi\esp_idf\cpp_code\build/../main/DspFaust.cpp:18191
+
+0x400d8b8f: esp32audio::audioTaskHandler(void*) at c:\users\fred\esp_projects\esp32_faust2api\sound_engines\faust2api\elguitarmidi\esp_idf\cpp_code\build/../main/DspFaust.cpp:18218
+
+
+E (5863) task_wdt: Print CPU 1 backtrace
+
+
+Backtrace:0x40081B12:0x3FFB0D60 0x40082669:0x3FFB0D80 0x4000BFED:0x3FFB69C0 0x40085681:0x3FFB69D0 0x400D3B00:0x3FFB69F0 0x400D3B0B:0x3FFB6A20 0x400D3BA6:0x3FFB6A40 0x40085C18:0x3FFB6A60
+0x40081b12: esp_crosscore_isr at C:/Users/Fred/esp-idf/components/esp32/crosscore_int.c:80
+
+0x40082669: _xt_lowint1 at C:/Users/Fred/esp-idf/components/freertos/xtensa/xtensa_vectors.S:1105
+
+0x40085681: vPortExitCritical at C:/Users/Fred/esp-idf/components/freertos/xtensa/port.c:419
+
+0x400d3b00: esp_task_wdt_reset at C:/Users/Fred/esp-idf/components/esp_common/src/task_wdt.c:333
+
+0x400d3b0b: idle_hook_cb at C:/Users/Fred/esp-idf/components/esp_common/src/task_wdt.c:88
+
+0x400d3ba6: esp_vApplicationIdleHook at C:/Users/Fred/esp-idf/components/esp_common/src/freertos_hooks.c:51 (discriminator 1)
+
+0x40085c18: prvIdleTask at C:/Users/Fred/esp-idf/components/freertos/tasks.c:3386

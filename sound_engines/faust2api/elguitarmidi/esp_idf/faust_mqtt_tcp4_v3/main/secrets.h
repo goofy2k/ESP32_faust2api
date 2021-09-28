@@ -1,0 +1,9 @@
+#define SECRET_ESP_WIFI_SSID "Verhoeckx_glas"
+#define SECRET_ESP_WIFI_PASSWORD "Goofy2kmacho_99"
+#define SECRET_ESP_MAXIMUM_RETRY 5
+
+// #define SECRET_ESP_MQTT_BROKER_URI "mqtt://192.168.2.200:1883"
+#define SECRET_ESP_MQTT_BROKER_URI "mqtt://goofy2knet.synology.me:1883"
+#define SECRET_ESP_MQTT_BROKER_USERNAME "Fred"
+#define SECRET_ESP_MQTT_BROKER_PASSWORD "Nwwnlil_12"
+#define SECRET_ESP_MQTT_CLIENT_ID "TTGO_TAudio"

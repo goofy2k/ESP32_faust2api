@@ -1,0 +1,414 @@
+#!/bin/bash
+
+#####################################################################
+#                                                                   #
+#    Generates an API for Android or iOS based on a Faust object    #
+#               (c) Romain Michon CCRMA and Grame, 2016-2021        #
+#                                                                   #
+#####################################################################
+
+. faustpath
+. faustoptflags
+. usage.sh
+
+CXXFLAGS+=" $MYGCCFLAGS"  # So that additional CXXFLAGS can be used
+
+# change if you want to get the log of what's happening
+LOG="/dev/null"
+
+# exit if a command fails
+set -e
+
+# global option variables
+
+NVOICES="0"
+#PACKAGENAME="0"
+POLY2="0"
+MIDI="0"
+SOUNDFILE="0"
+OSC="0"
+NODOC="0"
+NOZIP="0"
+APIFOLDER="dsp-faust"
+EFFECT=""
+BUILD="0"
+DYNAMIC_DSP="0"
+OPT=""
+MISC_OPT=""
+TARGETDEFINED="0"
+
+COREAUDIO_DRIVER="0"
+ANDROID_DRIVER="0"
+IOS_DRIVER="0"
+ALSA_DRIVER="0"
+JACK_DRIVER="0"
+PORTAUDIO_DRIVER="0"
+COREAUDIO_DRIVER="0"
+RTAUDIO_DRIVER="0"
+OPEN_FRAMEWORK_DRIVER="0"
+JUCE_DRIVER="0"
+DUMMY_DRIVER="0"
+TEENSY_DRIVER="0"
+ESP32_DRIVER="0"
+
+echoHelp ()
+{
+    if [ $p != "-help" ] && [ $p != "-h" ]; then
+        echo "$p wrong argument"
+        echo ""
+    fi
+    usage faust2api "[options] [Faust options] <file.dsp>"
+    echo "faust2api can be used to generate Faust based dsp objects for various platforms:"
+    echo 
+    echo "Ouput options:"
+    option -ios "generates an iOS API"
+    option -android "generates an Android API"
+    option -coreaudio "generates an OSX CoreAudio API" 
+    option -alsa "generates an ALSA API"
+    option -jack "generates a JACK API"
+    option -portaudio "generates a PortAudio API" 
+    option -rtaudio "generates an RTAudio API"
+    option -of "generates an openFrameworks API"
+    option -juce "generates a JUCE API"
+    option -dummy "generates a dummy audio API" 
+    option -teensy "generates a Teensy API" 
+    option -esp32 "generates a ESP32 API" 
+    echo 
+    echo "Global options:"
+    option "-opt native|generic" "activates the best compilation options for the native or generic CPU."
+    option "-nvoices <num>" "creates a polyphonic object with <num> voices."
+    option "-effect <effect.dsp>" "adds an effect to the polyphonic synth (ignored if -nvoices is not specified)."
+    option "-effect auto" "adds an effect (extracted automatically from the dsp file) to the polyphonic synth (ignored if -nvoices is not specified)."
+    option -nodoc "prevents documentation from being generated."
+    option -nozip "prevents generated files to be put in a zip file."
+    option "-target <target>" "sets a name of the target folder or the zip file. Defaults to \"dsp-faust\""
+    option "Faust options"
+    echo 
+    echo "Android specific options:"
+    option -package "set the JAVA package name (e.g. '-package mypackage' will change the JAVA package name to 'mypackage.DspFaust'). The default package name is 'com.DspFaust.'"
+    option -soundfile "add built-in Soundfile support to the API."
+    echo 
+    echo "Options supported by iOS, CoreAudio, ALSA, JACK, PortAudio, openFrameworks and JUCE"
+    option -midi "add built-in RtMidi support to the API."
+    option -osc "add built-in OSC support to the API."
+    option -soundfile "add built-in Soundfile support to the API."
+    echo 
+    echo "JACK specific options"
+    option -build "build a ready to test binary."
+    option -dynamic "add libfaust/LLVM dynamic DSP compilation mode."
+}
+
+createAPI ()
+{
+    cp -r $FAUSTARCH/api/DspFaust.h $APIFOLDER
+    faust $OPTIONS $MISC_OPT -i -a api/DspFaust.cpp "$FILE" -o "$APIFOLDER/DspFaust.cpp" || exit 1
+    if [ "$POLY2" = "1" ]; then
+        faust $OPTIONS -i -cn effect -a minimal-effect.cpp $EFFECT | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp" || exit 1
+        echo "#define POLY2 1" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+    fi
+    if [ "$NVOICES" -gt "0" ]; then
+        echo "#define NVOICES $NVOICES" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+    fi
+    if [ "$MIDI" = "1" ]; then
+        echo "#define MIDICTRL 1" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+    fi
+    if [ "$OSC" = "1" ]; then
+        echo "#define OSCCTRL 1" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+    fi
+    if [ "$SOUNDFILE" = "1" ]; then
+        echo "#define SOUNDFILE 1" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+    fi
+    if [ "$DYNAMIC_DSP" = "1" ]; then
+        echo "#define DYNAMIC_DSP 1" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+    fi
+    if [ "$BUILD" = "1" ]; then
+        echo "#define BUILD 1" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+    fi
+}
+
+# dispatch command arguments
+while [ $1 ]
+do
+	p=$1
+
+    if [ $p = "-help" ] || [ $p = "-h" ]; then
+        echoHelp
+        exit
+    elif [ $p = "-opt" ]; then
+        shift
+        OPT=$1
+    elif [ "$PACKAGENAME" = "-1" ]; then
+		PACKAGENAME="$p"
+    elif [[ -f "$p" ]] && [ ${p: -4} == ".dsp" ]; then
+		FILE="$p"
+    elif [ $p = "-android" ]; then
+		ANDROID_DRIVER=1
+    elif [ $p = "-ios" ]; then
+		IOS_DRIVER="1"
+    elif [ $p = "-coreaudio" ]; then
+        COREAUDIO_DRIVER=1
+    elif [ $p = "-alsa" ]; then
+        ALSA_DRIVER=1
+    elif [ $p = "-jack" ]; then
+        JACK_DRIVER=1
+    elif [ $p = "-portaudio" ]; then
+        PORTAUDIO_DRIVER=1
+    elif [ $p = "-rtaudio" ]; then
+        RTAUDIO_DRIVER=1
+    elif [ $p = "-of" ]; then
+        OPEN_FRAMEWORK_DRIVER=1
+    elif [ $p = "-juce" ]; then
+        JUCE_DRIVER=1
+    elif [ $p = "-dummy" ]; then
+        DUMMY_DRIVER=1
+    elif [ $p = "-teensy" ]; then
+        TEENSY_DRIVER=1
+        MISC_OPT="-uim"
+    elif [ $p = "-esp32" ]; then
+        ESP32_DRIVER=1
+        MISC_OPT="-uim"
+    elif [ "$p" = "-effect" ]; then
+        POLY2="1"
+		shift
+		EFFECT=$1
+    elif [ "$p" = "-midi" ]; then
+        MIDI="1"
+    elif [ "$p" = "-soundfile" ]; then
+        SOUNDFILE="1"
+    elif [ "$p" = "-osc" ]; then
+        OSC="1"
+    elif [ "$p" = "-nodoc" ]; then
+        NODOC="1"
+    elif [ "$p" = "-nozip" ]; then
+        NOZIP="1"
+    elif [ "$p" = "-target" ]; then
+        TARGETDEFINED="1"
+        shift
+        APIFOLDER=$1
+    elif [ "$p" = "-build" ]; then
+        BUILD="1"
+    elif [ "$p" = "-dynamic" ]; then
+        DYNAMIC_DSP="1"
+    elif [ $p = "-nvoices" ]; then
+		shift
+		NVOICES=$1
+    elif [ $p = "-package" ]; then
+        PACKAGENAME="-1"
+    elif [ ${p:0:1} = "-" ]; then
+        OPTIONS="$OPTIONS $p"
+    elif [[ -f "$p" ]]; then
+        FILES="$FILES $p"
+    else
+        OPTIONS="$OPTIONS $p"
+    fi
+    shift
+done
+
+if [ -z $FILE ]; then
+    echo "Please, provide a Faust file to process"
+    exit 1
+fi
+
+###################################
+# GENERATING API
+###################################
+
+rm -r "$APIFOLDER" 2> /dev/null || true
+mkdir "$APIFOLDER"
+
+#---------------------------------------------------------
+# discover best compilation options
+# discover best compilation options
+if [ "$OPT" = "generic" ]; then
+    echo "Look for best compilation options in 'generic' mode..."
+    OPTIONS="$OPTIONS $(faustbench-llvm -notrace -generic $OPTIONS $f)"
+    echo $OPTIONS
+elif [ "$OPT" = "native" ]; then
+    echo "Look for best compilation options in 'native' mode..."
+    OPTIONS="$OPTIONS $(faustbench-llvm -notrace $OPTIONS $f)"
+    echo $OPTIONS
+fi
+
+#---------------------------------------------------------
+# START CHECKING FOR AUTO EFFECT
+if [ "$NVOICES" -gt "0" ]; then
+if [ "$EFFECT" = "auto" ]; then
+    EFFECT="$APIFOLDER/autoeffect.dsp"
+    cat > "$EFFECT" << EndOfCode
+    adapt(1,1) = _;
+    adapt(2,2) = _,_;
+    adapt(1,2) = _ <: _,_;
+    adapt(2,1) = _,_ :> _;
+    adaptor(F,G) = adapt(outputs(F),inputs(G));
+    process = adaptor(library("$FILE").process, library("$FILE").effect) : library("$FILE").effect;
+EndOfCode
+    # We check this is a faust valid code. No error if it is not.
+    faust $EFFECT -o /dev/null 2> /dev/null || POLY2="0" EFFECT=""
+fi
+else
+    # No polyphony, make sure no effect
+    POLY2="0" EFFECT=""
+fi
+
+APILOCATION=""
+
+if [ "$NOZIP" = "0" ]; then
+    APILOCATION="$APIFOLDER.zip"
+elif [ "$TARGETDEFINED" = "1" ]; then
+    APILOCATION="$APIFOLDER/"
+fi
+
+# END CHECKING FOR AUTO EFFECT
+
+if [ $ANDROID_DRIVER -eq 1 ]; then
+    echo "Your $APILOCATION API package for Android is being created"
+    CPPFOLDER="$APIFOLDER/cpp"
+    JAVAFOLDER="$APIFOLDER/java"
+    mkdir $CPPFOLDER
+    mkdir $JAVAFOLDER
+    cp -r $FAUSTARCH/api/android/jni/*.java $JAVAFOLDER
+    if [ -n "$PACKAGENAME" ]; then
+        PACKAGENAME="$PACKAGENAME.DspFaust"
+        sed -i "s/com.DspFaust/$PACKAGENAME/g" $JAVAFOLDER/*.java
+    fi
+    cp -r $FAUSTARCH/api/android/jni/java_interface_wrap.cpp $CPPFOLDER
+    createAPI
+    mv $APIFOLDER/DspFaust.h $CPPFOLDER
+    mv $APIFOLDER/DspFaust.cpp $CPPFOLDER
+    echo "#define ANDROID_DRIVER 1" | cat - "$CPPFOLDER/DspFaust.cpp" > temp && mv temp "$CPPFOLDER/DspFaust.cpp"
+elif [ $IOS_DRIVER -eq 1 ]; then
+    echo "Your $APILOCATION API package for iOS is being created"
+    createAPI
+    echo "#define IOS_DRIVER 1" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+elif [ $COREAUDIO_DRIVER -eq 1 ]; then
+    echo "Your $APILOCATION API package for CoreAudio is being created"
+    createAPI
+    echo "#define COREAUDIO_DRIVER 1" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+elif [ $ALSA_DRIVER -eq 1 ]; then
+    echo "Your $APILOCATION API package for ALSA is being created"
+    createAPI
+    echo "#define ALSA_DRIVER 1" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+elif [ $JACK_DRIVER -eq 1 ]; then
+    echo "Your $APILOCATION API package for JACK is being created"
+    createAPI
+    echo "#define JACK_DRIVER 1" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+elif [ $PORTAUDIO_DRIVER -eq 1 ]; then
+    echo "Your $APILOCATION API package for PortAudio is being created"
+    createAPI
+    echo "#define PORTAUDIO_DRIVER 1" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+elif [ $RTAUDIO_DRIVER -eq 1 ]; then
+    echo "Your $APILOCATION API package for RTAudio is being created"
+    createAPI
+    echo "#define RTAUDIO_DRIVER 1" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+elif [ $OPEN_FRAMEWORK_DRIVER -eq 1 ]; then
+    echo "Your $APILOCATION API package for OpenFramework is being created"
+    createAPI
+    echo "#define OPEN_FRAMEWORK_DRIVER 1" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+elif [ $JUCE_DRIVER -eq 1 ]; then
+    echo "Your $APILOCATION API package for JUCE is being created"
+    createAPI
+    echo "#define JUCE_DRIVER 1" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+elif [ $DUMMY_DRIVER -eq 1 ]; then
+    echo "Your $APILOCATION API package for dummy audio is being created"
+    createAPI
+    echo "#define DUMMY_DRIVER 1" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+elif [ $TEENSY_DRIVER -eq 1 ]; then
+    echo "Your $APILOCATION API package for teensy audio is being created"
+    createAPI
+    echo "#define TEENSY_DRIVER 1" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+elif [ $ESP32_DRIVER -eq 1 ]; then
+    echo "Your $APILOCATION API package for ESP32 audio is being created"
+    createAPI
+    echo "#define ESP32_DRIVER 1" | cat - "$APIFOLDER/DspFaust.cpp" > temp && mv temp "$APIFOLDER/DspFaust.cpp"
+else
+    echoHelp
+    exit 1
+fi
+
+###################################
+# GENERATING BINARY
+###################################
+
+if [ "$BUILD" = "1" ]; then
+
+    if [ "$DYNAMIC_DSP" = "1" ]; then
+        echo "Compile as a binary named 'dynamic-api'"
+        # compile c++ to binary liked with lbfaust/LLSM
+        (
+            $CXX $CXXFLAGS $APIFOLDER/DspFaust.cpp /usr/local/lib/libfaust.a -lz -lncurses -lOSCFaust `llvm-config --ldflags --libs all --system-libs`  `pkg-config --cflags --static --libs jack sndfile` -o dynamic-api
+        ) > /dev/null || exit 1
+        exit 0
+   else
+        echo "Compile the ${FILE%.dsp} binary"
+        # compile c++ to binary
+        (
+            #$CXX $CXXFLAGS $APIFOLDER/DspFaust.cpp -lOSCFaust `pkg-config --cflags --static --libs jack sndfile` -o ${FILE%.dsp}
+            $CXX $CXXFLAGS $APIFOLDER/DspFaust.cpp -lOSCFaust `pkg-config --cflags --static --libs jack` -o ${FILE%.dsp}
+        ) > /dev/null || exit 1
+        exit 0
+    fi
+
+fi
+
+###################################
+# GENERATING API DOCUMENTATION
+###################################
+
+if [ $NODOC -eq 0 ]; then
+
+    APIHEADERFILE="$FAUSTARCH/api/DspFaust.h"
+
+    if [ $ANDROID_DRIVER -eq 1 ]; then
+        DOCHEADERFILE="$FAUSTARCH/api/doc/Android.md"
+    elif [ $IOS_DRIVER -eq 1 ]; then
+        DOCHEADERFILE="$FAUSTARCH/api/doc/iOS.md"
+    else
+        DOCHEADERFILE="$FAUSTARCH/api/doc/Generic.md"
+    fi
+
+	PPFILE=pPrinter.cpp
+	PPBINARY=pp
+	READMEFILE="$APIFOLDER/README.md"
+
+	faust $OPTIONS $MISC_OPT -i -a path-printer.cpp "$FILE" -o "$PPFILE" || exit 1
+	if [ "$POLY2" = "1" ]; then
+		faust $OPTIONS -i -cn effect -a minimal-effect.cpp $EFFECT | cat - "$PPFILE" > temp && mv temp "$PPFILE" || exit 1
+		echo "#define POLY2 1" | cat - "$PPFILE" > temp && mv temp "$PPFILE"
+	fi
+    if [ "$NVOICES" -gt "0" ]; then
+        echo "#define NVOICES $NVOICES" | cat - "$PPFILE" > temp && mv temp "$PPFILE"
+    fi
+    if [ "$SOUNDFILE" = "1" ]; then
+        echo "#define SOUNDFILE 1" | cat - "$PPFILE"  > temp && mv temp "$PPFILE"
+    fi
+
+	# compile c++ to binary
+	(
+		if [ "$NVOICES" -gt "0" ]; then
+		    $CXX $CXXFLAGS -DPOLY_VOICES "$PPFILE" `pkg-config --cflags --static --libs sndfile` -lpthread -o "$PPBINARY"
+		else
+		    $CXX $CXXFLAGS "$PPFILE" `pkg-config --cflags --static --libs sndfile` -lpthread -o "$PPBINARY"
+		fi
+	) > /dev/null || exit 1
+	rm "$PPFILE" || exit 1
+
+	cp "$DOCHEADERFILE"  "$READMEFILE" || exit 1
+	./"$PPBINARY" | cat "$READMEFILE" - > temp && mv temp "$READMEFILE" || exit 1
+	rm "$PPBINARY" || exit 1
+
+	faust2md "$APIHEADERFILE" | cat "$READMEFILE" - > temp && mv temp "$READMEFILE" || exit 1
+fi
+
+###################################
+# POST PROCESSING
+###################################
+
+if [ "$NOZIP" = "0" ]; then
+    ZIPOUT="$APIFOLDER.zip"
+    rm $ZIPOUT 2> /dev/null || true
+    zip -r $ZIPOUT $APIFOLDER > /dev/null || exit 1
+    rm -r $APIFOLDER || exit 1
+elif [ "$TARGETDEFINED" = "0" ]; then
+    mv $APIFOLDER/* . || exit 1
+    rm -r $APIFOLDER || exit 1
+fi

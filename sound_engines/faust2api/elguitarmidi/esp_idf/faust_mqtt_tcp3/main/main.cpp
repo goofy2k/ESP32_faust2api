@@ -1,15 +1,202 @@
 #include <stdio.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <string.h>
+#include "esp_wifi.h"
+#include "esp_system.h"
+#include "nvs_flash.h"
+#include "esp_event.h"
+#include "esp_netif.h"
+#include "protocol_examples_common.h"
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "esp_system.h"
+#include "freertos/semphr.h"
+#include "freertos/queue.h"
+// #include "esp_system.h"
 #include "esp_spi_flash.h"
+#include "lwip/sockets.h"
+#include "lwip/dns.h"
+#include "lwip/netdb.h"
 
+#include "esp_log.h"
+#include "mqtt_client.h"
+
+#include "secrets.h"
 #include "WM8978.h"
 #include "DspFaust.h"
 
 extern "C" {
     void app_main(void);
 }
+
+extern "C" {           //FCKX
+    static void mqtt_app_start(void);
+}
+
+extern "C" {           //FCKX
+static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event);
+}
+
+static const char *TAG = "MQTT_EXAMPLE";
+
+
+static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
+{  
+    //ESP_LOGI(TAG, "FCKX: HANDLER_CB CALLED");  //FCKX
+    esp_mqtt_client_handle_t client = event->client;
+    int msg_id;
+    // your_context_t *context = event->context;
+    switch (event->event_id) {
+        case MQTT_EVENT_CONNECTED:
+            ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
+            msg_id = esp_mqtt_client_publish(client, "/topic/qos1", "data_3", 0, 1, 0);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+
+            msg_id = esp_mqtt_client_subscribe(client, "/topic/qos0", 0);
+            ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+
+            msg_id = esp_mqtt_client_subscribe(client, "/topic/qos1", 1);
+            ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+
+            msg_id = esp_mqtt_client_unsubscribe(client, "/topic/qos1");
+            ESP_LOGI(TAG, "sent unsubscribe successful, msg_id=%d", msg_id);
+            
+            msg_id = esp_mqtt_client_subscribe(client, "/FCKX/test", 0);
+            ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+            
+            break;
+        case MQTT_EVENT_DISCONNECTED:
+            ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
+            break;
+
+        case MQTT_EVENT_SUBSCRIBED:
+            ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id);
+            msg_id = esp_mqtt_client_publish(client, "/topic/qos0", "data", 0, 0, 0);
+            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            break;
+        case MQTT_EVENT_UNSUBSCRIBED:
+            ESP_LOGI(TAG, "MQTT_EVENT_UNSUBSCRIBED, msg_id=%d", event->msg_id);
+            break;
+        case MQTT_EVENT_PUBLISHED:
+            ESP_LOGI(TAG, "MQTT_EVENT_PUBLISHED, msg_id=%d", event->msg_id);
+            break;
+        case MQTT_EVENT_DATA:
+            ESP_LOGI(TAG, "MQTT_EVENT_DATA");
+            printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
+            printf("DATA=%.*s\r\n", event->data_len, event->data);
+            break;
+        case MQTT_EVENT_ERROR:
+            ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
+            break;
+        default:
+            ESP_LOGI(TAG, "Other event id:%d", event->event_id);
+            break;
+    }
+    return ESP_OK;
+}
+//throws a compilation error! May be obsolete when registering is done i a different way
+/*
+static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
+
+    ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%d", base, event_id);
+    mqtt_event_handler_cb(event_data);
+}
+*/
+
+
+
+//FCKX guess
+static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, esp_mqtt_event_handle_t event_data) {
+    
+    ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%d", base, event_id);
+    mqtt_event_handler_cb(event_data);
+}
+
+
+
+/*
+../main/main.cpp: In function 'void mqtt_event_handler(void*, esp_event_base_t, int32_t, void*)':
+../main/main.cpp:94:27: error: invalid conversion from 'void*' to 'esp_mqtt_event_handle_t' {aka 'esp_mqtt_event_t*'} [-fpermissive]
+     mqtt_event_handler_cb(event_data);
+                           ^~~~~~~~~~
+*/
+
+//https://github.com/espressif/esp-idf/issues/5248
+
+/*
+@mntolia This is an issue with C++ build, has been fixed in espressif/esp-mqtt@8a1e1a5, but apparently that hasn't made it yet to arduino. As a workaround you can cast the variables to the expected types or even avoid using an event loop altogether.
+It is still possible to configure mqtt_event_handler_cb() as a plain callback in client config:
+
+    mqtt_config.event_handle = mqtt_event_handler_cb;
+And remove both definition of the mqtt_event_handler() and registration of the handler esp_mqtt_client_register_event()
+
+*/
+
+static void mqtt_app_start(void)
+{
+    /*
+    esp_mqtt_client_config_t mqtt_cfg = {
+    //.uri = CONFIG_BROKER_URL,
+    .uri = "mqtt://goofy2knet.synology.me",
+    .username = "Fred",
+    .password = "Nwwnlil_12",
+    .client_id = "TTGO_TAudio_1"
+    };
+    */
+       
+    //FCKX
+    esp_mqtt_client_config_t mqtt_cfg = {0};
+    // mqtt_cfg.uri = CONFIG_BROKER_URL;
+    //mqtt_cfg.uri = "mqtt://goofy2knet.synology.me";
+    //mqtt_cfg.uri = "mqtt://192.168.2.200:1883";
+    mqtt_cfg.uri = SECRET_ESP_MQTT_BROKER_URI;
+    //strcpy((char*)mqtt_cfg.uri, "mqtt://goofy2knet.synology.me");
+    //strcpy((char*)mqtt_cfg.username, "Fred");
+    //mqtt_cfg.username = "Fred";
+    mqtt_cfg.username = SECRET_ESP_MQTT_BROKER_USERNAME;
+    //strcpy((char*)mqtt_cfg.password, "Nwwnlil_12");
+    //mqtt_cfg.password = "Nwwnlil_12";
+    mqtt_cfg.password = SECRET_ESP_MQTT_BROKER_PASSWORD;
+    //strcpy((char*)mqtt_cfg.client_id, "TTGO_TAudio_1");
+    //mqtt_cfg.client_id = "TTGO_TAudio_1";
+    mqtt_cfg.client_id = SECRET_ESP_MQTT_CLIENT_ID;
+    
+#if CONFIG_BROKER_URL_FROM_STDIN
+    char line[128];
+
+    if (strcmp(mqtt_cfg.uri, "FROM_STDIN") == 0) {
+        int count = 0;
+        printf("Please enter url of mqtt broker\n");
+        while (count < 128) {
+            int c = fgetc(stdin);
+            if (c == '\n') {
+                line[count] = '\0';
+                break;
+            } else if (c > 0 && c < 127) {
+                line[count] = c;
+                ++count;
+            }
+            vTaskDelay(10 / portTICK_PERIOD_MS);
+        }
+        mqtt_cfg.uri = line;
+        printf("Broker url: %s\n", line);
+    } else {
+        ESP_LOGE(TAG, "Configuration mismatch: wrong broker url");
+        abort();
+    }
+#endif /* CONFIG_BROKER_URL_FROM_STDIN */
+
+    esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
+    //mqtt_cfg.event_handle = mqtt_event_handler_cb;
+    //esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, client);
+    esp_mqtt_client_register_event(client, (esp_mqtt_event_id_t)ESP_EVENT_ANY_ID, (esp_event_handler_t)mqtt_event_handler, client);  //trial, added 2x type casting 
+  
+    ESP_LOGI(TAG, "START MQTT CLIENT");  //FCKX
+    esp_mqtt_client_start(client);
+    ESP_LOGI(TAG, "MQTT CLIENT STARTED");  //FCKX
+}
+
 
 #define OCTAVE_OFFSET 0
 
@@ -244,6 +431,38 @@ void play_rtttl(char *p, dsp* DSP)
 
 void app_main(void)
 {
+    
+    ESP_LOGI(TAG, "[APP] Startup..");
+    ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
+    ESP_LOGI(TAG, "[APP] IDF version: %s", esp_get_idf_version());
+
+    esp_log_level_set("*", ESP_LOG_INFO);
+    esp_log_level_set("MQTT_CLIENT", ESP_LOG_VERBOSE);
+    esp_log_level_set("MQTT_EXAMPLE", ESP_LOG_VERBOSE);
+    esp_log_level_set("TRANSPORT_TCP", ESP_LOG_VERBOSE);
+    esp_log_level_set("TRANSPORT_SSL", ESP_LOG_VERBOSE);
+    esp_log_level_set("TRANSPORT", ESP_LOG_VERBOSE);
+    esp_log_level_set("OUTBOX", ESP_LOG_VERBOSE);
+
+    ESP_ERROR_CHECK(nvs_flash_init());
+    ESP_ERROR_CHECK(esp_netif_init());
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+
+    /* This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
+     * Read "Establishing Wi-Fi or Ethernet Connection" section in
+     * examples/protocols/README.md for more information about this function.
+     Add to Makefile:  EXTRA_COMPONENT_DIRS = $(IDF_PATH)/examples/common_components/protocol_examples_common
+     Use menuconfig to set: 
+     To configure the example to use Wi-Fi, Ethernet or both connections, open the project configuration menu (idf.py menuconfig) and navigate to "Example Connection Configuration" menu. Select either "Wi-Fi" or "Ethernet" or both in the "Connect using" choice.
+
+When connecting using Wi-Fi, enter SSID and password of your Wi-Fi access point into the corresponding fields. If connecting to an open Wi-Fi network, keep the password field empty.
+     
+     
+     */
+    ESP_ERROR_CHECK(example_connect());
+
+    mqtt_app_start();   
+    
 
     WM8978 wm8978;
     wm8978.init();
@@ -258,8 +477,8 @@ void app_main(void)
     wm8978.i2sCfg(2,0);
    
  //   YOU MUST USE faust2api API calls
-    int SR = 48000;   //48000
-    int BS = 32;      //32   was 8
+    int SR = 48000;
+    int BS = 32; //was 8
     printf("BEFORE DspFaust INSTANTIATION\n");
    // DspFaust dspFaust(SR,BS);
      // if (dspFaust.isRunning()) {printf("BEFORE START RUNNING\n");} else {printf("BEFORE START NOT RUNNING\n");} ;
@@ -270,110 +489,19 @@ void app_main(void)
     printf("Hello modified CHECKIT 1 world!\n");
     DspFaust* DSP = new DspFaust(SR,BS); 
     //printf("Hello modified 2x world!\n");
-    //if (DSP->isRunning()) {printf("BEFORE START RUNNINGa\n");} else {printf("BEFORE START NOT RUNNINGb\n");} ;
-    //DSP->allNotesOff();
-    //DSP->stop();
+    if (DSP->isRunning()) {printf("BEFORE START RUNNINGa\n");} else {printf("BEFORE START NOT RUNNINGb\n");} ;
+
     DSP->start();
     if (DSP->isRunning()) {printf("AFTER START RUNNINGc\n");} else {printf("AFTER START NOT RUNNINGd\n");} ;
   
     //printf("Hello modified 3x world!\n");
+    //DSP->setParamValue("freq",220);
+    //DSP->keyOn(50,50);
     DSP->allNotesOff();
-    vTaskDelay(2000/ portTICK_PERIOD_MS);
-  /*  
-    //loop basic midi sequence....
-    while (1) {
-    //DSP->setParamValue("freq",220);
-    DSP->keyOn(50,50);
-     vTaskDelay(500/ portTICK_PERIOD_MS);
-         DSP->keyOff(50);
-          vTaskDelay(500/ portTICK_PERIOD_MS);
-     DSP->keyOn(100,100);
-     vTaskDelay(500/ portTICK_PERIOD_MS);
-     DSP->keyOff(100);
- 
-     vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOn(50,50);
-     vTaskDelay(500/ portTICK_PERIOD_MS);
-     DSP->keyOff(50);
-          vTaskDelay(500/ portTICK_PERIOD_MS);
-     DSP->keyOn(80,100);
-     vTaskDelay(500/ portTICK_PERIOD_MS);
-     DSP->keyOff(80);
-     vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOn(50,50);
-     vTaskDelay(500/ portTICK_PERIOD_MS);
-     DSP->keyOff(50);
-          vTaskDelay(500/ portTICK_PERIOD_MS);
-     DSP->keyOn(100,100);
-     vTaskDelay(500/ portTICK_PERIOD_MS);
-     DSP->keyOff(100);
-     vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOn(50,50);
-     vTaskDelay(500/ portTICK_PERIOD_MS);
-     DSP->keyOff(50);
-          vTaskDelay(500/ portTICK_PERIOD_MS);
-     DSP->keyOn(100,100);
-     vTaskDelay(500/ portTICK_PERIOD_MS);
-     DSP->keyOff(100);
-     vTaskDelay(5000/ portTICK_PERIOD_MS);
-  
-    };
-  //DSP->allNotesOff();
-  */
-/*  
-   //loop basic midi sequence....
-    while (1) {
-    //DSP->setParamValue("freq",220);
-        DSP->keyOn(50,50);
-        vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOff(50);
-        vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOn(100,100);
-        vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOff(100);
-        vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOn(50,50);
-        vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOff(50);
-        vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOn(80,100);
-        vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOff(80);
-        vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOn(50,50);
-        vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOff(50);
-        vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOn(100,100);
-        vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOff(100);
-        vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOn(50,50);
-        vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOff(50);
-        vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOn(100,100);
-        vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOff(100);
-        vTaskDelay(5000/ portTICK_PERIOD_MS);  
-    };
-  //DSP->allNotesOff();
-  */
-  
-     //loop basic midi sequence....
-    while (1) {
-    //DSP->setParamValue("freq",220);
-        for (int ii = 30; ii<80; ii++) {
-        DSP->keyOn(ii,126);
-        vTaskDelay(500/ portTICK_PERIOD_MS);
-        DSP->keyOff(ii);
-        //DSP->allNotesOff();
-        vTaskDelay(500/ portTICK_PERIOD_MS);
-        }
-        
-    };
-  //DSP->allNotesOff();
-     /*
+
+
+
+    
      float CPULoad = DSP->getCPULoad();
      printf("CPULoad %7.5f \n",CPULoad);
      
@@ -389,36 +517,33 @@ void app_main(void)
      printf("min1 = %7.5f \n",min1);
      printf("max1 = %7.5f \n",max1);
      printf("init1 = %7.5f \n",init1);
-     */
- 
-/* 
+
     uintptr_t myvoice0 = DSP->newVoice();
     printf("myvoice0 = %u \n",myvoice0);
+    
+    //printf("myvoice0: %" PRIxPTR "\n", myvoice0);
+    
     uintptr_t myvoice1 = DSP->newVoice();
     printf("myvoice1 = %u \n",myvoice1);
-    
     //printf("myvoice1: %" PRIxPTR "\n", myvoice1);
     //printf("myvoice1: %PRIxPTR \n", myvoice1);
     //printf("The address of i is 0x%lx.\n", myvoice1);
     if (myvoice0 != 0) {
         printf("myvoice0 created\n");
     DSP->setVoiceParamValue(0,myvoice0,220);  
-    DSP->setVoiceParamValue(1,myvoice0,1);
     float freq0 = DSP-> getVoiceParamValue(0, myvoice0);
     printf("freq0 = %7.5f \n",freq0);
     float gain0 = DSP-> getVoiceParamValue(1, myvoice0);
     printf("gain0 = %7.5f \n",gain0);
-    //float freq1 = DSP-> getVoiceParamValue(0, myvoice1);
-    //printf("freq1 = %7.5f \n",freq1);
-    //float gain1 = DSP-> getVoiceParamValue(1, myvoice1);
-    //printf("gain1 = %7.5f \n",gain1);
+    float freq1 = DSP-> getVoiceParamValue(0, myvoice1);
+    printf("freq1 = %7.5f \n",freq1);
+    float gain1 = DSP-> getVoiceParamValue(1, myvoice1);
+    printf("gain1 = %7.5f \n",gain1);
     
     } else {
         printf("Could not create myvoice0 \n");
         
         };
-  */      
-        
 /*
 Main Parameters
 0: /Polyphonic/Voices/Panic
