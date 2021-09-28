@@ -349,7 +349,9 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
 4. Use external RAM	
    - https://faustdoc.grame.fr/tutorials/esp32/ (this is about static data..)
    - https://docs.espressif.com/projects/esp-idf/en/release-v3.3/api-guides/external-ram.html (Note: this link is for esp-idf V3.3)	
-   - https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/performance/size.html (use this to see % used) 
+   - https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/performance/size.html (use this to see % used)  
+5. Optimize WIFI memory usage	
+   - https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/performance/ram-usage.html  
 	
 ![external ram options](images/External%20RAM.png)  	
  
