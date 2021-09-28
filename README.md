@@ -336,10 +336,14 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
 	Google: Cache disabled but cached memory region accessed
 	https://blog.espressif.com/esp32-programmers-memory-model-259444d89387
 	https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/api-guides/memory-types.html
+	REMOVED more UI functionality. 
 	
 3. External communication (UI), e.g. with:
    - Nodered (via WIFI)
-   - Browser (via USB/serial)	
+   - Browser (via USB/serial)
+   NEED tot solve memory issues, e.g. by:
+	- setting low requirements for logging (esp-idf reduce firmware size)
+	- using a less memory-hungry connection method (e.g wired UART/I2C to peer ESP32 as hub) 
 	
  
  #### Testing some API calls:
