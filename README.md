@@ -351,7 +351,7 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
    - https://docs.espressif.com/projects/esp-idf/en/release-v3.3/api-guides/external-ram.html (Note: this link is for esp-idf V3.3)	
    - https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/performance/size.html (use this to see % used) 
 	
-![external ram options](/images/external_ram.png)  	
+![external ram options](images/External%20RAM.png)  	
  
  #### Testing some API calls:
  
