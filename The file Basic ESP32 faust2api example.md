@@ -42,7 +42,7 @@ The example must be compiled in the ESP-IDF environment as a C++ app. To this en
 3. move to the root folder of the project (cd <path_to_projects>/example_faust_mqtt_tcp4_v3
 4. set ESP32 as the target hardware with "idf.py set-target ESP32" (Option, not required for using the ready-to-go example) 
 5. if present, remove a build folder with it's contents, either by hand or by issuing a "idf.py fullclean" command
-6. modify project settings "idf.py menuconfig" (Option, not required for using the ready-to-go example, may be necessary if you have different hardware)
+6. tune project settings "idf.py menuconfig" (Option, not required for using the ready-to-go example, may be necessary if you have different hardware)
 7. compile/build the project:  "idf.py --no-ccache build"  or "idf.py --no-ccache build > buildlognn.txt" for logging of information
 8. inspect firmware size by adding an option "size", "size-files" or "size-components" to the above or use "idf.py size" or "idf.py size > sizelog.txt"
 9. flash the firmware: connect the device to a serial port of your computer and "run idf.py --no-ccache -p COMnn flash"
