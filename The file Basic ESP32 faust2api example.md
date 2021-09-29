@@ -9,5 +9,7 @@ Any changes implemented during write up of this consolidation are done in faust_
 
 The example contains a main C++ app. It uses the the output of the faust2api script. The WM8978 audio driver files are used unmodified. The DspFaust.cpp file has been modified to get things working on the TTGO TAudio board. These modifications may have to be implemented in the faust2api script for ESP32.
 
+General description of the features in the example...
+
   
 
