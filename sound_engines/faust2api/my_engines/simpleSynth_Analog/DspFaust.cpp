@@ -9066,7 +9066,7 @@ struct MidiMeta : public Meta, public std::map<std::string, std::string> {
     {
         return (this->find(key) != this->end()) ? (*this)[key] : def;
     }
-    /*
+    
     static void analyse(dsp* mono_dsp, bool& midi_sync, int& nvoices)
     {
         JSONUI jsonui;
@@ -9103,7 +9103,7 @@ struct MidiMeta : public Meta, public std::map<std::string, std::string> {
         nvoices = std::max<int>(0, nvoices);
     #endif
     }
-    */
+    
     static bool checkPolyphony(dsp* mono_dsp)
     {
         MapUI map_ui;
@@ -11884,7 +11884,7 @@ class FaustPolyEngine {
             int nvoices = 0;
             fRunning = false;
             
-            //MidiMeta::analyse(mono_dsp, midi_sync, nvoices);
+            MidiMeta::analyse(mono_dsp, midi_sync, nvoices);
             
             // Getting the UI JSON
             JSONUI jsonui1(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
@@ -25207,7 +25207,7 @@ DspFaust::DspFaust(bool auto_connect)
     driver = new juceaudio();
 #else
     printf("You are not setting 'sample_rate' and 'buffer_size', but the audio driver needs it !\n");
-    //throw std::bad_alloc();
+    throw std::bad_alloc();
 #endif
     init(NULL, driver);
 }

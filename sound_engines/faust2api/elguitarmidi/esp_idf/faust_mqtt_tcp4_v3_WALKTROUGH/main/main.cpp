@@ -732,9 +732,17 @@ void play_rtttl(char *p, DspFaust * aDSP)
    //   Serial.print(notes[(scale - 4) * 12 + note], 10);
    //   Serial.print(") ");
    //   Serial.println(duration, 10);
-      
+      /*
       aDSP->setParamValue("/elecGuitar/midi/freq",freqs[(scale-4) * 12 + note]);
       aDSP->setParamValue("/elecGuitar/gate",1);
+*/      
+      aDSP->setParamValue("/simpleSynt_Analog/freq",freqs[(scale-4) * 12 + note]);
+      aDSP->setParamValue("/simpleSynt_Analog/gate",1);     
+/*
+      aDSP->setParamValue("/WaveSynth_FX//freq",freqs[(scale-4) * 12 + note]);
+      aDSP->setParamValue("/WaveSynth_FX/gate",1); 
+*/
+      
       vTaskDelay(duration / portTICK_PERIOD_MS);
       //printf("%s \n",DSP->getJSONUI());
       //DSP->setParamValue("gain",0);
