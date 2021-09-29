@@ -34,7 +34,36 @@ The example contains a main C++ app where the WM8978 audio codec and sound engin
  
 ## 2. Walkthrough on how to use the example_faust_mqtt_tcp4_v3 under ESP-IDF  
 
-The example must be compiled in the ESP-IDF environment as a C++ app. To this end the project folder contains a folder main with a main.cpp file (only for this aspect see the praragraph Starting a New ESP32 Project in the tutorial on [DSP on the ESP32 With Faust](https://faustdoc.grame.fr/tutorials/esp32/). 
+The example must be compiled in the ESP-IDF environment as a C++ app. To this end the project folder contains a folder main with a main.cpp file (only for this aspect see the praragraph Starting a New ESP32 Project in the tutorial on [DSP on the ESP32 With Faust](https://faustdoc.grame.fr/tutorials/esp32/).
+
+
+0. create a secrets.h file in the folder "main" of the project (note 1.)  
+1. open an ESP-IDF 4.2 Powershell session in Windows Terminal (see note 2.)
+2. move to the root folder of the project (cd <path_to_projects>/example_faust_mqtt_tcp4_v3
+3. set ESP32 as the target hardware with "idf.py set-target ESP32" (Option, not required for using the ready-to-go example) 
+4. if present, remove a build folder with it's contents, either by hand or by issuing a "idf.py fullclean" command
+5. modify project settings "idf.py menuconfig" (Option, not required for using the ready-to-go example, may be necessary if you have different hardware)
+6. compile/build the project:  "idf.py --no-ccache build"  or "idf.py --no-ccache build > buildlognn.txt" for logging of information
+7. inspect firmware size by adding an option "size", "size-files" or "size-components" to the above or use "idf.py size" or "idf.py size > sizelog.txt"
+8. flash the firmware: connect the device to a serial port of your computer and "run idf.py --no-ccache -p COMnn flash"
+9. monitor the output: "run idf.py --no-ccache -p COMnn monitor"
+
+If you have properly configured an MQTT broker, the board sends some messages during start-up.
+You can send messages to the board (topic....).  If these are received, they will appear in your monitor screen.
+After connection to WIFI and MQTT broker a tune can be heared over the headphone jacket of the board.
+
+Notes:
+1. Add the following info to secrets.h: 
+   #define SECRET_ESP_WIFI_SSID "yourssid"
+   #define SECRET_ESP_WIFI_PASSWORD "yourwifipass"
+   #define SECRET_ESP_MAXIMUM_RETRY 5
+
+   #define SECRET_ESP_MQTT_BROKER_URI "mqtt://yourbrokerip:1883"
+   #define SECRET_ESP_MQTT_BROKER_USERNAME "yourbrokerusername"
+   #define SECRET_ESP_MQTT_BROKER_PASSWORD "yourbrokerpassword"
+   #define SECRET_ESP_MQTT_CLIENT_ID "egTTGO_TAudio"
+
+2. When opening, this runs a script that sets relvant environment variables for usage of ESP-IDF. Upon installation of the ESP-IDF environment a link to plain Powershell is created. For more convenience (such as copying and pasting commands) I transfered this to a Windows Terminal session. Windows Terminal can also run a Linux under Windows session, which is useful for using the Faust scripts.   
 
 
 ## 3. Walkthrough for creation of a project based on this example with a different Faust sound engine 
