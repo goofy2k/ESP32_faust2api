@@ -74,10 +74,10 @@ ESP-IDF uses CMake for building a project. The use of CMake goes **beyond the sc
 1. copy the project folder ("example_faust_mqtt_tcp4_v3") into a suitable location ("path_to_projects") on your computer: 
 2. create a secrets.h file in the folder "main"  of the project: <path_to_projects>/example_faust_mqtt_tcp4_v3/main/secrets.h (note 1. above)
 3. create a sound engine file either by hand or with the online [Faust IDE](https://faustide.grame.fr/index.html) (see the [ESP32 tutorial](https://faustdoc.grame.fr/tutorials/esp32/)  
-4. create the C++ sound engine and driver files by compiling the .dsp file with the script: for me under Linux for Windows , within \\wsl$\Ubuntu-20.04\home\fckx\faust\tools\faust2appls
- faust2api <options> elecGuitar_MIDI.dsp **not sure if the script also generates the WM8978 files. If not, re-use them from the example project)**  Don't use the option to change the name of the output files. The example project assumes DspFaust and WM8978 as names.
+4. create the C++ sound engine and driver files (DspFaust.cpp/.h) by compiling the .dsp file with the script: for me under Linux for Windows , within \\wsl$\Ubuntu-20.04\home\fckx\faust\tools\faust2appls
+ faust2api -esp32 -nvoices 2 elecGuitarMIDI.dsp -target elecGuitarMIDI. 
 5. apply a number of modifications to the DspFaust.cpp file (see xxxxx) 
-5. copy the DspFaust.cpp/.h and WM8978.cpp/.h files into the folder "main" of your project 
+5. copy the DspFaust.cpp/.h files into the folder "main" of your project. Do NOT change the names. The project assumes DspFaust.cpp/.h as the names.
 6. to compile and run your project, now continue with step 3 of section 2. in this document.
 
 (test first with elecGuitarMidi.dsp, includes description of the faust2api options,  changing the DspFaust,  specifically:  MidiMeta::analyse(mono_dsp, midi_sync, nvoices);)
@@ -101,4 +101,9 @@ ESP-IDF project settings can be modified with the idf.py menuconfig command. The
  
 xxxxx
 Modifications to the DspFaust.cpp file (case faust2api <options> elecGuitarMIDI.dsp ) 
+
+comment the call MidiMeta::analyses  appr line nr 11928 (for elecGuitarMIDI)
+comment static void analyses line 9111 - 9147
  
+ comment throw std:: bad_alloc()  line 25276 (to allow C++ exceptions)  near  printf("You are not setting 'sample_rate' and 'buffer_size', but the audio driver needs it !\n");
+ there are two additional occurrences, these are still in. Unclear when they become active.
