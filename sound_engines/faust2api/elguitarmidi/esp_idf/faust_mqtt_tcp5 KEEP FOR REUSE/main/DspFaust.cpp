@@ -9110,7 +9110,6 @@ struct MidiMeta : public Meta, public std::map<std::string, std::string> {
     
     static void analyse(dsp* mono_dsp, bool& midi_sync, int& nvoices)
     {
-       /* 
         JSONUI jsonui;
         mono_dsp->buildUserInterface(&jsonui);
         std::string json = jsonui.JSON();
@@ -9119,13 +9118,10 @@ struct MidiMeta : public Meta, public std::map<std::string, std::string> {
                       (json.find("stop") != std::string::npos) ||
                       (json.find("clock") != std::string::npos) ||
                       (json.find("timestamp") != std::string::npos)));
-       */  
-
-    /*       
+    
     #if defined(NVOICES) && NVOICES!=NUM_VOICES
         nvoices = NVOICES;
     #else
-        
         MidiMeta meta;
         mono_dsp->metadata(&meta);
         bool found_voices = false;
@@ -9146,9 +9142,7 @@ struct MidiMeta : public Meta, public std::map<std::string, std::string> {
             nvoices = std::atoi(numVoices.c_str());
         }
         nvoices = std::max<int>(0, nvoices);
-        
     #endif
-    */
     }
     
     static bool checkPolyphony(dsp* mono_dsp)
@@ -11930,29 +11924,21 @@ class FaustPolyEngine {
             bool midi_sync = false;
             int nvoices = 0;
             fRunning = false;
-           
             if (MidiMeta::checkPolyphony(mono_dsp)) {
                printf("checkPolyphony 1: true \n");    
             }
             else {
                 printf("checkPolyphony 1: false \n");
             };
-           
             //FCKX
             //MidiMeta::analyse(mono_dsp, midi_sync, nvoices);
-             // midi_sync = true;
-             // nvoices = NVOICES;              
-           
-           if (MidiMeta::checkPolyphony(mono_dsp)) {
+            if (MidiMeta::checkPolyphony(mono_dsp)) {
                printf("checkPolyphony 2: true \n");    
             }
             else {
                 printf("checkPolyphony 2: false \n");
-            };
-                     
+            };            
             // Getting the UI JSON
-            
-            
             JSONUI jsonui1(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
             mono_dsp->buildUserInterface(&jsonui1);
             fJSONUI = jsonui1.JSON();
@@ -11961,7 +11947,7 @@ class FaustPolyEngine {
             JSONUI jsonui1M(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
             mono_dsp->metadata(&jsonui1M);
             fJSONMeta = jsonui1M.JSON();
-        
+            
             if (nvoices > 0) {
                 
                 fPolyDSP = new mydsp_poly(mono_dsp, nvoices, true);
