@@ -53,7 +53,7 @@ If you have properly configured an MQTT broker, the board sends some messages du
 You can send messages to the board (topic....).  If these are received, they will appear in your monitor screen.
 After connection to WIFI and MQTT broker a tune can be heared over the headphone jacket of the board.
 
-Notes:
+#### Notes:
 1. Add the following info to secrets.h: 
    #define SECRET_ESP_WIFI_SSID "yourssid"
    #define SECRET_ESP_WIFI_PASSWORD "yourwifipass"
@@ -72,7 +72,7 @@ Notes:
 ESP-IDF uses CMake for building a project. The use of CMake goes beyond the scope of this document. Here we describe a method where the new project re-uses the project structure of the example project, including the CMake files.
 
 1. copy the project folder ("example_faust_mqtt_tcp4_v3") into a suitable location ("path_to_projects") on your computer: 
-2. create a secrets.h file in the folder "main"  of the project: <path_to_projects>/example_faust_mqtt_tcp4_v3/main/secrets.h (note 1.)
+2. create a secrets.h file in the folder "main"  of the project: <path_to_projects>/example_faust_mqtt_tcp4_v3/main/secrets.h (note 1. above)
 3. ...  
 
 n. to compile and run your project, now continue with step 3 of section 2. in this document.
