@@ -578,9 +578,53 @@ char *song = "GoodBad:d=4,o=5,b=56:32p,32a#,32d#6,32a#,32d#6,8a#.,16f#.,16g#.,d#
 
 #define isdigit(n) (n >= '0' && n <= '9')
 
+/*
+//keyOn  keyOff not active.... as other MIDI functionality?
+
+void play_keys(DspFaust * aDSP)
+{
+        for (int ii = 50; ii < 100; ii++){
+        aDSP->keyOn(50,50);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        aDSP->keyOff(50);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        }  
+}
+*/
+
+
+void play_poly_without_midi(DspFaust * aDSP) 
+{
+    uintptr_t voiceAddress = aDSP->newVoice(); //create main voice
+        for (int ii = 50; ii < 100; ii++){
+
+           aDSP->setVoiceParamValue("/Polyphonic/Voices/WaveSynth_FX/freq",voiceAddress,440.0);
+           // aDSP->setVoiceParamValue("/WaveSynth_FX/freq",freqs[(scale-4) * 12 + note]);
+           aDSP->setVoiceParamValue("/Polyphonic/Voices/WaveSynth_FX/gate",voiceAddress,1.0);
+           vTaskDelay(500 / portTICK_PERIOD_MS);          
+           aDSP->setVoiceParamValue("/Polyphonic/Voices/WaveSynth_FX/gate",voiceAddress,0);
+           vTaskDelay(500 / portTICK_PERIOD_MS); 
+           
+           aDSP->setVoiceParamValue("/Polyphonic/Voices/WaveSynth_FX/freq",voiceAddress,220.1);
+           // aDSP->setVoiceParamValue("/WaveSynth_FX/freq",freqs[(scale-4) * 12 + note]);
+           aDSP->setVoiceParamValue("/Polyphonic/Voices/WaveSynth_FX/gate",voiceAddress,1);
+           vTaskDelay(500 / portTICK_PERIOD_MS);          
+           aDSP->setVoiceParamValue("/Polyphonic/Voices/WaveSynth_FX/gate",voiceAddress,0);
+           vTaskDelay(500 / portTICK_PERIOD_MS);
+        }
+           aDSP->deleteVoice(voiceAddress); //delete main voice
+};
+
 
 void play_rtttl(char *p, DspFaust * aDSP)
 {
+ // aDSP->allNotesOff();  
+  aDSP->setParamValue("/WaveSynth_FX/lfoFreq",10);
+  aDSP->setParamValue("/WaveSynth_FX/lfoDepth",0.25); 
+  aDSP->setParamValue("/WaveSynth_FX/A",10);
+  aDSP->setParamValue("/WaveSynth_FX/D",1.0); 
+  aDSP->setParamValue("/WaveSynth_FX/S",0.01); 
+  aDSP->setParamValue("/WaveSynth_FX/R",1.0); 
   // Absolutely no error checking in here
   unsigned char default_dur = 4;
   unsigned char default_oct = 6;
@@ -735,20 +779,22 @@ void play_rtttl(char *p, DspFaust * aDSP)
       /*
       aDSP->setParamValue("/elecGuitar/midi/freq",freqs[(scale-4) * 12 + note]);
       aDSP->setParamValue("/elecGuitar/gate",1);
-*/      
+     */
+/* 
       aDSP->setParamValue("/simpleSynt_Analog/freq",freqs[(scale-4) * 12 + note]);
       aDSP->setParamValue("/simpleSynt_Analog/gate",1);     
-/*
-      aDSP->setParamValue("/WaveSynth_FX//freq",freqs[(scale-4) * 12 + note]);
-      aDSP->setParamValue("/WaveSynth_FX/gate",1); 
 */
+
+      aDSP->setParamValue("/WaveSynth_FX/freq",freqs[(scale-4) * 12 + note]);
+      aDSP->setParamValue("/WaveSynth_FX/gate",1); 
+
       
       vTaskDelay(duration / portTICK_PERIOD_MS);
       //printf("%s \n",DSP->getJSONUI());
       //DSP->setParamValue("gain",0);
-      aDSP->setParamValue("/elecGuitar/gate",0);
-      
-      
+    //  aDSP->setParamValue("/simpleSynt_Analog/gate",0); 
+        // aDSP->setParamValue("/elecGuitar/gate",0);
+        aDSP->setParamValue("/WaveSynth_FX/gate",0); 
      // tone1.play(notes[(scale - 4) * 12 + note]);
       //delay(duration);
       //tone1.stop();
@@ -911,20 +957,43 @@ ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 msg_id = esp_mqtt_client_subscribe(mqtt_client, "/faust/api2/#", 1);
 ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 
-msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop started", 0, 0, 0);
+
 msg_id = esp_mqtt_client_publish(mqtt_client, "/faust/jsonui", DSP->getJSONUI(), 0, 0, 0);  //to be implemented: publish the UI by remote request via th
 
+msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "rtttl song loop started", 0, 0, 0);
 play_rtttl(song, DSP); //try to implement playing a song in a separate task
+msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "rtttl song loop finished", 0, 0, 0);
 
+
+/*
+msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "keys song loop started", 0, 0, 0);
+play_keys( DSP); //try to implement playing a song in a separate task
+msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "keys song loop finished", 0, 0, 0);
+*/
+
+/*
+msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "poly_without_midi song loop started", 0, 0, 0);
+play_poly_without_midi(DSP); 
+msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "poly_without_midi song loop finished", 0, 0, 0);
+*/
 while(1) {
         printf(">>>>>Loop<<<<<< \n");
         //printf("%s \n",DSP->getJSONUI());
-
-   
-   /*
-        DSP->setParamValue("freq",rand()%(2000-50 + 1) + 50);
-        DSP->setParamValue("gain",0.1);
+        /*
+        DSP->keyOn(50,50);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        DSP->keyOff(50);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        DSP->keyOn(100,50);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        DSP->keyOff(100);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
         */
+        
+        
+     //   DSP->setParamValue("freq",rand()%(2000-50 + 1) + 50);
+      //  DSP->setParamValue("gain",0.1);
+        
         /*
         DSP->setParamValue("/elecGuitar/midi/freq",rand()%(2000-50 + 1) + 50);
         DSP->setParamValue("/elecGuitar/gate",1);
