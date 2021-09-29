@@ -103,6 +103,11 @@ xxxxx
 Modifications to the DspFaust.cpp file (case faust2api <options> elecGuitarMIDI.dsp ) 
 
 comment the call MidiMeta::analyses  appr line nr 11928 (for elecGuitarMIDI)
+ NOTE: addition of             nvoices = NVOICES;
+                               midi_sync = true;
+ 
+to simulate detection of polyphony leads to a stack overflow error 
+ 
 comment static void analyses line 9111 - 9147
  
  comment throw std:: bad_alloc()  line 25276 (to allow C++ exceptions)  near  printf("You are not setting 'sample_rate' and 'buffer_size', but the audio driver needs it !\n");
