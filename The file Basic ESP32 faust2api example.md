@@ -46,3 +46,13 @@ The example must be compiled in the ESP-IDF environment as a C++ app. To this en
   
 ESP-IDF project settings can be modified with the idf.py menuconfig command. The settings are saved in the **sdkconfig** file in the root folder of the project. Here we discuss the settings that were important to get the example running. The safest way to start your own project is to copy the project structure, including the contents of the sdkconfig file.
 
+#### Provisional list of relevant project settings  
+- disable WIFI speed optimization purpose:  reduce memory usage
+- run WIFI code on CPU 1 purpose: prevent interference (clicks) with sound engine
+- similar changes with MQTT
+- use external RAM
+- enable/disable C++ exceptions (necessity has been removed by commenting a throw ..... in the DspFaust file.
+- enable/disable C++ rtti
+- (do a file compare of the Hello World or early faust2api sdkconfig with the example SDK config to detect more differences)
+- 
+
