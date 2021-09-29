@@ -352,6 +352,7 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
    - https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/performance/size.html (use this to see % used)  
 5. Optimize WIFI memory usage	
    - https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/performance/ram-usage.html  
+   - prevent glitches: WIFI task core  change from 0 to 1	
 	
 ![external ram options](images/External%20RAM.png)  	
  
