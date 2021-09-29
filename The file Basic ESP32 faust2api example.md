@@ -69,13 +69,14 @@ After connection to WIFI and MQTT broker a tune can be heared over the headphone
 
 ## 3. Walkthrough for creation of a project based on this example with a different Faust sound engine
 
-ESP-IDF uses CMake for building a project. The use of CMake goes beyond the scope of this document. Here we describe a method where the new project re-uses the project structure of the example project, including the CMake files.
+ESP-IDF uses CMake for building a project. The use of CMake goes **beyond the scope** of this document. Here we describe a method where the new project re-uses the project structure of the example project, including the CMake files.
 
 1. copy the project folder ("example_faust_mqtt_tcp4_v3") into a suitable location ("path_to_projects") on your computer: 
 2. create a secrets.h file in the folder "main"  of the project: <path_to_projects>/example_faust_mqtt_tcp4_v3/main/secrets.h (note 1. above)
-3. ...  
-
-n. to compile and run your project, now continue with step 3 of section 2. in this document.
+3. create a sound engine file either by hand or with the online [Faust IDE](https://faustide.grame.fr/index.html) (see the [ESP32 tutorial](https://faustdoc.grame.fr/tutorials/esp32/)  
+4. create the C++ sound engine and driver files by compiling the .dsp file with the script:  faust2api <options> elecGuitar_MIDI.dsp **not sure if the script also generates the WM8978 files. If not, re-use them from the example project)**  Don't use the option to change the name of the output files. The example project assumes DspFaust and WM8978 as names.
+5. copy the DspFaust.cpp/.h and WM8978.cpp/.h files into the folder "main" of your project 
+6. to compile and run your project, now continue with step 3 of section 2. in this document.
 
 (test first with elecGuitarMidi.dsp, includes description of the faust2api options,  changing the DspFaust,  specifically:  MidiMeta::analyse(mono_dsp, midi_sync, nvoices);)
 (describe folder project structure, location of sound engine files and MakeLists.txt etc.)
