@@ -37,16 +37,17 @@ The example contains a main C++ app where the WM8978 audio codec and sound engin
 The example must be compiled in the ESP-IDF environment as a C++ app. To this end the project folder contains a folder main with a main.cpp file (only for this aspect see the praragraph "Starting a New ESP32 Project" in the tutorial on [DSP on the ESP32 With Faust](https://faustdoc.grame.fr/tutorials/esp32/).
 
 
-1. create a secrets.h file in the folder "main"  of the project: <path_to_projects>/example_faust_mqtt_tcp4_v3/main/secrets.h (note 1.)  
-2. open an ESP-IDF 4.2 Powershell session in Windows Terminal (see note 2.)
-3. move to the root folder of the project (cd <path_to_projects>/example_faust_mqtt_tcp4_v3
-4. set ESP32 as the target hardware with "idf.py set-target ESP32" (Option, not required for using the ready-to-go example) 
-5. if present, remove a build folder with it's contents, either by hand or by issuing a "idf.py fullclean" command
-6. tune project settings "idf.py menuconfig" (Option, not required for using the ready-to-go example, may be necessary if you have different hardware)
-7. compile/build the project:  "idf.py --no-ccache build"  or "idf.py --no-ccache build > buildlognn.txt" for logging of information
-8. inspect firmware size by adding an option "size", "size-files" or "size-components" to the above or use "idf.py size" or "idf.py size > sizelog.txt"
-9. flash the firmware: connect the device to a serial port of your computer and "run idf.py --no-ccache -p COMnn flash"
-10. monitor the output: "run idf.py --no-ccache -p COMnn monitor"
+1. copy the project folder ("example_faust_mqtt_tcp4_v3") into a suitable location ("path_to_projects") on your computer: 
+2. create a secrets.h file in the folder "main"  of the project: <path_to_projects>/example_faust_mqtt_tcp4_v3/main/secrets.h (note 1.)  
+3. open an ESP-IDF 4.2 Powershell session in Windows Terminal (see note 2.)
+4. move to the root folder of the project (cd <path_to_projects>/example_faust_mqtt_tcp4_v3)
+5. set ESP32 as the target hardware with "idf.py set-target ESP32" (Option, not required for using the ready-to-go example) 
+6. if present, remove a build folder with it's contents, either by hand or by issuing a "idf.py fullclean" command
+7. tune project settings "idf.py menuconfig" (Option, not required for using the ready-to-go example, may be necessary if you have different hardware)
+8. compile/build the project:  "idf.py --no-ccache build"  or "idf.py --no-ccache build > buildlognn.txt" for logging of information
+9. inspect firmware size by adding an option "size", "size-files" or "size-components" to the above or use "idf.py size" or "idf.py size > sizelog.txt"
+10. flash the firmware: connect the device to a serial port of your computer and "run idf.py --no-ccache -p COMnn flash"
+11. monitor the output: "run idf.py --no-ccache -p COMnn monitor"
 
 If you have properly configured an MQTT broker, the board sends some messages during start-up.
 You can send messages to the board (topic....).  If these are received, they will appear in your monitor screen.
@@ -66,7 +67,16 @@ Notes:
 2. When opening, this runs a script that sets relvant environment variables for usage of ESP-IDF. Upon installation of the ESP-IDF environment a link to plain Powershell is created. For more convenience (such as copying and pasting commands) I transfered this to a Windows Terminal session. Windows Terminal can also run a Linux under Windows session, which is useful for using the Faust scripts.   
 
 
-## 3. Walkthrough for creation of a project based on this example with a different Faust sound engine 
+## 3. Walkthrough for creation of a project based on this example with a different Faust sound engine
+
+ESP-IDF uses CMake for building a project. The use of CMake goes beyond the scope of this document. Here we describe a method where the new project re-uses the project structure of the example project, including the CMake files.
+
+1. copy the project folder ("example_faust_mqtt_tcp4_v3") into a suitable location ("path_to_projects") on your computer: 
+2. create a secrets.h file in the folder "main"  of the project: <path_to_projects>/example_faust_mqtt_tcp4_v3/main/secrets.h (note 1.)
+3. ...  
+
+n. to compile and run your project, now continue with step 3 of section 2. in this document.
+
 (test first with elecGuitarMidi.dsp, includes description of the faust2api options,  changing the DspFaust,  specifically:  MidiMeta::analyse(mono_dsp, midi_sync, nvoices);)
 (describe folder project structure, location of sound engine files and MakeLists.txt etc.)
 (Then test with different sound engine, e.g. simpleSynth_Analog.dsp or WaveSynth_FX.dsp)
