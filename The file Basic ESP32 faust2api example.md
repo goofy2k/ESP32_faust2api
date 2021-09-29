@@ -75,6 +75,7 @@ ESP-IDF uses CMake for building a project. The use of CMake goes **beyond the sc
 2. create a secrets.h file in the folder "main"  of the project: <path_to_projects>/example_faust_mqtt_tcp4_v3/main/secrets.h (note 1. above)
 3. create a sound engine file either by hand or with the online [Faust IDE](https://faustide.grame.fr/index.html) (see the [ESP32 tutorial](https://faustdoc.grame.fr/tutorials/esp32/)  
 4. create the C++ sound engine and driver files by compiling the .dsp file with the script:  faust2api <options> elecGuitar_MIDI.dsp **not sure if the script also generates the WM8978 files. If not, re-use them from the example project)**  Don't use the option to change the name of the output files. The example project assumes DspFaust and WM8978 as names.
+5. apply a number of modifications to the DspFaust.cpp file (see xxxxx) 
 5. copy the DspFaust.cpp/.h and WM8978.cpp/.h files into the folder "main" of your project 
 6. to compile and run your project, now continue with step 3 of section 2. in this document.
 
@@ -96,3 +97,7 @@ ESP-IDF project settings can be modified with the idf.py menuconfig command. The
 - (do a file compare of the Hello World or early faust2api sdkconfig with the example SDK config to detect more differences)
 - 
 
+ 
+xxxxx
+Modifications to the DspFaust.cpp file (case faust2api <options> elecGuitarMIDI.dsp ) 
+ 
