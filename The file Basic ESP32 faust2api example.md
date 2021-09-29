@@ -37,7 +37,7 @@ The example contains a main C++ app where the WM8978 audio codec and sound engin
 The example must be compiled in the ESP-IDF environment as a C++ app. To this end the project folder contains a folder main with a main.cpp file (only for this aspect see the praragraph "Starting a New ESP32 Project" in the tutorial on [DSP on the ESP32 With Faust](https://faustdoc.grame.fr/tutorials/esp32/).
 
 
-1. create a secrets.h file in the folder "main" of the project (note 1.)  
+1. create a secrets.h file in the folder "main"  of the project: <path_to_projects>/example_faust_mqtt_tcp4_v3/main/secrets.h (note 1.)  
 2. open an ESP-IDF 4.2 Powershell session in Windows Terminal (see note 2.)
 3. move to the root folder of the project (cd <path_to_projects>/example_faust_mqtt_tcp4_v3
 4. set ESP32 as the target hardware with "idf.py set-target ESP32" (Option, not required for using the ready-to-go example) 
