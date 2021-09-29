@@ -1,11 +1,4 @@
-/* MQTT (over TCP) Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
+//Version 5.0
 
 #include <stdio.h>
 #include <stdint.h>
@@ -16,18 +9,14 @@
 #include "nvs_flash.h"
 #include "esp_event.h"
 #include "esp_netif.h"
-//#include "protocol_examples_common.h"
+#include "protocol_examples_common.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/semphr.h"
 #include "freertos/queue.h"
-#include "freertos/event_groups.h"
-
+// #include "esp_system.h"
 #include "esp_spi_flash.h"
-
-#include "lwip/err.h"
-#include "lwip/sys.h"
 #include "lwip/sockets.h"
 #include "lwip/dns.h"
 #include "lwip/netdb.h"
@@ -35,317 +24,30 @@
 #include "esp_log.h"
 #include "mqtt_client.h"
 
+#include "secrets.h"
 #include "WM8978.h"
 #include "DspFaust.h"
-#include "secrets.h"
 
-
-/* The examples use WiFi configuration that you can set via project configuration menu
-
-   If you'd rather not, just change the below entries to strings with
-   the config you want - ie #define EXAMPLE_WIFI_SSID "mywifissid"
-*/
-/*
-//Credentials from menuconfig
-#define EXAMPLE_ESP_WIFI_SSID      CONFIG_ESP_WIFI_SSID
-#define EXAMPLE_ESP_WIFI_PASS      CONFIG_ESP_WIFI_PASSWORD
-#define EXAMPLE_ESP_MAXIMUM_RETRY  CONFIG_ESP_MAXIMUM_RETRY
-*/
-//Credentials form secrets.h
-#define EXAMPLE_ESP_WIFI_SSID      SECRET_ESP_WIFI_SSID
-#define EXAMPLE_ESP_WIFI_PASS      SECRET_ESP_WIFI_PASSWORD
-#define EXAMPLE_ESP_MAXIMUM_RETRY  SECRET_ESP_MAXIMUM_RETRY
-
-
-
-
-
-extern "C" {           //FCKX
+extern "C" {
     void app_main(void);
 }
 
-
 extern "C" {           //FCKX
-    static esp_mqtt_client * mqtt_app_start(void);
+    static void mqtt_app_start(void);
 }
 
 extern "C" {           //FCKX
 static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event);
 }
 
-/*
-
-extern "C" {
-    static void event_handler(void* arg, esp_event_base_t event_base,
-                                int32_t event_id, void* event_data);
-}
-
-extern "C" {
-    void wifi_init_sta(void);
-}
-
-*/
+static const char *TAG = "MQTT_EXAMPLE";
 
 
-/* FreeRTOS event group to signal when we are connected*/
-static EventGroupHandle_t s_wifi_event_group;
-
-/* The event group allows multiple bits for each event, but we only care about two events:
- * - we are connected to the AP with an IP
- * - we failed to connect after the maximum amount of retries */
-#define WIFI_CONNECTED_BIT BIT0
-#define WIFI_FAIL_BIT      BIT1
-
-static const char *TAG = "wifi station MQTT Faust";
-
-static int s_retry_num = 0;
-
-static void event_handler(void* arg, esp_event_base_t event_base,
-                                int32_t event_id, void* event_data){
-    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
-        esp_wifi_connect();
-    } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
-        if (s_retry_num < EXAMPLE_ESP_MAXIMUM_RETRY) {
-            esp_wifi_connect();
-            s_retry_num++;
-            ESP_LOGI(TAG, "retry to connect to the AP");
-        } else {
-            xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
-        }
-        ESP_LOGI(TAG,"connect to the AP fail");
-    } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
-        ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
-        ESP_LOGI(TAG, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
-        s_retry_num = 0;
-        xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
-    }
-}
-
-void wifi_init_sta(void)
-{
-    s_wifi_event_group = xEventGroupCreate();
-
-    ESP_ERROR_CHECK(esp_netif_init());
-    esp_event_loop_delete_default(); //FCKX
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
-    esp_netif_create_default_wifi_sta();
-
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-
-    esp_event_handler_instance_t instance_any_id;
-    esp_event_handler_instance_t instance_got_ip;
-    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
-                                                        ESP_EVENT_ANY_ID,
-                                                        &event_handler,
-                                                        NULL,
-                                                        &instance_any_id));
-    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
-                                                        IP_EVENT_STA_GOT_IP,
-                                                        &event_handler,
-                                                        NULL,
-                                                        &instance_got_ip));
-    /*
-    wifi_config_t wifi_config = {
-        .sta = {
-            //.ssid = EXAMPLE_ESP_WIFI_SSID,
-            .ssid = "Verhoeckx_glas",
-            //.password = EXAMPLE_ESP_WIFI_PASS,
-            .password = "Goofy2kmacho_99",
-            //Setting a password implies station will connect to all security modes including WEP/WPA.
-            // However these modes are deprecated and not advisable to be used. Incase your Access point
-            // doesn't support WPA2, these mode can be enabled by commenting below line
-	     .threshold.authmode = WIFI_AUTH_WPA2_PSK,
-
-            .pmf_cfg = {
-                .capable = true,
-                .required = false
-            },
-        },
-    };
-    
-    */
-    
-    //https://esp32.com/viewtopic.php?t=1317
-    //You can init structs in C++ but all elements of the struct has to be included in the initialization in the order they are declared as you can not reference properties by name. 
-    //Luckily, in C++, the struct can be initialized with {} and each property assigned separately.
-    
-    wifi_config_t wifi_config = {};  
-    strcpy((char*)wifi_config.sta.ssid, EXAMPLE_ESP_WIFI_SSID );
-    strcpy((char*)wifi_config.sta.password, EXAMPLE_ESP_WIFI_PASS);
-    
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
-    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config) );
-    ESP_ERROR_CHECK(esp_wifi_start() );
-
-    ESP_LOGI(TAG, "wifi_init_sta finished.");
-
-    /* Waiting until either the connection is established (WIFI_CONNECTED_BIT) or connection failed for the maximum
-     * number of re-tries (WIFI_FAIL_BIT). The bits are set by event_handler() (see above) */
-    EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
-            WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
-            pdFALSE,
-            pdFALSE,
-            portMAX_DELAY);
-
-    /* xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually
-     * happened. */
-    if (bits & WIFI_CONNECTED_BIT) {
-        ESP_LOGI(TAG, "connected to ap SSID:%s password:%s",
-                 EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS);
-    } else if (bits & WIFI_FAIL_BIT) {
-        ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s",
-                 EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS);
-    } else {
-        ESP_LOGE(TAG, "UNEXPECTED EVENT");
-    }
-
-    /* The event will not be processed after unregister */
-    ESP_ERROR_CHECK(esp_event_handler_instance_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP, instance_got_ip));
-    ESP_ERROR_CHECK(esp_event_handler_instance_unregister(WIFI_EVENT, ESP_EVENT_ANY_ID, instance_any_id));
-    vEventGroupDelete(s_wifi_event_group);
-}
-
-
-
-//static const char *TAG = "MQTT_EXAMPLE";
-
-
-
-static void call_faust_api(esp_mqtt_event_handle_t event){
-    printf("HANDLING FAUST API CALL=%s\n"," /faust/api");
-    if (strncmp(event->topic, "/faust/api/DspFaust",strlen("/faust/api/DspFaust")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else
-    
-    if (strncmp(event->topic, "/faust/api/DspFaust",strlen("/faust/api/DspFaust")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/start",strlen("/faust/api/start")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/stop",strlen("/faust/api/stop")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/isRunning",strlen("/faust/api/isRunning")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/keyOn",strlen("/faust/api/keyOn")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/keyOff",strlen("/faust/api/keyOff")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/newVoice",strlen("/faust/api/newVoice")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/deleteVoice",strlen("/faust/api/deleteVoice")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/allNotesOff",strlen("/faust/api/allNotesOff")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/propagateMidi",strlen("/faust/api/propagateMidi")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/getJSONUI",strlen("/faust/api/getJSONUI")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/getJSONMeta",strlen("/faust/api/getJSONMeta")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/buildUserInterface",strlen("/faust/api/buildUserInterface")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/getParamsCount",strlen("/faust/api/getParamsCount")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/setParamValue",strlen("/faust/api/SetParamValue")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/getParamValue",strlen("/faust/api/getParamValue")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/setVoiceParamValue",strlen("/faust/api/setVoiceParamValue")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else     
-    if (strncmp(event->topic, "/faust/api/getVoiceParamValue",strlen("/faust/api/getVoiceParamValue")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/getParamAddress",strlen("/faust/api/getParamAddress")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/getVoiceParamAddress",strlen("/faust/api/getVoiceParamAddress")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else      
-    if (strncmp(event->topic, "/faust/api/DspFaust",strlen("/faust/api/DspFaust")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/DspFaust",strlen("/faust/api/DspFaust")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/getParamMin",strlen("/faust/api/getParamMin")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/getParamMax",strlen("/faust/api/getParamMax")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/getParamInit",strlen("/faust/api/getParamInit")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/getMetaData",strlen("/faust/api/getMetaData")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/propagateAcc",strlen("/faust/api/propagateAcc")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/setAccConverter",strlen("/faust/api/setAccCoverter")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/propagateGyr",strlen("/faust/api/propagateGyr")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/setGyrConverter",strlen("/faust/api/setGyrCoverter")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/getCPULoad",strlen("/faust/api/getCPULoad")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else    
-    if (strncmp(event->topic, "/faust/api/configureOSC",strlen("/faust/api/configureOSC")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else 
-    if (strncmp(event->topic, "/faust/api/isOSCOn",strlen("/faust/api/isOSCOn")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else       
-
-    {
-        printf("HANDLING FAUST API CALL: INVALID COMMAND= %s\n",event->topic);
-          }            
-    }
-
-
-static void call_faust_api2(esp_mqtt_event_handle_t event){
-    printf("HANDLING FAUST API2 CALL=%s\n"," /faust/api2");
-    if (strncmp(event->topic, "/faust/api2/rtttl",strlen("/faust/api2/rtttl")) == 0) {
-             printf("HANDLING FAUST API2 CALL: COMMAND= %s\n",event->topic);
-    } else
-    if (strncmp(event->topic, "/faust/api2/gate",strlen("/faust/api2/gate")) == 0) {
-             printf("HANDLING FAUST API2 CALL: COMMAND= %s\n",event->topic);   
-    } else 
-    if (strncmp(event->topic, "/faust/api2/other",strlen("/faust/api2/other")) == 0) {
-             printf("HANDLING FAUST API2 CALL: COMMAND= %s\n",event->topic);   
-    } else         
-    {
-             printf("HANDLING FAUST API2 CALL: INVALID COMMAND= %s\n",event->topic);
-          }            
-    }
-
-
-static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event){  
+static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
+{  
     //ESP_LOGI(TAG, "FCKX: HANDLER_CB CALLED");  //FCKX
     esp_mqtt_client_handle_t client = event->client;
     int msg_id;
-    int result;
     // your_context_t *context = event->context;
     switch (event->event_id) {
         case MQTT_EVENT_CONNECTED:
@@ -385,41 +87,6 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event){
             ESP_LOGI(TAG, "MQTT_EVENT_DATA");
             printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
             printf("DATA=%.*s\r\n", event->data_len, event->data);
-            //if topic starts with /faust/api or /faust/api2, call a command dispatcher/handler
-            //code here
-           
-   //result =  strncmp(event->topic, "/faust/api2/gate",event->topic_len); //OK
-            //printf("result=%d\n", result);
-            /*
-            result =  strncmp("/faust/api2/gate",event->topic,event->topic_len);  //OK
-            printf("result=%d\n", result);
-            result =  strcmp("/faust/api2/gate",event->topic);                    //NOK    
-            printf("result=%d\n", result);
-            printf("topic=%s\n", event->topic);             
-            if (result == 0 ) {ESP_LOGI(TAG, "HIT TOPIC = /faust/api2/gate");};
-            */
-         //   if (strncmp(event->topic, "/faust/api",event->topic_len)==0) {ESP_LOGI(TAG, "HIT TOPIC = /faust/api");} 
-         //   else
-              //if (result == 0) {ESP_LOGI(TAG, "HIT TOPIC = /faust/api2/gate");}; 
-    //if (result == 0) {printf("HIT result=%d\n",result);};
- //   if (strncmp(event->topic, "/faust/api2/gate",event->topic_len) == 0) {
-     if (strncmp(event->topic, "/faust/api2",strlen("/faust/api2")) == 0) {
-        printf("HIT result=%s\n"," /faust/api2/gate");
-        call_faust_api2(event);
-    
-    }
-    //  else  if (strncmp(event->topic, "/faust/api",event->topic_len) == 0) {
-        else  if (strncmp(event->topic, "/faust/api",strlen("/faust/api")) == 0) {
-          printf("HIT result=%s\n"," /faust/api");
-          call_faust_api(event);
-      };
-
-          //else
-           //      {ESP_LOGI(TAG, "other HIT TOPIC");}
-            //if topic starts with .....
-            //if (my_topic.rfind("/faust/api2",0) == 0 ) {ESP_LOGI(TAG, "HIT TOPIC starts with /faust/api2");};
-            //else
-                
             break;
         case MQTT_EVENT_ERROR:
             ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
@@ -468,8 +135,8 @@ And remove both definition of the mqtt_event_handler() and registration of the h
 
 */
 
-static esp_mqtt_client * mqtt_app_start(void){
-//static void mqtt_app_start(void){
+static void mqtt_app_start(void)
+{
     /*
     esp_mqtt_client_config_t mqtt_cfg = {
     //.uri = CONFIG_BROKER_URL,
@@ -530,10 +197,7 @@ static esp_mqtt_client * mqtt_app_start(void){
     ESP_LOGI(TAG, "START MQTT CLIENT");  //FCKX
     esp_mqtt_client_start(client);
     ESP_LOGI(TAG, "MQTT CLIENT STARTED");  //FCKX
-    
-    return client;
 }
-
 
 
 #define OCTAVE_OFFSET 0
@@ -575,13 +239,20 @@ char *song = "GoodBad:d=4,o=5,b=56:32p,32a#,32d#6,32a#,32d#6,8a#.,16f#.,16g#.,d#
 //char *song = "MahnaMahna:d=16,o=6,b=125:c#,c.,b5,8a#.5,8f.,4g#,a#,g.,4d#,8p,c#,c.,b5,8a#.5,8f.,g#.,8a#.,4g,8p,c#,c.,b5,8a#.5,8f.,4g#,f,g.,8d#.,f,g.,8d#.,f,8g,8d#.,f,8g,d#,8c,a#5,8d#.,8d#.,4d#,8d#.";
 //char *song = "LeisureSuit:d=16,o=6,b=56:f.5,f#.5,g.5,g#5,32a#5,f5,g#.5,a#.5,32f5,g#5,32a#5,g#5,8c#.,a#5,32c#,a5,a#.5,c#.,32a5,a#5,32c#,d#,8e,c#.,f.,f.,f.,f.,f,32e,d#,8d,a#.5,e,32f,e,32f,c#,d#.,c#";
 //char *song = "MissionImp:d=16,o=6,b=95:32d,32d#,32d,32d#,32d,32d#,32d,32d#,32d,32d,32d#,32e,32f,32f#,32g,g,8p,g,8p,a#,p,c7,p,g,8p,g,8p,f,p,f#,p,g,8p,g,8p,a#,p,c7,p,g,8p,g,8p,f,p,f#,p,a#,g,2d,32p,a#,g,2c#,32p,a#,g,2c,a#5,8c,2p,32p,a#5,g5,2f#,32p,a#5,g5,2f,32p,a#5,g5,2e,d#,8d";
-
+/*
+void setup(void)
+{
+  Serial.begin(9600);
+  tone1.begin(13);
+}
+*/
 #define isdigit(n) (n >= '0' && n <= '9')
 
-
-void play_rtttl(char *p, DspFaust * aDSP)
+/*
+void play_rtttl(char *p, dsp* DSP)
 {
   // Absolutely no error checking in here
+
   unsigned char default_dur = 4;
   unsigned char default_oct = 6;
   int bpm = 63;
@@ -593,8 +264,6 @@ void play_rtttl(char *p, DspFaust * aDSP)
 
   // format: d=N,o=N,b=NNN:
   // find the start (skip name, etc)
-
-  //char * p = song;
 
   while(*p != ':') p++;    // ignore name
   p++;                     // skip ':'
@@ -733,12 +402,12 @@ void play_rtttl(char *p, DspFaust * aDSP)
    //   Serial.print(") ");
    //   Serial.println(duration, 10);
       
-      aDSP->setParamValue("/elecGuitar/midi/freq",freqs[(scale-4) * 12 + note]);
-      aDSP->setParamValue("/elecGuitar/gate",1);
+      DSP->setParamValue("/elecGuitar/midi/freq",freqs[(scale-4) * 12 + note]);
+      DSP->setParamValue("/elecGuitar/gate",1);
       vTaskDelay(duration / portTICK_PERIOD_MS);
       //printf("%s \n",DSP->getJSONUI());
       //DSP->setParamValue("gain",0);
-      aDSP->setParamValue("/elecGuitar/gate",0);
+      DSP->setParamValue("/elecGuitar/gate",0);
       
       
      // tone1.play(notes[(scale - 4) * 12 + note]);
@@ -750,15 +419,21 @@ void play_rtttl(char *p, DspFaust * aDSP)
     {
       //Serial.print("Pausing: ");
       //Serial.println(duration, 10);
-      vTaskDelay(5*duration/ portTICK_PERIOD_MS);
+      delay(duration);
     }
-  }  //while (p*)
-  } //song player    
- 
+  }
+}
+
+*/
+
+
+
+
 
 
 void app_main(void)
 {
+    
     ESP_LOGI(TAG, "[APP] Startup..");
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
     ESP_LOGI(TAG, "[APP] IDF version: %s", esp_get_idf_version());
@@ -778,23 +453,19 @@ void app_main(void)
     /* This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
      * Read "Establishing Wi-Fi or Ethernet Connection" section in
      * examples/protocols/README.md for more information about this function.
-     */
-    //ESP_ERROR_CHECK(example_connect());
-    
-    //Initialize NVS
-    esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-      ESP_ERROR_CHECK(nvs_flash_erase());
-      ret = nvs_flash_init();
-    }
-    ESP_ERROR_CHECK(ret);
+     Add to Makefile:  EXTRA_COMPONENT_DIRS = $(IDF_PATH)/examples/common_components/protocol_examples_common
+     Use menuconfig to set: 
+     To configure the example to use Wi-Fi, Ethernet or both connections, open the project configuration menu (idf.py menuconfig) and navigate to "Example Connection Configuration" menu. Select either "Wi-Fi" or "Ethernet" or both in the "Connect using" choice.
 
-    ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
-    wifi_init_sta();
-    esp_mqtt_client_handle_t  mqtt_client =  mqtt_app_start();
-    int msg_id;
+When connecting using Wi-Fi, enter SSID and password of your Wi-Fi access point into the corresponding fields. If connecting to an open Wi-Fi network, keep the password field empty.
+     
+     
+     */
+    ESP_ERROR_CHECK(example_connect());
+
+    mqtt_app_start();   
     
-    msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "init", 0, 0, 0);
+
     WM8978 wm8978;
     wm8978.init();
     wm8978.addaCfg(1,1); 
@@ -824,11 +495,14 @@ void app_main(void)
 
     DSP->start();
     if (DSP->isRunning()) {printf("AFTER START RUNNINGc\n");} else {printf("AFTER START NOT RUNNINGd\n");} ;
-  /*
+  
     //printf("Hello modified 3x world!\n");
     //DSP->setParamValue("freq",220);
     //DSP->keyOn(50,50);
     DSP->allNotesOff();
+
+
+
     
      float CPULoad = DSP->getCPULoad();
      printf("CPULoad %7.5f \n",CPULoad);
@@ -872,9 +546,6 @@ void app_main(void)
         printf("Could not create myvoice0 \n");
         
         };
-
-*/
-
 /*
 Main Parameters
 0: /Polyphonic/Voices/Panic
@@ -895,25 +566,9 @@ Independent Voice
 6: /elecGuitar/pluckPosition
 */
 
-
-//msg_id = esp_mqtt_client_subscribe(mqtt_client, "/faust/gate", 1);
-//ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
-msg_id = esp_mqtt_client_subscribe(mqtt_client, "/faust/api/#", 1);
-ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
-msg_id = esp_mqtt_client_subscribe(mqtt_client, "/faust/api2/#", 1);
-ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
-
-msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop started", 0, 0, 0);
-msg_id = esp_mqtt_client_publish(mqtt_client, "/faust/jsonui", DSP->getJSONUI(), 0, 0, 0);  //to be implemented: publish the UI by remote request via th
-
-play_rtttl(song, DSP); //try to implement playing a song in a separate task
-
 while(1) {
-        printf(">>>>>Loop<<<<<< \n");
-        //printf("%s \n",DSP->getJSONUI());
-
-   
-   /*
+        printf("Loop \n");
+        /*
         DSP->setParamValue("freq",rand()%(2000-50 + 1) + 50);
         DSP->setParamValue("gain",0.1);
         */
@@ -924,15 +579,179 @@ while(1) {
         printf("%s \n",DSP->getJSONUI());
         //DSP->setParamValue("gain",0);
         DSP->setParamValue("/elecGuitar/gate",0);
-        */
+        vTaskDelay(500 / portTICK_PERIOD_MS);*/
+         unsigned char default_dur = 4;
+  unsigned char default_oct = 6;
+  int bpm = 63;
+  int num;
+  long wholenote;
+  long duration;
+  unsigned char note;
+  unsigned char scale;
+
+  // format: d=N,o=N,b=NNN:
+  // find the start (skip name, etc)
+
+  char * p = song;
+
+  while(*p != ':') p++;    // ignore name
+  p++;                     // skip ':'
+
+  // get default duration
+  if(*p == 'd')
+  {
+    p++; p++;              // skip "d="
+    num = 0;
+    while(isdigit(*p))
+    {
+      num = (num * 10) + (*p++ - '0');
+    }
+    if(num > 0) default_dur = num;
+    p++;                   // skip comma
+  }
+
+ //Serial.print("ddur: "); Serial.println(default_dur, 10);
+
+  // get default octave
+  if(*p == 'o')
+  {
+    p++; p++;              // skip "o="
+    num = *p++ - '0';
+    if(num >= 3 && num <=7) default_oct = num;
+    p++;                   // skip comma
+  }
+
+  //Serial.print("doct: "); Serial.println(default_oct, 10);
+
+  // get BPM
+  if(*p == 'b')
+  {
+    p++; p++;              // skip "b="
+    num = 0;
+    while(isdigit(*p))
+    {
+      num = (num * 10) + (*p++ - '0');
+    }
+    bpm = num;
+    p++;                   // skip colon
+  }
+
+  //Serial.print("bpm: "); Serial.println(bpm, 10);
+
+  // BPM usually expresses the number of quarter notes per minute
+  wholenote = (60 * 1000L / bpm) * 4;  // this is the time for whole note (in milliseconds)
+
+  //Serial.print("wn: "); Serial.println(wholenote, 10);
+
+
+  // now begin note loop
+  while(*p)
+  {
+    // first, get note duration, if available
+    num = 0;
+    while(isdigit(*p))
+    {
+      num = (num * 10) + (*p++ - '0');
+    }
+    
+    if(num) duration = wholenote / num;
+    else duration = wholenote / default_dur;  // we will need to check if we are a dotted note after
+
+    // now get the note
+    note = 0;
+
+    switch(*p)
+    {
+      case 'c':
+        note = 1;
+        break;
+      case 'd':
+        note = 3;
+        break;
+      case 'e':
+        note = 5;
+        break;
+      case 'f':
+        note = 6;
+        break;
+      case 'g':
+        note = 8;
+        break;
+      case 'a':
+        note = 10;
+        break;
+      case 'b':
+        note = 12;
+        break;
+      case 'p':
+      default:
+        note = 0;
+    }
+    p++;
+
+    // now, get optional '#' sharp
+    if(*p == '#')
+    {
+      note++;
+      p++;
+    }
+
+    // now, get optional '.' dotted note
+    if(*p == '.')
+    {
+      duration += duration/2;
+      p++;
+    }
+  
+    // now, get scale
+    if(isdigit(*p))
+    {
+      scale = *p - '0';
+      p++;
+    }
+    else
+    {
+      scale = default_oct;
+    }
+
+    scale += OCTAVE_OFFSET;
+
+    if(*p == ',')
+      p++;       // skip comma for next note (or we may be at the end)
+
+    // now play the note
+
+    if(note)
+    {
+       
+   //   Serial.print("Playing: ");
+   //   Serial.print(scale, 10); Serial.print(' ');
+   //   Serial.print(note, 10); Serial.print(" (");
+   //   Serial.print(notes[(scale - 4) * 12 + note], 10);
+   //   Serial.print(") ");
+   //   Serial.println(duration, 10);
+      
+      DSP->setParamValue("/elecGuitar/midi/freq",freqs[(scale-4) * 12 + note]);
+      DSP->setParamValue("/elecGuitar/gate",1);
+      vTaskDelay(duration / portTICK_PERIOD_MS);
+      //printf("%s \n",DSP->getJSONUI());
+      //DSP->setParamValue("gain",0);
+      DSP->setParamValue("/elecGuitar/gate",0);
+      
+      
+     // tone1.play(notes[(scale - 4) * 12 + note]);
+      //delay(duration);
+      //tone1.stop();
+      
+    }
+    else
+    {
+      //Serial.print("Pausing: ");
+      //Serial.println(duration, 10);
+      vTaskDelay(5*duration/ portTICK_PERIOD_MS);
+    }
+  }
         
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-   
-
-  
-  //play_rtttl(song, DSP);
-  
-
 };
 
 
@@ -947,6 +766,6 @@ while(1) {
     }
     */
     // Waiting forever
-    vTaskSuspend(nullptr);   
+    vTaskSuspend(nullptr);
     
 }

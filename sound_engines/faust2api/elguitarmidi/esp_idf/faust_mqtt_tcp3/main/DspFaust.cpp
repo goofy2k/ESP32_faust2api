@@ -11932,12 +11932,16 @@ class FaustPolyEngine {
             };
             //FCKX
             //MidiMeta::analyse(mono_dsp, midi_sync, nvoices);
+            midi_sync = true;
+            nvoices = NVOICES;
             if (MidiMeta::checkPolyphony(mono_dsp)) {
                printf("checkPolyphony 2: true \n");    
             }
             else {
                 printf("checkPolyphony 2: false \n");
-            };            
+            };   
+
+            /*            
             // Getting the UI JSON
             JSONUI jsonui1(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
             mono_dsp->buildUserInterface(&jsonui1);
@@ -11947,7 +11951,7 @@ class FaustPolyEngine {
             JSONUI jsonui1M(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
             mono_dsp->metadata(&jsonui1M);
             fJSONMeta = jsonui1M.JSON();
-            
+            */
             if (nvoices > 0) {
                 
                 fPolyDSP = new mydsp_poly(mono_dsp, nvoices, true);
@@ -11957,7 +11961,7 @@ class FaustPolyEngine {
             #else
                 fFinalDSP = fPolyDSP;
             #endif
-                
+                /*
                 // Update JSONs with Poly version
                 JSONUI jsonui2(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
                 fFinalDSP->buildUserInterface(&jsonui2);
@@ -11966,15 +11970,15 @@ class FaustPolyEngine {
                 JSONUI jsonui2M(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
                 fFinalDSP->metadata(&jsonui2M);
                 fJSONMeta = jsonui2M.JSON();
-                
+                */
             } else {
                 fPolyDSP = NULL;
                 fFinalDSP = mono_dsp;
             }
-            
+            /*
             fFinalDSP->buildUserInterface(&fMidiUI);
             fFinalDSP->buildUserInterface(&fAPIUI);
-            
+            */
             // Retrieving DSP object name
             struct MyMeta : public Meta
             {

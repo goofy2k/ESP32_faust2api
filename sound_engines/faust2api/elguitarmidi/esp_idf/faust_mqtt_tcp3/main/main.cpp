@@ -501,7 +501,7 @@ When connecting using Wi-Fi, enter SSID and password of your Wi-Fi access point 
 
 
 
-    
+    /*
      float CPULoad = DSP->getCPULoad();
      printf("CPULoad %7.5f \n",CPULoad);
      
@@ -544,6 +544,8 @@ When connecting using Wi-Fi, enter SSID and password of your Wi-Fi access point 
         printf("Could not create myvoice0 \n");
         
         };
+    */    
+        
 /*
 Main Parameters
 0: /Polyphonic/Voices/Panic
@@ -566,18 +568,20 @@ Independent Voice
 
 while(1) {
         printf("Loop \n");
-        /*
+        
         DSP->setParamValue("freq",rand()%(2000-50 + 1) + 50);
         DSP->setParamValue("gain",0.1);
-        */
-        /*
+        
+        
         DSP->setParamValue("/elecGuitar/midi/freq",rand()%(2000-50 + 1) + 50);
         DSP->setParamValue("/elecGuitar/gate",1);
         vTaskDelay(500 / portTICK_PERIOD_MS);
         printf("%s \n",DSP->getJSONUI());
         //DSP->setParamValue("gain",0);
         DSP->setParamValue("/elecGuitar/gate",0);
-        vTaskDelay(500 / portTICK_PERIOD_MS);*/
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        
+        
          unsigned char default_dur = 4;
   unsigned char default_oct = 6;
   int bpm = 63;

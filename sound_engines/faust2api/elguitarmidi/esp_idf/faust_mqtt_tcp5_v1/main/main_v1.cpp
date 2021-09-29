@@ -1,3 +1,4 @@
+// V 5.1
 /* MQTT (over TCP) Example
 
    This example code is in the Public Domain (or CC0 licensed, at your option.)
@@ -824,7 +825,7 @@ void app_main(void)
 
     DSP->start();
     if (DSP->isRunning()) {printf("AFTER START RUNNINGc\n");} else {printf("AFTER START NOT RUNNINGd\n");} ;
-  /*
+  
     //printf("Hello modified 3x world!\n");
     //DSP->setParamValue("freq",220);
     //DSP->keyOn(50,50);
@@ -872,9 +873,6 @@ void app_main(void)
         printf("Could not create myvoice0 \n");
         
         };
-
-*/
-
 /*
 Main Parameters
 0: /Polyphonic/Voices/Panic
