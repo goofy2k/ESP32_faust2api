@@ -85,7 +85,18 @@ extern "C" {
 }
 
 */
-
+int msg_id;
+DspFaust* DSP;
+WM8978 wm8978;
+int hpVol_L = 40;
+int hpVol_R = 40;
+float lfoFreq = 10;
+float lfoDepth = 0.25;
+float synthA = 10;
+float synthD = 1;
+float synthS = 0.01;
+float synthR = 1.0;
+bool play_flag = false;
 
 /* FreeRTOS event group to signal when we are connected*/
 static EventGroupHandle_t s_wifi_event_group;
@@ -96,7 +107,7 @@ static EventGroupHandle_t s_wifi_event_group;
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT      BIT1
 
-static const char *TAG = "wifi station MQTT Faust";
+static const char *TAG = "MQTT Faust";
 
 static int s_retry_num = 0;
 
@@ -206,20 +217,34 @@ void wifi_init_sta(void)
     vEventGroupDelete(s_wifi_event_group);
 }
 
-
+void update_controls(){  //do this in a cyclic freertos task
+    
+  wm8978.hpVolSet(hpVol_R, hpVol_L);
+  DSP->setParamValue("/WaveSynth_FX/lfoFreq",lfoFreq);
+  DSP->setParamValue("/WaveSynth_FX/lfoDepth",lfoDepth); 
+  DSP->setParamValue("/WaveSynth_FX/A",synthA);
+  DSP->setParamValue("/WaveSynth_FX/D",synthD); 
+  DSP->setParamValue("/WaveSynth_FX/S",synthS); 
+  DSP->setParamValue("/WaveSynth_FX/R",synthR); 
+  
+  
+    
+}
 
 //static const char *TAG = "MQTT_EXAMPLE";
 
 
-
 static void call_faust_api(esp_mqtt_event_handle_t event){
-    printf("HANDLING FAUST API CALL=%s\n"," /faust/api");
+    //printf("HANDLING FAUST API CALL=%s\n"," /faust/api");
+    //static const char *TAG = "MQTT Faust API2";
     if (strncmp(event->topic, "/faust/api/DspFaust",strlen("/faust/api/DspFaust")) == 0) {
              printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
     } else
     
     if (strncmp(event->topic, "/faust/api/DspFaust",strlen("/faust/api/DspFaust")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
+            ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
+            ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
+            ESP_LOGI(TAG,"...to be implemented..."); 
     } else    
     if (strncmp(event->topic, "/faust/api/start",strlen("/faust/api/start")) == 0) {
              printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
@@ -325,18 +350,66 @@ static void call_faust_api(esp_mqtt_event_handle_t event){
 
 
 static void call_faust_api2(esp_mqtt_event_handle_t event){
-    printf("HANDLING FAUST API2 CALL=%s\n"," /faust/api2");
+    static const char *TAG = "MQTT Faust API2";
+    ESP_LOGI(TAG,"HANDLING Faust API2 CALL:%.*s\r ", event->topic_len, event->topic);
+    ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
+    //printf("HANDLING FAUST API2 CALL=%s\n"," /faust/api2");
     if (strncmp(event->topic, "/faust/api2/rtttl",strlen("/faust/api2/rtttl")) == 0) {
-             printf("HANDLING FAUST API2 CALL: COMMAND= %s\n",event->topic);
+             ESP_LOGI(TAG,"...to be implemented..."); 
     } else
     if (strncmp(event->topic, "/faust/api2/gate",strlen("/faust/api2/gate")) == 0) {
-             printf("HANDLING FAUST API2 CALL: COMMAND= %s\n",event->topic);   
+            ESP_LOGI(TAG,"...to be implemented..."); 
     } else 
-    if (strncmp(event->topic, "/faust/api2/other",strlen("/faust/api2/other")) == 0) {
-             printf("HANDLING FAUST API2 CALL: COMMAND= %s\n",event->topic);   
+    if (strncmp(event->topic, "/faust/api2/wm8978/hpVol/left",strlen("/faust/api2/wm8978/hpVol/left")) == 0)
+        {
+             hpVol_L = atoi(event->data);            
+    } else  
+    if (strncmp(event->topic, "/faust/api2/wm8978/hpVol/right",strlen("/faust/api2/wm8978/hpVol/right")) == 0)
+        {
+             hpVol_R = atoi(event->data);             
+    } else  
+
+    if (strncmp(event->topic, "/faust/api2/DSP/synthA",strlen("/faust/api2/DSP/synthA")) == 0)
+        {
+             synthA = atof(event->data);             
+    } else    
+    if (strncmp(event->topic, "/faust/api2/DSP/synthD",strlen("/faust/api2/DSP/synthD")) == 0)
+        {
+             synthD = atof(event->data);             
+    } else    
+        
+    if (strncmp(event->topic, "/faust/api2/DSP/synthS",strlen("/faust/api2/DSP/synthS")) == 0)
+        {
+             synthS = atof(event->data);             
+    } else 
+
+    if (strncmp(event->topic, "/faust/api2/DSP/synthR",strlen("/faust/api2/DSP/synthR")) == 0)
+        {
+             synthR = atof(event->data);             
     } else         
+
+    if (strncmp(event->topic, "/faust/api2/DSP/lfoFreq",strlen("/faust/api2/DSP/lfoFreq")) == 0)
+        {
+             lfoFreq = atof(event->data);             
+    } else    
+
+    if (strncmp(event->topic, "/faust/api2/DSP/lfoDepth",strlen("/faust/api2/DSP/lfoDepth")) == 0)
+        {
+             lfoDepth = atof(event->data);             
+    } else    
+
+    if (strncmp(event->topic, "/faust/api2/DSP/play",strlen("/faust/api2/DSP/play")) == 0)
+        {
+            play_flag = strncmp(event->data, "false",strlen("false"));
+            if (play_flag) { ESP_LOGI(TAG,"play_flag: true");}
+            else { ESP_LOGI(TAG,"play_flag: false");} ;          
+             //play_flag = atob(event_data); //try to implement playing a song in a separate task             
+    } else  
+
     {
-             printf("HANDLING FAUST API2 CALL: INVALID COMMAND= %s\n",event->topic);
+             ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
+             ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
+             ESP_LOGI(TAG,">>>INVALID COMMAND<<<"); 
           }            
     }
 
@@ -344,26 +417,30 @@ static void call_faust_api2(esp_mqtt_event_handle_t event){
 static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event){  
     //ESP_LOGI(TAG, "FCKX: HANDLER_CB CALLED");  //FCKX
     esp_mqtt_client_handle_t client = event->client;
-    int msg_id;
+    //int msg_id;
     int result;
     // your_context_t *context = event->context;
     switch (event->event_id) {
         case MQTT_EVENT_CONNECTED:
             ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
-            msg_id = esp_mqtt_client_publish(client, "/topic/qos1", "data_3", 0, 1, 0);
+            
+            msg_id = esp_mqtt_client_publish(client, "/faust/test/qos1", "test qos1", 0, 1, 0);
             ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
 
-            msg_id = esp_mqtt_client_subscribe(client, "/topic/qos0", 0);
+            msg_id = esp_mqtt_client_subscribe(client, "/faust/test/qos0", 0);
             ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 
-            msg_id = esp_mqtt_client_subscribe(client, "/topic/qos1", 1);
+            msg_id = esp_mqtt_client_subscribe(client, "/faust/test/qos1", 1);
             ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 
-            msg_id = esp_mqtt_client_unsubscribe(client, "/topic/qos1");
+            msg_id = esp_mqtt_client_unsubscribe(client, "/faust/test/qos1");
             ESP_LOGI(TAG, "sent unsubscribe successful, msg_id=%d", msg_id);
-            
-            msg_id = esp_mqtt_client_subscribe(client, "/FCKX/test", 0);
-            ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+            /*
+            msg_id = esp_mqtt_client_subscribe(client, "/faust", 0);
+            //ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+            msg_id = esp_mqtt_client_publish(client, "/faust", "MQTT OK", 0, 1, 0);
+            //ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            */
             
             break;
         case MQTT_EVENT_DISCONNECTED:
@@ -372,7 +449,7 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event){
 
         case MQTT_EVENT_SUBSCRIBED:
             ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id);
-            msg_id = esp_mqtt_client_publish(client, "/topic/qos0", "data", 0, 0, 0);
+            msg_id = esp_mqtt_client_publish(client, "/faust/test/qos0", "MQTT EVENT SUBSCRIBED", 0, 0, 0);
             ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
             break;
         case MQTT_EVENT_UNSUBSCRIBED:
@@ -382,44 +459,16 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event){
             ESP_LOGI(TAG, "MQTT_EVENT_PUBLISHED, msg_id=%d", event->msg_id);
             break;
         case MQTT_EVENT_DATA:
-            ESP_LOGI(TAG, "MQTT_EVENT_DATA");
-            printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
-            printf("DATA=%.*s\r\n", event->data_len, event->data);
+            ESP_LOGV(TAG, "MQTT_EVENT_DATA");
+            //ESP_LOGI(TAG, "TOPIC=%.*s\r", event->topic_len, event->topic);
+            //ESP_LOGI(TAG,"DATA=%.*s\r", event->data_len, event->data);
             //if topic starts with /faust/api or /faust/api2, call a command dispatcher/handler
-            //code here
-           
-   //result =  strncmp(event->topic, "/faust/api2/gate",event->topic_len); //OK
-            //printf("result=%d\n", result);
-            /*
-            result =  strncmp("/faust/api2/gate",event->topic,event->topic_len);  //OK
-            printf("result=%d\n", result);
-            result =  strcmp("/faust/api2/gate",event->topic);                    //NOK    
-            printf("result=%d\n", result);
-            printf("topic=%s\n", event->topic);             
-            if (result == 0 ) {ESP_LOGI(TAG, "HIT TOPIC = /faust/api2/gate");};
-            */
-         //   if (strncmp(event->topic, "/faust/api",event->topic_len)==0) {ESP_LOGI(TAG, "HIT TOPIC = /faust/api");} 
-         //   else
-              //if (result == 0) {ESP_LOGI(TAG, "HIT TOPIC = /faust/api2/gate");}; 
-    //if (result == 0) {printf("HIT result=%d\n",result);};
- //   if (strncmp(event->topic, "/faust/api2/gate",event->topic_len) == 0) {
-     if (strncmp(event->topic, "/faust/api2",strlen("/faust/api2")) == 0) {
-        printf("HIT result=%s\n"," /faust/api2/gate");
-        call_faust_api2(event);
-    
-    }
-    //  else  if (strncmp(event->topic, "/faust/api",event->topic_len) == 0) {
-        else  if (strncmp(event->topic, "/faust/api",strlen("/faust/api")) == 0) {
-          printf("HIT result=%s\n"," /faust/api");
-          call_faust_api(event);
-      };
-
-          //else
-           //      {ESP_LOGI(TAG, "other HIT TOPIC");}
-            //if topic starts with .....
-            //if (my_topic.rfind("/faust/api2",0) == 0 ) {ESP_LOGI(TAG, "HIT TOPIC starts with /faust/api2");};
-            //else
-                
+            if (strncmp(event->topic, "/faust/api2",strlen("/faust/api2")) == 0) {
+                call_faust_api2(event);    
+                }
+            else if (strncmp(event->topic, "/faust/api",strlen("/faust/api")) == 0) {
+                call_faust_api(event);
+                };
             break;
         case MQTT_EVENT_ERROR:
             ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
@@ -431,6 +480,7 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event){
     return ESP_OK;
 }
 //throws a compilation error! May be obsolete when registering is done i a different way
+
 /*
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
 
@@ -439,16 +489,12 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 }
 */
 
-
-
 //FCKX guess
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, esp_mqtt_event_handle_t event_data) {
     
     ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%d", base, event_id);
     mqtt_event_handler_cb(event_data);
 }
-
-
 
 /*
 ../main/main.cpp: In function 'void mqtt_event_handler(void*, esp_event_base_t, int32_t, void*)':
@@ -457,9 +503,9 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
                            ^~~~~~~~~~
 */
 
+/*
 //https://github.com/espressif/esp-idf/issues/5248
 
-/*
 @mntolia This is an issue with C++ build, has been fixed in espressif/esp-mqtt@8a1e1a5, but apparently that hasn't made it yet to arduino. As a workaround you can cast the variables to the expected types or even avoid using an event loop altogether.
 It is still possible to configure mqtt_event_handler_cb() as a plain callback in client config:
 
@@ -534,8 +580,6 @@ static esp_mqtt_client * mqtt_app_start(void){
     return client;
 }
 
-
-
 #define OCTAVE_OFFSET 0
 
 float freqs[] = { 0,
@@ -578,9 +622,53 @@ char *song = "GoodBad:d=4,o=5,b=56:32p,32a#,32d#6,32a#,32d#6,8a#.,16f#.,16g#.,d#
 
 #define isdigit(n) (n >= '0' && n <= '9')
 
+/*
+//keyOn  keyOff not active.... as other MIDI functionality?
 
-void play_rtttl(char *p, DspFaust * aDSP)
+void play_keys(DspFaust * aDSP)
 {
+        for (int ii = 50; ii < 100; ii++){
+        aDSP->keyOn(50,50);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        aDSP->keyOff(50);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        }  
+}
+*/
+
+
+void play_poly_without_midi(DspFaust * aDSP) 
+{
+    uintptr_t voiceAddress = aDSP->newVoice(); //create main voice
+        for (int ii = 50; ii < 100; ii++){
+
+           aDSP->setVoiceParamValue("/Polyphonic/Voices/WaveSynth_FX/freq",voiceAddress,440.0);
+           // aDSP->setVoiceParamValue("/WaveSynth_FX/freq",freqs[(scale-4) * 12 + note]);
+           aDSP->setVoiceParamValue("/Polyphonic/Voices/WaveSynth_FX/gate",voiceAddress,1.0);
+           vTaskDelay(500 / portTICK_PERIOD_MS);          
+           aDSP->setVoiceParamValue("/Polyphonic/Voices/WaveSynth_FX/gate",voiceAddress,0);
+           vTaskDelay(500 / portTICK_PERIOD_MS); 
+           
+           aDSP->setVoiceParamValue("/Polyphonic/Voices/WaveSynth_FX/freq",voiceAddress,220.1);
+           // aDSP->setVoiceParamValue("/WaveSynth_FX/freq",freqs[(scale-4) * 12 + note]);
+           aDSP->setVoiceParamValue("/Polyphonic/Voices/WaveSynth_FX/gate",voiceAddress,1);
+           vTaskDelay(500 / portTICK_PERIOD_MS);          
+           aDSP->setVoiceParamValue("/Polyphonic/Voices/WaveSynth_FX/gate",voiceAddress,0);
+           vTaskDelay(500 / portTICK_PERIOD_MS);
+        }
+           aDSP->deleteVoice(voiceAddress); //delete main voice
+};
+
+
+void play_mono_rtttl(char *p, DspFaust * aDSP)
+{
+ // aDSP->allNotesOff();  
+  aDSP->setParamValue("/WaveSynth_FX/lfoFreq",lfoFreq);
+  aDSP->setParamValue("/WaveSynth_FX/lfoDepth",lfoDepth); 
+  aDSP->setParamValue("/WaveSynth_FX/A",synthA);
+  aDSP->setParamValue("/WaveSynth_FX/D",synthD); 
+  aDSP->setParamValue("/WaveSynth_FX/S",synthS); 
+  aDSP->setParamValue("/WaveSynth_FX/R",synthR); 
   // Absolutely no error checking in here
   unsigned char default_dur = 4;
   unsigned char default_oct = 6;
@@ -732,16 +820,29 @@ void play_rtttl(char *p, DspFaust * aDSP)
    //   Serial.print(notes[(scale - 4) * 12 + note], 10);
    //   Serial.print(") ");
    //   Serial.println(duration, 10);
-      
+      /*
       aDSP->setParamValue("/elecGuitar/midi/freq",freqs[(scale-4) * 12 + note]);
       aDSP->setParamValue("/elecGuitar/gate",1);
+     */
+/* 
+      aDSP->setParamValue("/simpleSynt_Analog/freq",freqs[(scale-4) * 12 + note]);
+      aDSP->setParamValue("/simpleSynt_Analog/gate",1);     
+*/
+
+      aDSP->setParamValue("/WaveSynth_FX/freq",freqs[(scale-4) * 12 + note]);
+      aDSP->setParamValue("/WaveSynth_FX/gate",1); 
+
+      
       vTaskDelay(duration / portTICK_PERIOD_MS);
       //printf("%s \n",DSP->getJSONUI());
       //DSP->setParamValue("gain",0);
-      aDSP->setParamValue("/elecGuitar/gate",0);
-      
-      
+    //  aDSP->setParamValue("/simpleSynt_Analog/gate",0); 
+        // aDSP->setParamValue("/elecGuitar/gate",0);
+        aDSP->setParamValue("/WaveSynth_FX/gate",0); 
      // tone1.play(notes[(scale - 4) * 12 + note]);
+      
+      update_controls();  //later do this in a freertos task 
+      
       //delay(duration);
       //tone1.stop();
       
@@ -781,6 +882,7 @@ void app_main(void)
      */
     //ESP_ERROR_CHECK(example_connect());
     
+    
     //Initialize NVS
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
@@ -788,13 +890,14 @@ void app_main(void)
       ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK(ret);
-
+    
     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
     wifi_init_sta();
     esp_mqtt_client_handle_t  mqtt_client =  mqtt_app_start();
-    int msg_id;
-    
-    msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "init", 0, 0, 0);
+    ESP_LOGW(TAG,"MQTT client started audio codec initialized"); 
+
+
+
     WM8978 wm8978;
     wm8978.init();
     wm8978.addaCfg(1,1); 
@@ -804,26 +907,38 @@ void app_main(void)
     wm8978.auxGain(0);
     wm8978.lineinGain(0);
     wm8978.spkVolSet(0);
-    wm8978.hpVolSet(40,40);
+    wm8978.hpVolSet(hpVol_L,hpVol_R);
     wm8978.i2sCfg(2,0);
-   
+    ESP_LOGW(TAG,"WM8978 audio codec initialized"); 
  //   YOU MUST USE faust2api API calls
     int SR = 48000;
     int BS = 32; //was 8
-    printf("BEFORE DspFaust INSTANTIATION\n");
+   
    // DspFaust dspFaust(SR,BS);
      // if (dspFaust.isRunning()) {printf("BEFORE START RUNNING\n");} else {printf("BEFORE START NOT RUNNING\n");} ;
    // dspFaust.start();
     
     //if (dspFaust.isRunning()) {printf("AFTER START RUNNING\n");} else {printf("AFTER START NOT RUNNING\n");} ;
     
-    printf("Hello modified CHECKIT 1 world!\n");
-    DspFaust* DSP = new DspFaust(SR,BS); 
+   // printf("Hello modified CHECKIT 1 world!\n");
+   // printf("BEFORE DspFaust INSTANTIATION\n");
+    DSP = new DspFaust(SR,BS); 
     //printf("Hello modified 2x world!\n");
-    if (DSP->isRunning()) {printf("BEFORE START RUNNINGa\n");} else {printf("BEFORE START NOT RUNNINGb\n");} ;
+   // if (DSP->isRunning()) {printf("BEFORE START RUNNINGa\n");} else {printf("BEFORE START NOT RUNNINGb\n");} ;
 
     DSP->start();
-    if (DSP->isRunning()) {printf("AFTER START RUNNINGc\n");} else {printf("AFTER START NOT RUNNINGd\n");} ;
+    if (DSP->isRunning()) {
+                     ESP_LOGW(TAG,"DSP is running"); 
+                        // int msg_id;
+    msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "init OK", 0, 0, 0);
+    ESP_LOGW(TAG,"Sent MQTT message to Nodered"); 
+
+       
+        } else {
+            ESP_LOGE(TAG,"DSP not running");
+                        // int msg_id;
+    msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "init NOK", 0, 0, 0);
+    ESP_LOGW(TAG,"Sent MQTT message to Nodered");            } ;
   /*
     //printf("Hello modified 3x world!\n");
     //DSP->setParamValue("freq",220);
@@ -896,27 +1011,56 @@ Independent Voice
 */
 
 
-//msg_id = esp_mqtt_client_subscribe(mqtt_client, "/faust/gate", 1);
-//ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 msg_id = esp_mqtt_client_subscribe(mqtt_client, "/faust/api/#", 1);
 ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 msg_id = esp_mqtt_client_subscribe(mqtt_client, "/faust/api2/#", 1);
 ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 
-msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop started", 0, 0, 0);
+
 msg_id = esp_mqtt_client_publish(mqtt_client, "/faust/jsonui", DSP->getJSONUI(), 0, 0, 0);  //to be implemented: publish the UI by remote request via th
 
-play_rtttl(song, DSP); //try to implement playing a song in a separate task
+/*
+while(play_flag){
+msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "rtttl song loop started", 0, 0, 0);
+play_mono_rtttl(song, DSP); //try to implement playing a song in a separate task
+msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "rtttl song loop finished", 0, 0, 0);
+}
+*/
 
+/*
+msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "keys song loop started", 0, 0, 0);
+play_poly_keys( DSP); //try to implement playing a song in a separate task
+msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "keys song loop finished", 0, 0, 0);
+*/
+
+/*
+msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "poly_without_midi song loop started", 0, 0, 0);
+play_poly_without_midi(DSP); 
+msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "poly_without_midi song loop finished", 0, 0, 0);
+*/
 while(1) {
         printf(">>>>>Loop<<<<<< \n");
+        while(play_flag){
+            msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "rtttl song loop started", 0, 0, 0);
+            play_mono_rtttl(song, DSP); //try to implement playing a song in a separate task
+            msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "rtttl song loop finished", 0, 0, 0);
+            }
         //printf("%s \n",DSP->getJSONUI());
-
-   
-   /*
-        DSP->setParamValue("freq",rand()%(2000-50 + 1) + 50);
-        DSP->setParamValue("gain",0.1);
+        /*
+        DSP->keyOn(50,50);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        DSP->keyOff(50);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        DSP->keyOn(100,50);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        DSP->keyOff(100);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
         */
+        
+        
+     //   DSP->setParamValue("freq",rand()%(2000-50 + 1) + 50);
+      //  DSP->setParamValue("gain",0.1);
+        
         /*
         DSP->setParamValue("/elecGuitar/midi/freq",rand()%(2000-50 + 1) + 50);
         DSP->setParamValue("/elecGuitar/gate",1);

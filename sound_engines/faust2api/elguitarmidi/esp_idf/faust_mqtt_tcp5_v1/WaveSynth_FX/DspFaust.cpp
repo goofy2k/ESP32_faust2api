@@ -9075,12 +9075,9 @@ struct MidiMeta : public Meta, public std::map<std::string, std::string> {
     {
         return (this->find(key) != this->end()) ? (*this)[key] : def;
     }
-    
+  /*  
     static void analyse(dsp* mono_dsp, bool& midi_sync, int& nvoices)
     {
-        static const char *TAG = "MidiMeta::analyse";
-        ESP_LOGW(TAG, "entering MidiMeta::analyse");    
-        /*
         JSONUI jsonui;
         mono_dsp->buildUserInterface(&jsonui);
         std::string json = jsonui.JSON();
@@ -9114,10 +9111,8 @@ struct MidiMeta : public Meta, public std::map<std::string, std::string> {
         }
         nvoices = std::max<int>(0, nvoices);
     #endif
-    */
-    
     }
-   
+    */
     static bool checkPolyphony(dsp* mono_dsp)
     {
         MapUI map_ui;
@@ -11897,12 +11892,9 @@ class FaustPolyEngine {
             bool midi_sync = false;
             int nvoices = 0;
             fRunning = false;
-            //FCKX
-             MidiMeta::analyse(mono_dsp, midi_sync, nvoices);
-             //midi_sync = true;
-             //nvoices = NVOICES;  // NVOICES equals 2
             
-            //FCKX
+            //MidiMeta::analyse(mono_dsp, midi_sync, nvoices);
+            
             // Getting the UI JSON
             JSONUI jsonui1(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
             mono_dsp->buildUserInterface(&jsonui1);
@@ -11924,8 +11916,6 @@ class FaustPolyEngine {
             #endif
                 
                 // Update JSONs with Poly version
-                //FCKX
-               
                 JSONUI jsonui2(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
                 fFinalDSP->buildUserInterface(&jsonui2);
                 fJSONUI = jsonui2.JSON();
@@ -11933,7 +11923,6 @@ class FaustPolyEngine {
                 JSONUI jsonui2M(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
                 fFinalDSP->metadata(&jsonui2M);
                 fJSONMeta = jsonui2M.JSON();
-                
                 
             } else {
                 fPolyDSP = NULL;
