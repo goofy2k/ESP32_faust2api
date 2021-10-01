@@ -31,6 +31,7 @@ Compilation options: -a api/DspFaust.cpp -lang cpp -es 1 -single -ftz 0
 #include <cmath>
 #include <cstring>
 #include <stdio.h>
+#include "esp_log.h" //FCKX
 
 /************************** BEGIN misc.h **************************/
 /************************************************************************
@@ -9079,17 +9080,20 @@ struct MidiMeta : public Meta, public std::map<std::string, std::string> {
     static void analyse(dsp* mono_dsp, bool& midi_sync, int& nvoices)
     {
         static const char *TAG = "MidiMeta::analyse";
-        ESP_LOGW(TAG, "entering MidiMeta::analyse");    
-        /*
+        ESP_LOGW(TAG, "after entering"); 
         JSONUI jsonui;
+        ESP_LOGW(TAG, "after JSONUI intantiation");        
         mono_dsp->buildUserInterface(&jsonui);
+        ESP_LOGW(TAG, "after mono_dsp->");  
+        
         std::string json = jsonui.JSON();
+         ESP_LOGW(TAG, "after mono_dsp-> 2"); 
         midi_sync = ((json.find("midi") != std::string::npos) &&
                      ((json.find("start") != std::string::npos) ||
                       (json.find("stop") != std::string::npos) ||
                       (json.find("clock") != std::string::npos) ||
                       (json.find("timestamp") != std::string::npos)));
-    
+    ESP_LOGW(TAG, "after mono_dsp-> 3");
     #if defined(NVOICES) && NVOICES!=NUM_VOICES
         nvoices = NVOICES;
     #else
@@ -9114,7 +9118,7 @@ struct MidiMeta : public Meta, public std::map<std::string, std::string> {
         }
         nvoices = std::max<int>(0, nvoices);
     #endif
-    */
+    
     
     }
    

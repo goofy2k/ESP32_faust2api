@@ -88,8 +88,8 @@ extern "C" {
 int msg_id;
 DspFaust* DSP;
 WM8978 wm8978;
-int hpVol_L = 40;
-int hpVol_R = 40;
+int hpVol_L = 5;
+int hpVol_R = 5;
 float lfoFreq = 10;
 float lfoDepth = 0.25;
 float synthA = 10;
@@ -97,6 +97,20 @@ float synthD = 1;
 float synthS = 0.01;
 float synthR = 1.0;
 bool play_flag = false;
+int poly = 0; //ofset for 
+
+
+    //testing polyphony
+    int synthAId = 0;
+    int synthDId = 1;
+    int synthSId = 3;
+    int synthRId = 2;
+    int freqId = 5; //for WaveSynth_FX poly
+    int gainId = 6; //for WaveSynth_FX poly
+    int gateId = 7; //for WaveSynth_FX poly
+    int lfoDepthId = 8;
+    int lfoFreqId = 9;
+
 
 /* FreeRTOS event group to signal when we are connected*/
 static EventGroupHandle_t s_wifi_event_group;
@@ -220,12 +234,13 @@ void wifi_init_sta(void)
 void update_controls(){  //do this in a cyclic freertos task
     
   wm8978.hpVolSet(hpVol_R, hpVol_L);
-  DSP->setParamValue("/WaveSynth_FX/lfoFreq",lfoFreq);
-  DSP->setParamValue("/WaveSynth_FX/lfoDepth",lfoDepth); 
-  DSP->setParamValue("/WaveSynth_FX/A",synthA);
-  DSP->setParamValue("/WaveSynth_FX/D",synthD); 
-  DSP->setParamValue("/WaveSynth_FX/S",synthS); 
-  DSP->setParamValue("/WaveSynth_FX/R",synthR); 
+  ESP_LOGI(TAG, "poly: %d", poly);
+  DSP->setParamValue("/WaveSynth_FX/lfoFreq",lfoFreq+poly);
+  DSP->setParamValue("/WaveSynth_FX/lfoDepth",lfoDepth+poly); 
+  DSP->setParamValue("/WaveSynth_FX/A",synthA+poly);
+  DSP->setParamValue("/WaveSynth_FX/D",synthD+poly); 
+  DSP->setParamValue("/WaveSynth_FX/S",synthS+poly); 
+  DSP->setParamValue("/WaveSynth_FX/R",synthR+poly); 
   
   
     
@@ -397,6 +412,11 @@ static void call_faust_api2(esp_mqtt_event_handle_t event){
         {
              lfoDepth = atof(event->data);             
     } else    
+
+    if (strncmp(event->topic, "/faust/api2/DSP/poly",strlen("/faust/api2/DSP/poly")) == 0)
+        {
+             poly = atoi(event->data);             
+    } else 
 
     if (strncmp(event->topic, "/faust/api2/DSP/play",strlen("/faust/api2/DSP/play")) == 0)
         {
@@ -622,24 +642,34 @@ char *song = "GoodBad:d=4,o=5,b=56:32p,32a#,32d#6,32a#,32d#6,8a#.,16f#.,16g#.,d#
 
 #define isdigit(n) (n >= '0' && n <= '9')
 
-/*
+
 //keyOn  keyOff not active.... as other MIDI functionality?
 
-void play_keys(DspFaust * aDSP)
-{
-        for (int ii = 50; ii < 100; ii++){
-        aDSP->keyOn(50,50);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        aDSP->keyOff(50);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+void play_poly_keys(DspFaust * aDSP){
+       // start continuous background voice
+       aDSP->keyOn(50, 10);
+       vTaskDelay(1000 / portTICK_PERIOD_MS);
+        //release continuous background voice
+       aDSP->keyOff(50); 
+        for (int ii = 51; ii < 60; ii++){
+        vTaskDelay(10 / portTICK_PERIOD_MS);    
+        aDSP->keyOn(ii,10);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        aDSP->keyOff(ii);
+        
         }  
+         vTaskDelay(1000 / portTICK_PERIOD_MS);
+        //release continuous background voice
+        //aDSP->keyOff(50);
 }
-*/
 
 
 void play_poly_without_midi(DspFaust * aDSP) 
 {
     uintptr_t voiceAddress = aDSP->newVoice(); //create main voice
+    
+    aDSP->setVoiceParamValue("/Polyphonic/Voices/WaveSynth_FX/gain",voiceAddress,0.5);
+    
         for (int ii = 50; ii < 100; ii++){
 
            aDSP->setVoiceParamValue("/Polyphonic/Voices/WaveSynth_FX/freq",voiceAddress,440.0);
@@ -657,6 +687,77 @@ void play_poly_without_midi(DspFaust * aDSP)
            vTaskDelay(500 / portTICK_PERIOD_MS);
         }
            aDSP->deleteVoice(voiceAddress); //delete main voice
+};
+
+void play_poly_without_midi_2(DspFaust * aDSP) 
+{
+
+
+  /*
+    //start background voice
+    uintptr_t background_voiceAddress = aDSP->newVoice(); //create main voice
+    aDSP->setVoiceParamValue(freqId,background_voiceAddress,110.0);
+    aDSP->setVoiceParamValue(gainId,background_voiceAddress,0.02);
+    ESP_LOGI(TAG, "setVoiceParamValue(freqId,voiceAddress,110) set freq");  //FCKX
+    aDSP->setVoiceParamValue(gateId,background_voiceAddress,1);
+    ESP_LOGI(TAG, "setVoiceParamValue(gateId,background_voiceAddress,1) GATE ON");  //FCKX
+  */
+  
+    
+    //loop with subsequential triggers on the same voice  
+    uintptr_t voiceAddress = aDSP->newVoice(); //create main voice
+    aDSP->setVoiceParamValue(gainId,voiceAddress, 0.02);
+    for (int ii = 0; ii < 50; ii++){
+        update_controls();
+        aDSP->setVoiceParamValue(lfoFreqId+poly,voiceAddress,lfoFreq);
+        aDSP->setVoiceParamValue(lfoDepthId+poly,voiceAddress,lfoDepth); 
+        aDSP->setVoiceParamValue(synthAId+poly,voiceAddress,synthA);
+        aDSP->setVoiceParamValue(synthDId+poly,voiceAddress,synthD); 
+        aDSP->setVoiceParamValue(synthSId+poly,voiceAddress,synthS); 
+        aDSP->setVoiceParamValue(synthRId+poly,voiceAddress,synthR);
+
+        aDSP->setVoiceParamValue(freqId+poly,voiceAddress,440.0);
+        ESP_LOGI(TAG, "setVoiceParamValue(6,voiceAddress,440.0) set freq");  //FCKX
+        aDSP->setVoiceParamValue(gateId+poly,voiceAddress,1);
+        ESP_LOGI(TAG, "setVoiceParamValue(gateId,voiceAddress,1) GATE ON");  //FCKX
+        vTaskDelay(500 / portTICK_PERIOD_MS); 
+        ESP_LOGI(TAG, "delay");  //FCKX
+        aDSP->setVoiceParamValue(gateId+poly,voiceAddress,0);
+        ESP_LOGI(TAG, "setVoiceParamValue(gateId,voiceAddress,0) GATE OFF");  //FCKX 
+        vTaskDelay(500 / portTICK_PERIOD_MS); 
+        ESP_LOGI(TAG, "delay");  //FCKX
+
+        update_controls();
+        aDSP->setVoiceParamValue(lfoFreqId+poly,voiceAddress,lfoFreq);
+        aDSP->setVoiceParamValue(lfoDepthId+poly,voiceAddress,lfoDepth); 
+        aDSP->setVoiceParamValue(synthAId+poly,voiceAddress,synthA);
+        aDSP->setVoiceParamValue(synthDId+poly,voiceAddress,synthD); 
+        aDSP->setVoiceParamValue(synthSId+poly,voiceAddress,synthS); 
+        aDSP->setVoiceParamValue(synthRId+poly,voiceAddress,synthR);
+
+        aDSP->setVoiceParamValue(freqId+poly,voiceAddress,440.0);
+        ESP_LOGI(TAG, "setVoiceParamValue(freqId,voiceAddress,220.0) set freq");  //FCKX
+        aDSP->setVoiceParamValue(gateId+poly,voiceAddress,1);
+        ESP_LOGI(TAG, "setVoiceParamValue(gateId,voiceAddress,1) GATE ON");  //FCKX
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        ESP_LOGI(TAG, "delay");  //FCKX
+        aDSP->setVoiceParamValue(gateId+poly,voiceAddress,0);
+        ESP_LOGI(TAG, "setVoiceParamValue(gateId,voiceAddress,0) GATE OFF");  //FCKX            
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        ESP_LOGI(TAG, "delay");  //FCKX
+        }
+
+          //release background voice
+         // aDSP->setVoiceParamValue(gateId,background_voiceAddress,0);
+         // ESP_LOGI(TAG, "setVoiceParamValue(gateId,background_voiceAddress,1) GATE OFF");  //FCKX
+          
+          //clean up voices
+           
+          aDSP->deleteVoice(voiceAddress);            //delete main voice 
+           
+          
+       //   aDSP->deleteVoice(background_voiceAddress); //delete background voice  
+           
 };
 
 
@@ -1039,37 +1140,17 @@ play_poly_without_midi(DSP);
 msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "poly_without_midi song loop finished", 0, 0, 0);
 */
 while(1) {
-        printf(">>>>>Loop<<<<<< \n");
+        //printf(">>>>>Loop<<<<<< \n");
         while(play_flag){
-            msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "rtttl song loop started", 0, 0, 0);
-            play_mono_rtttl(song, DSP); //try to implement playing a song in a separate task
-            msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "rtttl song loop finished", 0, 0, 0);
+            msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop started", 0, 0, 0);
+            //play_mono_rtttl(song, DSP);     // uses setParamValue(path
+            //play_poly_without_midi(DSP);    // uses setVoiceParamValue(path
+            play_poly_without_midi_2(DSP);  // uses setVoiceParamValue(ID
+            
+            //play_poly_keys(DSP);                 // uses keyOn/keyOff
+            msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop finished", 0, 0, 0);
             }
-        //printf("%s \n",DSP->getJSONUI());
-        /*
-        DSP->keyOn(50,50);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        DSP->keyOff(50);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        DSP->keyOn(100,50);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        DSP->keyOff(100);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        */
-        
-        
-     //   DSP->setParamValue("freq",rand()%(2000-50 + 1) + 50);
-      //  DSP->setParamValue("gain",0.1);
-        
-        /*
-        DSP->setParamValue("/elecGuitar/midi/freq",rand()%(2000-50 + 1) + 50);
-        DSP->setParamValue("/elecGuitar/gate",1);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        printf("%s \n",DSP->getJSONUI());
-        //DSP->setParamValue("gain",0);
-        DSP->setParamValue("/elecGuitar/gate",0);
-        */
-        
+        update_controls();
         vTaskDelay(500 / portTICK_PERIOD_MS);
    
 
