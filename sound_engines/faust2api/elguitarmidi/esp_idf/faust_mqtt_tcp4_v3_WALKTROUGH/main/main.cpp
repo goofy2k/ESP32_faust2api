@@ -86,6 +86,16 @@ extern "C" {
 
 */
 
+DspFaust* DSP;
+WM8978 wm8978;
+int hpVol_L = 40;
+int hpVol_R = 40;
+float lfoFreq = 10;
+float lfoDepth = 0.25;
+float synthA = 10;
+float synthD = 1;
+float synthS = 0.01;
+float synthR = 1.0;
 
 /* FreeRTOS event group to signal when we are connected*/
 static EventGroupHandle_t s_wifi_event_group;
@@ -206,7 +216,19 @@ void wifi_init_sta(void)
     vEventGroupDelete(s_wifi_event_group);
 }
 
-
+void update_controls(){  //do this in a cyclic freertos task
+    
+  wm8978.hpVolSet(hpVol_R, hpVol_L);
+  DSP->setParamValue("/WaveSynth_FX/lfoFreq",lfoFreq);
+  DSP->setParamValue("/WaveSynth_FX/lfoDepth",lfoDepth); 
+  DSP->setParamValue("/WaveSynth_FX/A",synthA);
+  DSP->setParamValue("/WaveSynth_FX/D",synthD); 
+  DSP->setParamValue("/WaveSynth_FX/S",synthS); 
+  DSP->setParamValue("/WaveSynth_FX/R",synthR); 
+  
+  
+    
+}
 
 //static const char *TAG = "MQTT_EXAMPLE";
 
@@ -332,9 +354,73 @@ static void call_faust_api2(esp_mqtt_event_handle_t event){
     if (strncmp(event->topic, "/faust/api2/gate",strlen("/faust/api2/gate")) == 0) {
              printf("HANDLING FAUST API2 CALL: COMMAND= %s\n",event->topic);   
     } else 
-    if (strncmp(event->topic, "/faust/api2/other",strlen("/faust/api2/other")) == 0) {
-             printf("HANDLING FAUST API2 CALL: COMMAND= %s\n",event->topic);   
+    if (strncmp(event->topic, "/faust/api2/wm8978/hpVol/left",strlen("/faust/api2/wm8978/hpVol/left")) == 0)
+        {
+             printf("HANDLING FAUST API2 CALL: COMMAND= %s\n",event->topic);
+             printf("SETTING hpVol LEFT to: %s\n",event->data);  
+             hpVol_L = atoi(event->data);             
+
+             
+    } else  
+    if (strncmp(event->topic, "/faust/api2/wm8978/hpVol/right",strlen("/faust/api2/wm8978/hpVol/right")) == 0)
+        {
+             printf("HANDLING FAUST API2 CALL: COMMAND= %s\n",event->topic);
+             printf("SETTING hpVol RIGHT to: %s\n",event->data);
+             hpVol_R = atoi(event->data);
+             
+    } else  
+
+    if (strncmp(event->topic, "/faust/api2/DSP/synthA",strlen("/faust/api2/DSP/synthA")) == 0)
+        {
+             printf("HANDLING FAUST API2 CALL: COMMAND= %s\n",event->topic);
+             printf("SETTING synthR to: %s\n",event->data);
+             synthA = atof(event->data);
+             
+    } else    
+    if (strncmp(event->topic, "/faust/api2/DSP/synthD",strlen("/faust/api2/DSP/synthD")) == 0)
+        {
+             printf("HANDLING FAUST API2 CALL: COMMAND= %s\n",event->topic);
+             printf("SETTING synthD to: %s\n",event->data);
+             synthD = atof(event->data);
+             
+    } else    
+        
+    if (strncmp(event->topic, "/faust/api2/DSP/synthS",strlen("/faust/api2/DSP/synthS")) == 0)
+        {
+             printf("HANDLING FAUST API2 CALL: COMMAND= %s\n",event->topic);
+             printf("SETTING synthS to: %s\n",event->data);
+             synthS = atof(event->data);
+             
+    } else    
+
+
+
+    if (strncmp(event->topic, "/faust/api2/DSP/synthR",strlen("/faust/api2/DSP/synthR")) == 0)
+        {
+             printf("HANDLING FAUST API2 CALL: COMMAND= %s\n",event->topic);
+             printf("SETTING synthR to: %s\n",event->data);
+             synthR = atof(event->data);
+             
     } else         
+
+    if (strncmp(event->topic, "/faust/api2/DSP/lfoFreq",strlen("/faust/api2/DSP/lfoFreq")) == 0)
+        {
+             printf("HANDLING FAUST API2 CALL: COMMAND= %s\n",event->topic);
+             printf("SETTING lfoFreq to: %s\n",event->data);
+             lfoFreq = atof(event->data);
+             
+    } else    
+
+    if (strncmp(event->topic, "/faust/api2/DSP/lfoDepth",strlen("/faust/api2/DSP/lfoDepth")) == 0)
+        {
+             printf("HANDLING FAUST API2 CALL: COMMAND= %s\n",event->topic);
+             printf("SETTING lfoDepth to: %s\n",event->data);
+             lfoDepth = atof(event->data);
+             
+    } else    
+
+
+        
     {
              printf("HANDLING FAUST API2 CALL: INVALID COMMAND= %s\n",event->topic);
           }            
@@ -431,6 +517,7 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event){
     return ESP_OK;
 }
 //throws a compilation error! May be obsolete when registering is done i a different way
+
 /*
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
 
@@ -439,16 +526,12 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 }
 */
 
-
-
 //FCKX guess
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, esp_mqtt_event_handle_t event_data) {
     
     ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%d", base, event_id);
     mqtt_event_handler_cb(event_data);
 }
-
-
 
 /*
 ../main/main.cpp: In function 'void mqtt_event_handler(void*, esp_event_base_t, int32_t, void*)':
@@ -457,9 +540,9 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
                            ^~~~~~~~~~
 */
 
+/*
 //https://github.com/espressif/esp-idf/issues/5248
 
-/*
 @mntolia This is an issue with C++ build, has been fixed in espressif/esp-mqtt@8a1e1a5, but apparently that hasn't made it yet to arduino. As a workaround you can cast the variables to the expected types or even avoid using an event loop altogether.
 It is still possible to configure mqtt_event_handler_cb() as a plain callback in client config:
 
@@ -533,8 +616,6 @@ static esp_mqtt_client * mqtt_app_start(void){
     
     return client;
 }
-
-
 
 #define OCTAVE_OFFSET 0
 
@@ -616,15 +697,15 @@ void play_poly_without_midi(DspFaust * aDSP)
 };
 
 
-void play_rtttl(char *p, DspFaust * aDSP)
+void play_mono_rtttl(char *p, DspFaust * aDSP)
 {
  // aDSP->allNotesOff();  
-  aDSP->setParamValue("/WaveSynth_FX/lfoFreq",10);
-  aDSP->setParamValue("/WaveSynth_FX/lfoDepth",0.25); 
-  aDSP->setParamValue("/WaveSynth_FX/A",10);
-  aDSP->setParamValue("/WaveSynth_FX/D",1.0); 
-  aDSP->setParamValue("/WaveSynth_FX/S",0.01); 
-  aDSP->setParamValue("/WaveSynth_FX/R",1.0); 
+  aDSP->setParamValue("/WaveSynth_FX/lfoFreq",lfoFreq);
+  aDSP->setParamValue("/WaveSynth_FX/lfoDepth",lfoDepth); 
+  aDSP->setParamValue("/WaveSynth_FX/A",synthA);
+  aDSP->setParamValue("/WaveSynth_FX/D",synthD); 
+  aDSP->setParamValue("/WaveSynth_FX/S",synthS); 
+  aDSP->setParamValue("/WaveSynth_FX/R",synthR); 
   // Absolutely no error checking in here
   unsigned char default_dur = 4;
   unsigned char default_oct = 6;
@@ -796,6 +877,9 @@ void play_rtttl(char *p, DspFaust * aDSP)
         // aDSP->setParamValue("/elecGuitar/gate",0);
         aDSP->setParamValue("/WaveSynth_FX/gate",0); 
      // tone1.play(notes[(scale - 4) * 12 + note]);
+      
+      update_controls();  //later do this in a freertos task 
+      
       //delay(duration);
       //tone1.stop();
       
@@ -858,26 +942,27 @@ void app_main(void)
     wm8978.auxGain(0);
     wm8978.lineinGain(0);
     wm8978.spkVolSet(0);
-    wm8978.hpVolSet(40,40);
+    wm8978.hpVolSet(hpVol_L,hpVol_R);
     wm8978.i2sCfg(2,0);
    
  //   YOU MUST USE faust2api API calls
     int SR = 48000;
     int BS = 32; //was 8
-    printf("BEFORE DspFaust INSTANTIATION\n");
+   
    // DspFaust dspFaust(SR,BS);
      // if (dspFaust.isRunning()) {printf("BEFORE START RUNNING\n");} else {printf("BEFORE START NOT RUNNING\n");} ;
    // dspFaust.start();
     
     //if (dspFaust.isRunning()) {printf("AFTER START RUNNING\n");} else {printf("AFTER START NOT RUNNING\n");} ;
     
-    printf("Hello modified CHECKIT 1 world!\n");
-    DspFaust* DSP = new DspFaust(SR,BS); 
+   // printf("Hello modified CHECKIT 1 world!\n");
+   // printf("BEFORE DspFaust INSTANTIATION\n");
+    DSP = new DspFaust(SR,BS); 
     //printf("Hello modified 2x world!\n");
-    if (DSP->isRunning()) {printf("BEFORE START RUNNINGa\n");} else {printf("BEFORE START NOT RUNNINGb\n");} ;
+   // if (DSP->isRunning()) {printf("BEFORE START RUNNINGa\n");} else {printf("BEFORE START NOT RUNNINGb\n");} ;
 
     DSP->start();
-    if (DSP->isRunning()) {printf("AFTER START RUNNINGc\n");} else {printf("AFTER START NOT RUNNINGd\n");} ;
+    if (DSP->isRunning()) {printf("DSP is running");} else {printf("AFTER START NOT RUNNINGd\n");} ;
   /*
     //printf("Hello modified 3x world!\n");
     //DSP->setParamValue("freq",220);
@@ -959,15 +1044,15 @@ ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 
 
 msg_id = esp_mqtt_client_publish(mqtt_client, "/faust/jsonui", DSP->getJSONUI(), 0, 0, 0);  //to be implemented: publish the UI by remote request via th
-
+while(1){
 msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "rtttl song loop started", 0, 0, 0);
-play_rtttl(song, DSP); //try to implement playing a song in a separate task
+play_mono_rtttl(song, DSP); //try to implement playing a song in a separate task
 msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "rtttl song loop finished", 0, 0, 0);
-
+}
 
 /*
 msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "keys song loop started", 0, 0, 0);
-play_keys( DSP); //try to implement playing a song in a separate task
+play_poly_keys( DSP); //try to implement playing a song in a separate task
 msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "keys song loop finished", 0, 0, 0);
 */
 

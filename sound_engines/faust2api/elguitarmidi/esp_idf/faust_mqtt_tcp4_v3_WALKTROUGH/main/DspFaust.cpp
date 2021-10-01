@@ -11892,10 +11892,12 @@ class FaustPolyEngine {
             bool midi_sync = false;
             int nvoices = 0;
             fRunning = false;
-            
+            //FCKX
             //MidiMeta::analyse(mono_dsp, midi_sync, nvoices);
-
+             //midi_sync = true;
+             //nvoices = NVOICES;  // NVOICES equals 2
             
+            //FCKX
             // Getting the UI JSON
             JSONUI jsonui1(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
             mono_dsp->buildUserInterface(&jsonui1);
@@ -11917,6 +11919,8 @@ class FaustPolyEngine {
             #endif
                 
                 // Update JSONs with Poly version
+                //FCKX
+               
                 JSONUI jsonui2(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
                 fFinalDSP->buildUserInterface(&jsonui2);
                 fJSONUI = jsonui2.JSON();
@@ -11924,6 +11928,7 @@ class FaustPolyEngine {
                 JSONUI jsonui2M(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
                 fFinalDSP->metadata(&jsonui2M);
                 fJSONMeta = jsonui2M.JSON();
+                
                 
             } else {
                 fPolyDSP = NULL;
