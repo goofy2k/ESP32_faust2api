@@ -239,12 +239,12 @@ void wifi_init_sta(void)
     vEventGroupDelete(s_wifi_event_group);
 }
 
-void update_controls(uintptr_t voiceAddress, DspFaust * aDSP){  //do this in a cyclic freertos task
+void update_controls(uintptr_t voiceAddress, DspFaust * aDSP){  //maybe do this in a cyclic freertos timer task
   static const char *TAG = "update_controls";  
   wm8978.hpVolSet(hpVol_R, hpVol_L);
   ESP_LOGI(TAG, "poly: %d", poly); 
   //if (poly == 1){
-      poly = 0;
+    poly = 0;
     //later, use a struct, better: re-use an existing struct
     aDSP->setVoiceParamValue(gainBaseId+poly,voiceAddress, 0.5);
     ESP_LOGI(TAG, "gainBaseId %d, set gain %6.2f", gainBaseId, 0.5);  //FCKX
@@ -709,7 +709,6 @@ NOTE_C7, NOTE_CS7, NOTE_D7, NOTE_DS7, NOTE_E7, NOTE_F7, NOTE_FS7, NOTE_G7, NOTE_
 //char *song = "Bond:d=4,o=5,b=80:32p,16c#6,32d#6,32d#6,16d#6,8d#6,16c#6,16c#6,16c#6,16c#6,32e6,32e6,16e6,8e6,16d#6,16d#6,16d#6,16c#6,32d#6,32d#6,16d#6,8d#6,16c#6,16c#6,16c#6,16c#6,32e6,32e6,16e6,8e6,16d#6,16d6,16c#6,16c#7,c.7,16g#6,16f#6,g#.6";
 //char *song = "MASH:d=8,o=5,b=140:4a,4g,f#,g,p,f#,p,g,p,f#,p,2e.,p,f#,e,4f#,e,f#,p,e,p,4d.,p,f#,4e,d,e,p,d,p,e,p,d,p,2c#.,p,d,c#,4d,c#,d,p,e,p,4f#,p,a,p,4b,a,b,p,a,p,b,p,2a.,4p,a,b,a,4b,a,b,p,2a.,a,4f#,a,b,p,d6,p,4e.6,d6,b,p,a,p,2b";
 //char *song = "StarWars:d=4,o=5,b=45:32p,32f#,32f#,32f#,8b.,8f#.6,32e6,32d#6,32c#6,8b.6,16f#.6,32e6,32d#6,32c#6,8b.6,16f#.6,32e6,32d#6,32e6,8c#.6,32f#,32f#,32f#,8b.,8f#.6,32e6,32d#6,32c#6,8b.6,16f#.6,32e6,32d#6,32c#6,8b.6,16f#.6,32e6,32d#6,32e6,8c#6";
-char *song = "GoodBad:d=4,o=5,b=56:32p,32a#,32d#6,32a#,32d#6,8a#.,16f#.,16g#.,d#,32a#,32d#6,32a#,32d#6,8a#.,16f#.,16g#.,c#6,32a#,32d#6,32a#,32d#6,8a#.,16f#.,32f.,32d#.,c#,32a#,32d#6,32a#,32d#6,8a#.,16g#.,d#";
 //char *song = "TopGun:d=4,o=4,b=31:32p,16c#,16g#,16g#,32f#,32f,32f#,32f,16d#,16d#,32c#,32d#,16f,32d#,32f,16f#,32f,32c#,16f,d#,16c#,16g#,16g#,32f#,32f,32f#,32f,16d#,16d#,32c#,32d#,16f,32d#,32f,16f#,32f,32c#,g#";
 //char *song = "A-Team:d=8,o=5,b=125:4d#6,a#,2d#6,16p,g#,4a#,4d#.,p,16g,16a#,d#6,a#,f6,2d#6,16p,c#.6,16c6,16a#,g#.,2a#";
 //char *song = "Flinstones:d=4,o=5,b=40:32p,16f6,16a#,16a#6,32g6,16f6,16a#.,16f6,32d#6,32d6,32d6,32d#6,32f6,16a#,16c6,d6,16f6,16a#.,16a#6,32g6,16f6,16a#.,32f6,32f6,32d#6,32d6,32d6,32d#6,32f6,16a#,16c6,a#,16a6,16d.6,16a#6,32a6,32a6,32g6,32f#6,32a6,8g6,16g6,16c.6,32a6,32a6,32g6,32g6,32f6,32e6,32g6,8f6,16f6,16a#.,16a#6,32g6,16f6,16a#.,16f6,32d#6,32d6,32d6,32d#6,32f6,16a#,16c.6,32d6,32d#6,32f6,16a#,16c.6,32d6,32d#6,32f6,16a#6,16c7,8a#.6";
@@ -719,20 +718,16 @@ char *song = "GoodBad:d=4,o=5,b=56:32p,32a#,32d#6,32a#,32d#6,8a#.,16f#.,16g#.,d#
 //char *song = "MahnaMahna:d=16,o=6,b=125:c#,c.,b5,8a#.5,8f.,4g#,a#,g.,4d#,8p,c#,c.,b5,8a#.5,8f.,g#.,8a#.,4g,8p,c#,c.,b5,8a#.5,8f.,4g#,f,g.,8d#.,f,g.,8d#.,f,8g,8d#.,f,8g,d#,8c,a#5,8d#.,8d#.,4d#,8d#.";
 //char *song = "LeisureSuit:d=16,o=6,b=56:f.5,f#.5,g.5,g#5,32a#5,f5,g#.5,a#.5,32f5,g#5,32a#5,g#5,8c#.,a#5,32c#,a5,a#.5,c#.,32a5,a#5,32c#,d#,8e,c#.,f.,f.,f.,f.,f,32e,d#,8d,a#.5,e,32f,e,32f,c#,d#.,c#";
 //char *song = "MissionImp:d=16,o=6,b=95:32d,32d#,32d,32d#,32d,32d#,32d,32d#,32d,32d,32d#,32e,32f,32f#,32g,g,8p,g,8p,a#,p,c7,p,g,8p,g,8p,f,p,f#,p,g,8p,g,8p,a#,p,c7,p,g,8p,g,8p,f,p,f#,p,a#,g,2d,32p,a#,g,2c#,32p,a#,g,2c,a#5,8c,2p,32p,a#5,g5,2f#,32p,a#5,g5,2f,32p,a#5,g5,2e,d#,8d";
+char *song = "GoodBad:d=4,o=5,b=56:32p,32a#,32d#6,32a#,32d#6,8a#.,16f#.,16g#.,d#,32a#,32d#6,32a#,32d#6,8a#.,16f#.,16g#.,c#6,32a#,32d#6,32a#,32d#6,8a#.,16f#.,32f.,32d#.,c#,32a#,32d#6,32a#,32d#6,8a#.,16g#.,d#";
 
 #define isdigit(n) (n >= '0' && n <= '9')
 
-
-//keyOn  keyOff not active.... as other MIDI functionality?
-
 void play_keys(DspFaust * aDSP){  //uses keyOn / keyOff
-       // start continuous background voice
+       // start continuous background voice for testing polyphony
        
        /*
        aDSP->keyOn(50, 126);
        vTaskDelay(3000 / portTICK_PERIOD_MS);
-        //release continuous background voice
-       //aDSP->keyOff(50); 
        */
   
         for (int ii = 48; ii < 69; ii++){
@@ -740,17 +735,17 @@ void play_keys(DspFaust * aDSP){  //uses keyOn / keyOff
         vTaskDelay(100 / portTICK_PERIOD_MS);
         //update_controls(voiceAddress,aDSP)        
         uintptr_t voiceAddress = aDSP->keyOn(ii,126);
- //cannot use update_controls as used here for this kind of voice ?? 
-           //update_controls(voiceAddress,aDSP); 
+        //cannot use update_controls as used here for this kind of voice ?? 
+        //update_controls(voiceAddress,aDSP); 
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         //aDSP->setVoiceParamValue(5,voiceAddress,110);
         //update_controls(voiceAddress,aDSP);
         aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,110);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         int res = aDSP->keyOff(ii);
-        
         }  
          vTaskDelay(3000 / portTICK_PERIOD_MS);
+         
         /*
         //release continuous background voice
         aDSP->keyOff(50);
@@ -776,7 +771,7 @@ void play_keys2(DspFaust * aDSP){  //uses keyOn / keyOff
         vTaskDelay(100 / portTICK_PERIOD_MS);    
         uintptr_t voiceAddress = aDSP->keyOn(ii,126);
         //cannot use update_controls as used here for this kind of voice 
-           //update_controls(voiceAddress,aDSP); 
+        //update_controls(voiceAddress,aDSP); 
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         //aDSP->setVoiceParamValue(5,voiceAddress,110);
         aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,110);
@@ -790,7 +785,6 @@ void play_keys2(DspFaust * aDSP){  //uses keyOn / keyOff
         aDSP->keyOff(50);
         
 }
-
 
 
 void play_setVoiceParam_path(DspFaust * aDSP) 
@@ -1059,11 +1053,7 @@ void play_poly_rtttl(char *p, DspFaust * aDSP)
     {
        
       printf("Playing: \n");
-   //   Serial.print(scale, 10); Serial.print(' ');
-   //   Serial.print(note, 10); Serial.print(" (");
-   //   Serial.print(notes[(scale - 4) * 12 + note], 10);
-   //   Serial.print(") ");
-   //   Serial.println(duration, 10);
+
       /*
       aDSP->setParamValue("/elecGuitar/midi/freq",freqs[(scale-4) * 12 + note]);
       aDSP->setParamValue("/elecGuitar/gate",1);
@@ -1080,9 +1070,9 @@ void play_poly_rtttl(char *p, DspFaust * aDSP)
       vTaskDelay(duration / portTICK_PERIOD_MS);
       //printf("%s \n",DSP->getJSONUI());
       //DSP->setParamValue("gain",0);
-    //  aDSP->setParamValue("/simpleSynt_Analog/gate",0); 
-        // aDSP->setParamValue("/elecGuitar/gate",0);
-        aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0); 
+      //aDSP->setParamValue("/simpleSynt_Analog/gate",0); 
+      // aDSP->setParamValue("/elecGuitar/gate",0);
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0); 
      // tone1.play(notes[(scale - 4) * 12 + note]);
       
       update_controls(voiceAddress,aDSP);  //later do this in a freertos task 
@@ -1494,10 +1484,10 @@ while(1) {
             msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop started", 0, 0, 0);
            // play_mono_rtttl(song, DSP);     // NOK uses setParamValue(path
            // play_poly_rtttl(song, DSP);     //  NOK uses setVoiceParamValue(path
-            play_setVoiceParam_path(DSP);    //OK
-           // play_setVoiceParam_Id(DSP);   //to be tested
-           //play_keys(DSP);                 // OK uses keyOn/keyOff  how to update controls??
-           // play_keys2(DSP);                 // overlapping keys uses keyOn/keyOff
+            play_setVoiceParam_path(DSP);     //OK
+           // play_setVoiceParam_Id(DSP);     //to be tested
+           // play_keys(DSP);                  // OK uses keyOn/keyOff  how to update controls??
+           // play_keys2(DSP);                // NOK overlapping keys uses keyOn/keyOff
             msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop finished", 0, 0, 0);
             }
         //update_controls();
