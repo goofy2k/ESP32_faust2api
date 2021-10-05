@@ -112,19 +112,19 @@ bool play_flag = false;
 int poly = 0; //ofset for 
 
 
-    //parameter base ID's (WaveSynth FX), taken from API README.md
-    //add 1 in case of polyphony
-    int synthABaseId = 0;
-    int synthDBaseId = 1;
-    int synthRBaseId = 2;
-    int synthSBaseId = 3;
-    int bendBaseId = 4;
-    int synthFreqBaseId = 5; //for WaveSynth_FX poly
-    int gainBaseId = 6; //for WaveSynth_FX poly
-    int gateBaseId = 7; //for WaveSynth_FX poly
-    int lfoDepthBaseId = 8;
-    int lfoFreqBaseId = 9;
-    int waveTravelBaseId = 10;
+//parameter base ID's (WaveSynth FX), taken from API README.md
+//add 1 in case of polyphony
+int synthABaseId = 0;
+int synthDBaseId = 1;
+int synthRBaseId = 2;
+int synthSBaseId = 3;
+int bendBaseId = 4;
+int synthFreqBaseId = 5; //for WaveSynth_FX poly
+int gainBaseId = 6; //for WaveSynth_FX poly
+int gateBaseId = 7; //for WaveSynth_FX poly
+int lfoDepthBaseId = 8;
+int lfoFreqBaseId = 9;
+int waveTravelBaseId = 10;
 
 /* FreeRTOS event group to signal when we are connected*/
 static EventGroupHandle_t s_wifi_event_group;
@@ -281,8 +281,6 @@ void update_controls(uintptr_t voiceAddress, DspFaust * aDSP){  //maybe do this 
   incoming_updates = false;
 
 }
-
-//static const char *TAG = "MQTT_EXAMPLE";
 
 
 static void call_faust_api(esp_mqtt_event_handle_t event){
@@ -899,8 +897,6 @@ ESP_LOGI(TAG, "play_poly_without_midi_Id");
            
 };
 
-
-
 void play_poly_rtttl(char *p, DspFaust * aDSP)
 {
  // aDSP->allNotesOff(); 
@@ -1100,8 +1096,6 @@ void play_poly_rtttl(char *p, DspFaust * aDSP)
   }  //while (p*)
   } //song player    
  
-
-
 void play_mono_rtttl(char *p, DspFaust * aDSP)
 {
  // aDSP->allNotesOff();  
@@ -1324,8 +1318,7 @@ void app_main(void)
      * examples/protocols/README.md for more information about this function.
      */
     //ESP_ERROR_CHECK(example_connect());
-    
-    
+       
     //Initialize NVS
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
@@ -1339,8 +1332,6 @@ void app_main(void)
     esp_mqtt_client_handle_t  mqtt_client =  mqtt_app_start();
     ESP_LOGW(TAG,"MQTT client started audio codec initialized"); 
 
-
-
     WM8978 wm8978;
     wm8978.init();
     wm8978.addaCfg(1,1); 
@@ -1352,22 +1343,13 @@ void app_main(void)
     wm8978.spkVolSet(0);
     wm8978.hpVolSet(hpVol_L,hpVol_R);
     wm8978.i2sCfg(2,0);
-    ESP_LOGW(TAG,"WM8978 audio codec initialized"); 
+    ESP_LOGW(TAG,"WM8978 audio codec initialized");
+    
  //   YOU MUST USE faust2api API calls
     int SR = 48000;
     int BS = 32; //was 8
    
-   // DspFaust dspFaust(SR,BS);
-     // if (dspFaust.isRunning()) {printf("BEFORE START RUNNING\n");} else {printf("BEFORE START NOT RUNNING\n");} ;
-   // dspFaust.start();
-    
-    //if (dspFaust.isRunning()) {printf("AFTER START RUNNING\n");} else {printf("AFTER START NOT RUNNING\n");} ;
-    
-   // printf("Hello modified CHECKIT 1 world!\n");
-   // printf("BEFORE DspFaust INSTANTIATION\n");
     DSP = new DspFaust(SR,BS); 
-    //printf("Hello modified 2x world!\n");
-   // if (DSP->isRunning()) {printf("BEFORE START RUNNINGa\n");} else {printf("BEFORE START NOT RUNNINGb\n");} ;
 
     DSP->start();
     if (DSP->isRunning()) {
@@ -1382,150 +1364,44 @@ void app_main(void)
                         // int msg_id;
     msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "init NOK", 0, 0, 0);
     ESP_LOGW(TAG,"Sent MQTT message to Nodered");            } ;
-  /*
-    //printf("Hello modified 3x world!\n");
-    //DSP->setParamValue("freq",220);
-    //DSP->keyOn(50,50);
-    DSP->allNotesOff();
-    
-     float CPULoad = DSP->getCPULoad();
-     printf("CPULoad %7.5f \n",CPULoad);
-     
-     float min0 = DSP->getParamMin(0);
-     float max0 = DSP->getParamMax(0);
-     float init0 = DSP->getParamInit(0);
-     float min1 = DSP->getParamMin(1);
-     float max1 = DSP->getParamMax(1);
-     float init1 = DSP->getParamInit(1); 
-     printf("min0 = %7.5f \n",min0);
-     printf("max0 = %7.5f \n",max0);
-     printf("init0 = %7.5f \n",init0);
-     printf("min1 = %7.5f \n",min1);
-     printf("max1 = %7.5f \n",max1);
-     printf("init1 = %7.5f \n",init1);
 
-    uintptr_t myvoice0 = DSP->newVoice();
-    printf("myvoice0 = %u \n",myvoice0);
-    
-    //printf("myvoice0: %" PRIxPTR "\n", myvoice0);
-    
-    uintptr_t myvoice1 = DSP->newVoice();
-    printf("myvoice1 = %u \n",myvoice1);
-    //printf("myvoice1: %" PRIxPTR "\n", myvoice1);
-    //printf("myvoice1: %PRIxPTR \n", myvoice1);
-    //printf("The address of i is 0x%lx.\n", myvoice1);
-    if (myvoice0 != 0) {
-        printf("myvoice0 created\n");
-    DSP->setVoiceParamValue(0,myvoice0,220);  
-    float freq0 = DSP-> getVoiceParamValue(0, myvoice0);
-    printf("freq0 = %7.5f \n",freq0);
-    float gain0 = DSP-> getVoiceParamValue(1, myvoice0);
-    printf("gain0 = %7.5f \n",gain0);
-    float freq1 = DSP-> getVoiceParamValue(0, myvoice1);
-    printf("freq1 = %7.5f \n",freq1);
-    float gain1 = DSP-> getVoiceParamValue(1, myvoice1);
-    printf("gain1 = %7.5f \n",gain1);
-    
-    } else {
-        printf("Could not create myvoice0 \n");
-        
+    msg_id = esp_mqtt_client_subscribe(mqtt_client, "/faust/api/#", 1);
+    ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+    msg_id = esp_mqtt_client_subscribe(mqtt_client, "/faust/api2/#", 1);
+    ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+
+    //send JSONUI to Nodered
+    msg_id = esp_mqtt_client_publish(mqtt_client, "/faust/jsonui", DSP->getJSONUI(), 0, 0, 0);  //to be implemented: publish the UI by remote request
+
+    bool even = true;
+    printf("                    ");
+    while(1) {
+            if (even) {
+                printf("\r                   ");
+                printf("\r<<<<<Loop>>>>>"); 
+                } 
+                else {
+                 printf("\r                   ");
+                 printf("\r>>>>>Loop<<<<<");};
+            while(play_flag){
+                msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop started", 0, 0, 0);
+               play_keys(DSP);                  // OK uses keyOn/keyOff  how to update controls??
+               //play_setVoiceParam_path(DSP);     //OK
+               // play_mono_rtttl(song, DSP);     // NOK uses setParamValue(path
+               // play_poly_rtttl(song, DSP);     //  NOK uses setVoiceParamValue(path
+
+               // play_setVoiceParam_Id(DSP);     //to be tested
+
+               // play_keys2(DSP);                // NOK overlapping keys uses keyOn/keyOff
+                msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop finished", 0, 0, 0);
+                }
+            //update_controls();
+            even = !even;
+            vTaskDelay(500 / portTICK_PERIOD_MS);
+
         };
 
-*/
-
-/*
-Main Parameters
-0: /Polyphonic/Voices/Panic
-1: /Polyphonic/Voices/elecGuitar/midi/freq
-2: /Polyphonic/Voices/elecGuitar/midi/bend
-3: /Polyphonic/Voices/elecGuitar/midi/gain
-4: /Polyphonic/Voices/elecGuitar/midi/sustain
-5: /Polyphonic/Voices/elecGuitar/pluckPosition
-6: /Polyphonic/Voices/elecGuitar/outGain
-7: /Polyphonic/Voices/elecGuitar/gate
-Independent Voice
-0: /elecGuitar/gate
-1: /elecGuitar/midi/bend
-2: /elecGuitar/midi/freq
-3: /elecGuitar/midi/gain
-4: /elecGuitar/midi/sustain
-5: /elecGuitar/outGain
-6: /elecGuitar/pluckPosition
-*/
-
-
-msg_id = esp_mqtt_client_subscribe(mqtt_client, "/faust/api/#", 1);
-ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
-msg_id = esp_mqtt_client_subscribe(mqtt_client, "/faust/api2/#", 1);
-ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
-
-
-msg_id = esp_mqtt_client_publish(mqtt_client, "/faust/jsonui", DSP->getJSONUI(), 0, 0, 0);  //to be implemented: publish the UI by remote request via th
-
-/*
-while(play_flag){
-msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "rtttl song loop started", 0, 0, 0);
-play_mono_rtttl(song, DSP); //try to implement playing a song in a separate task
-msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "rtttl song loop finished", 0, 0, 0);
-}
-*/
-
-/*
-msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "keys song loop started", 0, 0, 0);
-play_poly_keys( DSP); //try to implement playing a song in a separate task
-msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "keys song loop finished", 0, 0, 0);
-*/
-
-/*
-msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "poly_without_midi song loop started", 0, 0, 0);
-play_poly_without_midi(DSP); 
-msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "poly_without_midi song loop finished", 0, 0, 0);
-*/
-bool even = true;
-printf("                    ");
-while(1) {
-        if (even) {
-            printf("\r                   ");
-            printf("\r<<<<<Loop>>>>>"); 
-            } 
-            else {
-             printf("\r                   ");
-             printf("\r>>>>>Loop<<<<<");};
-        while(play_flag){
-            msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop started", 0, 0, 0);
-           play_keys(DSP);                  // OK uses keyOn/keyOff  how to update controls??
-           //play_setVoiceParam_path(DSP);     //OK
-           // play_mono_rtttl(song, DSP);     // NOK uses setParamValue(path
-           // play_poly_rtttl(song, DSP);     //  NOK uses setVoiceParamValue(path
-
-           // play_setVoiceParam_Id(DSP);     //to be tested
-
-           // play_keys2(DSP);                // NOK overlapping keys uses keyOn/keyOff
-            msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop finished", 0, 0, 0);
-            }
-        //update_controls();
-        even = !even;
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-   
-
-  
-  //play_rtttl(song, DSP);
-  
-
-};
-
-
-
-    /*
-    while(1) {
-        //printf("Hello modified 4x world!\n");
-       // dspFaust.setParamValue("freq",rand()%(2000-50 + 1) + 50);
-       DSP->setParamValue("freq",440);
-     //   YOU MUST USE faust2api API calls
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
-    */
-    // Waiting forever
+    // Waiting forever, but code is never reached
     vTaskSuspend(nullptr);   
     
 }
