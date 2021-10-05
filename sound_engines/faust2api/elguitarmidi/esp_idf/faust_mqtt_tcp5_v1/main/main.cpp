@@ -727,28 +727,32 @@ char *song = "GoodBad:d=4,o=5,b=56:32p,32a#,32d#6,32a#,32d#6,8a#.,16f#.,16g#.,d#
 void play_keys(DspFaust * aDSP){  //uses keyOn / keyOff
        // start continuous background voice for testing polyphony
        static const char *TAG = "PLAY_KEYS";
+       int res;
+       uintptr_t voiceAddress;
        ESP_LOGI(TAG, "starting play_keys");
        /*
        aDSP->keyOn(50, 126);
        vTaskDelay(3000 / portTICK_PERIOD_MS);
        */
-  
-        for (int ii = 48; ii < 69; ii++){
-        printf("counter ii %d \n",ii);    
+        int vel1 = 126;
+        for (int pitch = 48; pitch < 69; pitch++){
+   
+        //printf("counter ii %d \n",ii);    
         vTaskDelay(100 / portTICK_PERIOD_MS);
            
-        ESP_LOGI(TAG, "going to launch keyOn");       
-        uintptr_t voiceAddress = aDSP->keyOn(ii,126);
-        update_controls(voiceAddress,aDSP);
+        ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1);      
+        voiceAddress = aDSP->keyOn(pitch,vel1);
+        //update_controls(voiceAddress,aDSP);
         ESP_LOGI(TAG, "after keyOn");  
         //cannot use update_controls as used here for this kind of voice ?? 
         //update_controls(voiceAddress,aDSP); 
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         //aDSP->setVoiceParamValue(5,voiceAddress,110);
         //update_controls(voiceAddress,aDSP);
-        aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,110);
+        //aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,110);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
-        int res = aDSP->keyOff(ii);
+        ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1);  
+        res = aDSP->keyOff(pitch);
         } 
          ESP_LOGI(TAG, "end of sequence");        
          vTaskDelay(3000 / portTICK_PERIOD_MS);
@@ -803,28 +807,73 @@ void play_setVoiceParam_path(DspFaust * aDSP)
     vTaskDelay(500 / portTICK_PERIOD_MS);  
 */
 
-
-    uintptr_t voiceAddress = aDSP->newVoice(); //create main voice    
+    /*
+    uintptr_t bg_voiceAddress = aDSP->newVoice(); //create main voice    
+    aDSP->setVoiceParamValue("/WaveSynth_FX/gain",bg_voiceAddress,1);
+    update_controls(bg_voiceAddress,aDSP);
+    */
+    
+    uintptr_t voiceAddress = aDSP->newVoice(); //create main voice
     aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress,1);
+    //update_controls(voiceAddress,aDSP);
+        
+    //aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress,1); 
     
         for (int ii = 50; ii < 60; ii++){
            update_controls(voiceAddress,aDSP);  
-                   ESP_LOGI(TAG, "going to set frequency"); 
-           aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,440.0);
+           ESP_LOGI(TAG, "going to set frequency 2"); 
+           
+           aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,220.0);
            ESP_LOGI(TAG, "going to set gate ON"); 
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1.0);
            vTaskDelay(500 / portTICK_PERIOD_MS); 
            ESP_LOGI(TAG, "going to set gate OFF");            
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
-           vTaskDelay(500 / portTICK_PERIOD_MS); 
+           vTaskDelay(5000 / portTICK_PERIOD_MS);
+
+
            
-           update_controls(voiceAddress,aDSP);  
-           aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,220.0);
+           
+           //update_controls(voiceAddress,aDSP);  
            // aDSP->setVoiceParamValue("/WaveSynth_FX/freq",freqs[(scale-4) * 12 + note]);
-           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1);
-           vTaskDelay(500 / portTICK_PERIOD_MS);          
+
+           //aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,440.0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1.0);
+           vTaskDelay(100 / portTICK_PERIOD_MS);          
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
-           vTaskDelay(500 / portTICK_PERIOD_MS);
+           vTaskDelay(100 / portTICK_PERIOD_MS);
+           
+           //adding subsequent short notes does not work!
+           //the strange thing is that when the third note is added, also the two first ones do not fire .....
+          
+           //aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,440.0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1.0);
+           vTaskDelay(100 / portTICK_PERIOD_MS);          
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
+           vTaskDelay(100 / portTICK_PERIOD_MS);
+           
+           
+           
+           
+           aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,440.0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1);
+           vTaskDelay(100 / portTICK_PERIOD_MS);          
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
+           vTaskDelay(100 / portTICK_PERIOD_MS); 
+                      
+                      
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1);
+           vTaskDelay(100 / portTICK_PERIOD_MS);          
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
+           vTaskDelay(100 / portTICK_PERIOD_MS);
+           
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1);
+           vTaskDelay(100 / portTICK_PERIOD_MS);          
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
+           vTaskDelay(100 / portTICK_PERIOD_MS);
+           
+           
+           vTaskDelay(100 / portTICK_PERIOD_MS);
            
            /*
            vTaskDelay(500 / portTICK_PERIOD_MS);          
@@ -835,7 +884,7 @@ void play_setVoiceParam_path(DspFaust * aDSP)
         }
         ESP_LOGI(TAG, "end of sequence");
            aDSP->deleteVoice(voiceAddress); //delete main voice
-                    
+  //        aDSP->deleteVoice(bg_voiceAddress); //delete bg voice     
   //         aDSP->deleteVoice(bg_voiceAddress); //delete background voice
 };
 
@@ -1337,7 +1386,7 @@ void app_main(void)
     wm8978.addaCfg(1,1); 
     wm8978.inputCfg(1,0,0);     
     wm8978.outputCfg(1,0); 
-    wm8978.micGain(30);
+    wm8978.micGain(50);
     wm8978.auxGain(0);
     wm8978.lineinGain(0);
     wm8978.spkVolSet(0);
