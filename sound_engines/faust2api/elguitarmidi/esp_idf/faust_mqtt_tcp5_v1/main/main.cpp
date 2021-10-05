@@ -653,31 +653,17 @@ And remove both definition of the mqtt_event_handler() and registration of the h
 
 static esp_mqtt_client * mqtt_app_start(void){
 //static void mqtt_app_start(void){
-    /*
-    esp_mqtt_client_config_t mqtt_cfg = {
-    //.uri = CONFIG_BROKER_URL,
-    .uri = "mqtt://goofy2knet.synology.me",
-    .username = "Fred",
-    .password = "Nwwnlil_12",
-    .client_id = "TTGO_TAudio_1"
-    };
-    */
+
        
     //FCKX
     esp_mqtt_client_config_t mqtt_cfg = {0};
-    // mqtt_cfg.uri = CONFIG_BROKER_URL;
-    //mqtt_cfg.uri = "mqtt://goofy2knet.synology.me";
-    //mqtt_cfg.uri = "mqtt://192.168.2.200:1883";
+
     mqtt_cfg.uri = SECRET_ESP_MQTT_BROKER_URI;
-    //strcpy((char*)mqtt_cfg.uri, "mqtt://goofy2knet.synology.me");
-    //strcpy((char*)mqtt_cfg.username, "Fred");
-    //mqtt_cfg.username = "Fred";
+
     mqtt_cfg.username = SECRET_ESP_MQTT_BROKER_USERNAME;
-    //strcpy((char*)mqtt_cfg.password, "Nwwnlil_12");
-    //mqtt_cfg.password = "Nwwnlil_12";
+
     mqtt_cfg.password = SECRET_ESP_MQTT_BROKER_PASSWORD;
-    //strcpy((char*)mqtt_cfg.client_id, "TTGO_TAudio_1");
-    //mqtt_cfg.client_id = "TTGO_TAudio_1";
+
     mqtt_cfg.client_id = SECRET_ESP_MQTT_CLIENT_ID;
     
 #if CONFIG_BROKER_URL_FROM_STDIN
@@ -771,9 +757,10 @@ void play_keys(DspFaust * aDSP){  //uses keyOn / keyOff
         for (int ii = 48; ii < 69; ii++){
         printf("counter ii %d \n",ii);    
         vTaskDelay(100 / portTICK_PERIOD_MS);
-        //update_controls(voiceAddress,aDSP)   
+           
         ESP_LOGI(TAG, "going to launch keyOn");       
         uintptr_t voiceAddress = aDSP->keyOn(ii,126);
+        update_controls(voiceAddress,aDSP);
         ESP_LOGI(TAG, "after keyOn");  
         //cannot use update_controls as used here for this kind of voice ?? 
         //update_controls(voiceAddress,aDSP); 
@@ -792,7 +779,6 @@ void play_keys(DspFaust * aDSP){  //uses keyOn / keyOff
         aDSP->keyOff(50);
         */
 }
-
 
 void play_keys2(DspFaust * aDSP){  //uses keyOn / keyOff
        // start continuous background voice
@@ -825,7 +811,6 @@ void play_keys2(DspFaust * aDSP){  //uses keyOn / keyOff
         
 }
 
-
 void play_setVoiceParam_path(DspFaust * aDSP) 
 { //uses setVoiceParamValue(path
        static const char *TAG = "PLAY_setVoiceParam_path";
@@ -843,7 +828,7 @@ void play_setVoiceParam_path(DspFaust * aDSP)
     uintptr_t voiceAddress = aDSP->newVoice(); //create main voice    
     aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress,1);
     
-        for (int ii = 50; ii < 100; ii++){
+        for (int ii = 50; ii < 60; ii++){
            update_controls(voiceAddress,aDSP);  
                    ESP_LOGI(TAG, "going to set frequency"); 
            aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,440.0);
@@ -1527,8 +1512,8 @@ while(1) {
              printf("\r>>>>>Loop<<<<<");};
         while(play_flag){
             msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop started", 0, 0, 0);
-          // play_keys(DSP);                  // OK uses keyOn/keyOff  how to update controls??
-           play_setVoiceParam_path(DSP);     //OK
+           play_keys(DSP);                  // OK uses keyOn/keyOff  how to update controls??
+           //play_setVoiceParam_path(DSP);     //OK
            // play_mono_rtttl(song, DSP);     // NOK uses setParamValue(path
            // play_poly_rtttl(song, DSP);     //  NOK uses setVoiceParamValue(path
 
