@@ -103,11 +103,10 @@ ESP-IDF project settings can be modified with the idf.py menuconfig command. The
 
 ## 4. Descrition of modifications to the DspFaust.cpp file (case faust2api <options> elecGuitarMIDI.dsp  ) 
 
- a. comment the call MidiMeta::analyses  appr line nr 11928 (for elecGuitarMIDI)
+ a. comment the call MidiMeta::analyses  appr line nr 11928 (for elecGuitarMIDI)  
       NOTE: addition of nvoices = NVOICES;
-                                  midi_sync = true;
- 
-      to simulate the outtput of MidiMeta::analysis leads to a stack overflow error 
+                                  midi_sync = true;  
+    to simulate the outtput of MidiMeta::analysis leads to a stack overflow error 
  
  
  b. comment static void analyses line 9111 - 9147
