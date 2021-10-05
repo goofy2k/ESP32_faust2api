@@ -1,5 +1,5 @@
 # DSP On the ESP32 with Faust  
-## faust2api script for ESP32 under ESP-IDF (intermediate results)  
+## faust2api script for ESP32 under ESP-IDF (intermediate results status: 211005 )  
 
 This document is intended for consolidation of the intermediate status on using the faust2api script for ESP32.
 A working basic example app is available (example_faust_mqtt_tcp4_v3). The example:  
