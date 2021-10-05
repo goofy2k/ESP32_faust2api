@@ -92,15 +92,21 @@ WM8978 wm8978;
 int hpVol_L = 20;
 int hpVol_R = 20;
 
-//initial values in app for DSP parameters (not compliant with DspFaust.cpp defaults)
+//initial values in app for DSP parameters (may not be compliant with DspFaust.cpp defaults)
 DspFaust* DSP;
-float lfoFreq = 10;
-float lfoDepth = 0.25;
+float lfoFreq = 0.1;     //
+float lfoDepth = 0;
 float gain = 0.5;
-float synthA = 10;
-float synthD = 1;
-float synthS = 0.01;
-float synthR = 1.0;
+int gate = 0;
+float synthA = 0.01;
+float synthD = 0.6;
+float synthS = 0.2;
+float synthR = 0.8;
+bool incoming_updates = false;
+float bend = 0;
+float synthFreq = 440;
+float waveTravel = 0;
+
 
 bool play_flag = false;
 int poly = 0; //ofset for 
@@ -112,13 +118,13 @@ int poly = 0; //ofset for
     int synthDBaseId = 1;
     int synthRBaseId = 2;
     int synthSBaseId = 3;
-    int synthbendBaseID = 4;
-    int freqBaseId = 5; //for WaveSynth_FX poly
+    int bendBaseId = 4;
+    int synthFreqBaseId = 5; //for WaveSynth_FX poly
     int gainBaseId = 6; //for WaveSynth_FX poly
     int gateBaseId = 7; //for WaveSynth_FX poly
     int lfoDepthBaseId = 8;
     int lfoFreqBaseId = 9;
-    int waveTarvelBaseId = 10;
+    int waveTravelBaseId = 10;
 
 /* FreeRTOS event group to signal when we are connected*/
 static EventGroupHandle_t s_wifi_event_group;
@@ -240,14 +246,32 @@ void wifi_init_sta(void)
 }
 
 void update_controls(uintptr_t voiceAddress, DspFaust * aDSP){  //maybe do this in a cyclic freertos timer task
-  static const char *TAG = "update_controls";  
+  static const char *TAG = "update_controls"; 
+  if (incoming_updates) {
+  
   wm8978.hpVolSet(hpVol_R, hpVol_L);
   ESP_LOGI(TAG, "poly: %d", poly); 
   //if (poly == 1){
+    //found out that the BaseId is sufficient, poly = 0
     poly = 0;
+    
     //later, use a struct, better: re-use an existing struct
-    aDSP->setVoiceParamValue(gainBaseId+poly,voiceAddress, 0.5);
-    ESP_LOGI(TAG, "gainBaseId %d, set gain %6.2f", gainBaseId, 0.5);  //FCKX
+    //and or use MACROS and a loop
+        aDSP->setVoiceParamValue(synthFreqBaseId+poly,voiceAddress, synthFreq);
+    ESP_LOGI(TAG, "synthFreqBaseId %d, set gain %6.2f", synthFreqBaseId, synthFreq);  //FCKX  
+         aDSP->setVoiceParamValue(gateBaseId+poly,voiceAddress, gate);
+  //  ESP_LOGI(TAG, "gateBaseId %d, set gate %6.2f", gateBaseId, gate);  //FCKX    
+    
+           aDSP->setVoiceParamValue(waveTravelBaseId+poly,voiceAddress, waveTravel);
+    ESP_LOGI(TAG, "waveTravelBaseId %d, set waveTravel %6.2f", waveTravelBaseId, waveTravel);  //FCKX    
+    
+    
+    aDSP->setVoiceParamValue(bendBaseId+poly,voiceAddress, bend);
+    ESP_LOGI(TAG, "bendBaseId %d, set bend %6.2f", bendBaseId, bend);  //FCKX   
+    aDSP->setVoiceParamValue(gainBaseId+poly,voiceAddress, gain);
+    ESP_LOGI(TAG, "gainBaseId %d, set gain %6.2f", gainBaseId, gain);  //FCKX
+    
+    
     aDSP->setVoiceParamValue(lfoFreqBaseId+poly,voiceAddress, lfoFreq);
     ESP_LOGI(TAG, "lfoFreqBaseId %d, set lfoFreq %6.2f", lfoFreqBaseId, lfoFreq);  //FCKX
     aDSP->setVoiceParamValue(lfoDepthBaseId+poly,voiceAddress, lfoDepth);
@@ -272,6 +296,9 @@ void update_controls(uintptr_t voiceAddress, DspFaust * aDSP){  //maybe do this 
       
   }
 */    
+  }
+  incoming_updates = false;
+
 }
 
 //static const char *TAG = "MQTT_EXAMPLE";
@@ -280,6 +307,7 @@ void update_controls(uintptr_t voiceAddress, DspFaust * aDSP){  //maybe do this 
 static void call_faust_api(esp_mqtt_event_handle_t event){
     //printf("HANDLING FAUST API CALL=%s\n"," /faust/api");
     static const char *TAG = "MQTT Faust API";
+    incoming_updates = true;
     if (strncmp(event->topic, "/faust/api/DspFaust",strlen("/faust/api/DspFaust")) == 0) {
              printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
     } else
@@ -388,7 +416,8 @@ static void call_faust_api(esp_mqtt_event_handle_t event){
     if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/A",strlen("/Polyphonic/Voices/WaveSynth_FX/A")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
-             synthA = atof(event->data);  
+             synthA = atof(event->data);
+                          
              //ESP_LOGI(TAG,"...to be implemented<<<"); 
     } else
     if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/D",strlen("/Polyphonic/Voices/WaveSynth_FX/D")) == 0) {
@@ -412,21 +441,24 @@ static void call_faust_api(esp_mqtt_event_handle_t event){
     if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/bend",strlen("/Polyphonic/Voices/WaveSynth_FX/bend")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
-             ESP_LOGI(TAG,"...to be implemented<<<"); 
+             bend = atof(event->data); 
     } else  
     if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/freq",strlen("/Polyphonic/Voices/WaveSynth_FX/freq")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
-             ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
+             ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data);
+             synthFreq = atof(event->data);              
              ESP_LOGI(TAG,"...to be implemented<<<"); 
+             
     } else
     if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/gain",strlen("/Polyphonic/Voices/WaveSynth_FX/gain")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
-             ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
-             ESP_LOGI(TAG,"...to be implemented<<<"); 
+             ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data);
+             gain = atof(event->data);              
     } else  
     if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/gate",strlen("/Polyphonic/Voices/WaveSynth_FX/gate")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
+             gate= atoi(event->data); //must convert from int
              ESP_LOGI(TAG,"...to be implemented<<<"); 
     } else  
     if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/lfoFreq",strlen("/Polyphonic/Voices/WaveSynth_FX/lfoFreq")) == 0) {
@@ -448,12 +480,14 @@ static void call_faust_api(esp_mqtt_event_handle_t event){
     } else          
     {
         printf("HANDLING FAUST API CALL: INVALID COMMAND= %s\n",event->topic);
+        incoming_updates = false;
           }            
     }
 
 
 static void call_faust_api2(esp_mqtt_event_handle_t event){
     static const char *TAG = "MQTT Faust API2";
+    incoming_updates = true;
     ESP_LOGI(TAG,"HANDLING Faust API2 CALL:%.*s\r ", event->topic_len, event->topic);
     ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
     //printf("HANDLING FAUST API2 CALL=%s\n"," /faust/api2");
@@ -469,6 +503,7 @@ static void call_faust_api2(esp_mqtt_event_handle_t event){
     if (strncmp(event->topic, "/faust/api2/wm8978/hpVol/right",strlen("/faust/api2/wm8978/hpVol/right")) == 0)        {
              hpVol_R = atoi(event->data);             
     } else  
+/*        
     if (strncmp(event->topic, "/faust/api2/DSP/synthA",strlen("/faust/api2/DSP/synthA")) == 0)        {
              synthA = atof(event->data);             
     } else    
@@ -486,7 +521,8 @@ static void call_faust_api2(esp_mqtt_event_handle_t event){
     } else    
     if (strncmp(event->topic, "/faust/api2/DSP/lfoDepth",strlen("/faust/api2/DSP/lfoDepth")) == 0)        {
              lfoDepth = atof(event->data);             
-    } else    
+    } else 
+*/        
     if (strncmp(event->topic, "/faust/api2/DSP/poly",strlen("/faust/api2/DSP/poly")) == 0)        {
              poly = atoi(event->data);             
     } else 
@@ -502,6 +538,7 @@ static void call_faust_api2(esp_mqtt_event_handle_t event){
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
              ESP_LOGI(TAG,">>>INVALID COMMAND<<<"); 
+             incoming_updates = false;
           }            
     }
 
@@ -724,7 +761,8 @@ char *song = "GoodBad:d=4,o=5,b=56:32p,32a#,32d#6,32a#,32d#6,8a#.,16f#.,16g#.,d#
 
 void play_keys(DspFaust * aDSP){  //uses keyOn / keyOff
        // start continuous background voice for testing polyphony
-       
+       static const char *TAG = "PLAY_KEYS";
+       ESP_LOGI(TAG, "starting play_keys");
        /*
        aDSP->keyOn(50, 126);
        vTaskDelay(3000 / portTICK_PERIOD_MS);
@@ -733,8 +771,10 @@ void play_keys(DspFaust * aDSP){  //uses keyOn / keyOff
         for (int ii = 48; ii < 69; ii++){
         printf("counter ii %d \n",ii);    
         vTaskDelay(100 / portTICK_PERIOD_MS);
-        //update_controls(voiceAddress,aDSP)        
+        //update_controls(voiceAddress,aDSP)   
+        ESP_LOGI(TAG, "going to launch keyOn");       
         uintptr_t voiceAddress = aDSP->keyOn(ii,126);
+        ESP_LOGI(TAG, "after keyOn");  
         //cannot use update_controls as used here for this kind of voice ?? 
         //update_controls(voiceAddress,aDSP); 
         vTaskDelay(1000 / portTICK_PERIOD_MS);
@@ -743,7 +783,8 @@ void play_keys(DspFaust * aDSP){  //uses keyOn / keyOff
         aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,110);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         int res = aDSP->keyOff(ii);
-        }  
+        } 
+         ESP_LOGI(TAG, "end of sequence");        
          vTaskDelay(3000 / portTICK_PERIOD_MS);
          
         /*
@@ -751,8 +792,6 @@ void play_keys(DspFaust * aDSP){  //uses keyOn / keyOff
         aDSP->keyOff(50);
         */
 }
-
-
 
 
 void play_keys2(DspFaust * aDSP){  //uses keyOn / keyOff
@@ -789,7 +828,8 @@ void play_keys2(DspFaust * aDSP){  //uses keyOn / keyOff
 
 void play_setVoiceParam_path(DspFaust * aDSP) 
 { //uses setVoiceParamValue(path
-
+       static const char *TAG = "PLAY_setVoiceParam_path";
+       ESP_LOGI(TAG, "starting play_setVoiceParam_path");
 /*
     uintptr_t bg_voiceAddress = aDSP->newVoice(); //create background voice    
     aDSP->setVoiceParamValue("/WaveSynth_FX/gain",bg_voiceAddress,1);  
@@ -805,10 +845,12 @@ void play_setVoiceParam_path(DspFaust * aDSP)
     
         for (int ii = 50; ii < 100; ii++){
            update_controls(voiceAddress,aDSP);  
+                   ESP_LOGI(TAG, "going to set frequency"); 
            aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,440.0);
-           // aDSP->setVoiceParamValue("/WaveSynth_FX/freq",freqs[(scale-4) * 12 + note]);
+           ESP_LOGI(TAG, "going to set gate ON"); 
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1.0);
-           vTaskDelay(500 / portTICK_PERIOD_MS);          
+           vTaskDelay(500 / portTICK_PERIOD_MS); 
+           ESP_LOGI(TAG, "going to set gate OFF");            
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
            vTaskDelay(500 / portTICK_PERIOD_MS); 
            
@@ -827,7 +869,9 @@ void play_setVoiceParam_path(DspFaust * aDSP)
            */
            
         }
+        ESP_LOGI(TAG, "end of sequence");
            aDSP->deleteVoice(voiceAddress); //delete main voice
+                    
   //         aDSP->deleteVoice(bg_voiceAddress); //delete background voice
 };
 
@@ -851,8 +895,8 @@ ESP_LOGI(TAG, "play_poly_without_midi_Id");
     for (int ii = 0; ii < 50; ii++){
         
         update_controls(voiceAddress,aDSP);        
-        aDSP->setVoiceParamValue(freqBaseId+poly,voiceAddress,440.0);
-        ESP_LOGI(TAG, "freqBaseId %d, set freq %6.2f", freqBaseId, 440.0);  //FCKX
+        aDSP->setVoiceParamValue(synthFreqBaseId+poly,voiceAddress,440.0);
+        ESP_LOGI(TAG, "synthFreqBaseId %d, set freq %6.2f", synthFreqBaseId, 440.0);  //FCKX
         aDSP->setVoiceParamValue(gateBaseId+poly,voiceAddress,1);
         ESP_LOGI(TAG, "gateBaseId %d, set gate %d", gateBaseId, 1);  //FCKX
         vTaskDelay(500 / portTICK_PERIOD_MS); 
@@ -863,8 +907,8 @@ ESP_LOGI(TAG, "play_poly_without_midi_Id");
         ESP_LOGI(TAG, "delay");  //FCKX
 
         update_controls(voiceAddress,aDSP);        
-        aDSP->setVoiceParamValue(freqBaseId+poly,voiceAddress,220.0);
-        ESP_LOGI(TAG, "setVoiceParamValue(freqBaseId+poly,voiceAddress,440.0)");  //FCKX
+        aDSP->setVoiceParamValue(synthFreqBaseId+poly,voiceAddress,220.0);
+        ESP_LOGI(TAG, "setVoiceParamValue(synthFreqBaseId+poly,voiceAddress,440.0)");  //FCKX
         aDSP->setVoiceParamValue(gateBaseId+poly,voiceAddress,1);
         ESP_LOGI(TAG, "gateBaseId %d, set gate %d", gateBaseId, 1);  //FCKX
         vTaskDelay(500 / portTICK_PERIOD_MS); 
@@ -1303,7 +1347,8 @@ void app_main(void)
     esp_log_level_set("TRANSPORT_SSL", ESP_LOG_VERBOSE);
     esp_log_level_set("TRANSPORT", ESP_LOG_VERBOSE);
     esp_log_level_set("OUTBOX", ESP_LOG_VERBOSE);
-
+    esp_log_level_set("update_controls", ESP_LOG_ERROR);
+    
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
@@ -1482,11 +1527,13 @@ while(1) {
              printf("\r>>>>>Loop<<<<<");};
         while(play_flag){
             msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop started", 0, 0, 0);
+          // play_keys(DSP);                  // OK uses keyOn/keyOff  how to update controls??
+           play_setVoiceParam_path(DSP);     //OK
            // play_mono_rtttl(song, DSP);     // NOK uses setParamValue(path
            // play_poly_rtttl(song, DSP);     //  NOK uses setVoiceParamValue(path
-            play_setVoiceParam_path(DSP);     //OK
+
            // play_setVoiceParam_Id(DSP);     //to be tested
-           // play_keys(DSP);                  // OK uses keyOn/keyOff  how to update controls??
+
            // play_keys2(DSP);                // NOK overlapping keys uses keyOn/keyOff
             msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop finished", 0, 0, 0);
             }
