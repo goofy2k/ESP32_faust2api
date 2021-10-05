@@ -4,7 +4,7 @@
 This document is intended for consolidation of the intermediate status on using the faust2api script for ESP32.
 A working basic example app is available (example_faust_mqtt_tcp4_v3). The example:  
 - has been created for compilation under ESP-IDF
-- is based on the Faust elecGuitarMidi.dsp sound engine
+- is based on the Faust elecGuitarMidi.dsp sound engine (currently tests of example_faust_mqtt_tcp5_v1 are ongoing using WaveSynth_FX.dsp)
 - has been tested on a TTGO TAudio board 
 
 To get the example working we had to:
@@ -18,10 +18,11 @@ This document contains a:
 2. walkthrough on how to use this example under ESP-IDF  
 3. walkthrough for creation of a project based on this example with a different Faust sound engine 
 4. description of the ESP-IDF project settings and their rationale
+5. description of the modifications to the DspFaust.cpp file
  
-In the future the faust2api script my have to be adapted for use with an ESP32. As the current status is premature, adaptation of the faust2api script is not yet part of the work until now.
+In the future the faust2api script may have to be adapted for use with an ESP32. As the current status is premature, adaptation of the faust2api script is not yet part of the work until now. Focus is on getting things running.
  
-The adaptations in the  DspFaust.cpp file may be specific for the used sound engine and usage environment (mainly MIDI I/O for elecGuitarMIDI)
+The adaptations in the  DspFaust.cpp file may be specific for the used sound engine and usage environment.
  
 Any changes implemented during write up of this consolidation are done in ESP-IDF project faust_mqtt_tcp5_v1
 
@@ -99,16 +100,19 @@ ESP-IDF project settings can be modified with the idf.py menuconfig command. The
 - 
 
  
-xxxxx
-Modifications to the DspFaust.cpp file (case faust2api <options> elecGuitarMIDI.dsp ) 
 
-comment the call MidiMeta::analyses  appr line nr 11928 (for elecGuitarMIDI)
- NOTE: addition of             nvoices = NVOICES;
-                               midi_sync = true;
+## 4. Descrition of modifications to the DspFaust.cpp file (case faust2api <options> elecGuitarMIDI.dsp  ) 
+
+ a. comment the call MidiMeta::analyses  appr line nr 11928 (for elecGuitarMIDI)
+      NOTE: addition of nvoices = NVOICES;
+                                  midi_sync = true;
  
-to simulate detection of polyphony leads to a stack overflow error 
+      to simulate the outtput of MidiMeta::analysis leads to a stack overflow error 
  
-comment static void analyses line 9111 - 9147
  
- comment throw std:: bad_alloc()  line 25276 (to allow C++ exceptions)  near  printf("You are not setting 'sample_rate' and 'buffer_size', but the audio driver needs it !\n");
- there are two additional occurrences, these are still in. Unclear when they become active.
+ b. comment static void analyses line 9111 - 9147
+ 
+ c. comment throw std:: bad_alloc()  line 25276 (to allow C++ exceptions)  near  printf("You are not setting 'sample_rate' and 'buffer_size', but the audio driver needs it !\n");
+   There are two additional occurrences of this code , these are still in. These are probably not active because of compilation directives.
+
+ NOTE: the changes a. and b. can be undone when the ESP32 main stack size is increased in the project settings (idf.py menuconfig).  Default: 3584. Now 14336 (factor of 4). Later this "huge" increase will have to be minimized as total firmware size may become critical.   
