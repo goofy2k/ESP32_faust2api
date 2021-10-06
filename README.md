@@ -377,7 +377,8 @@ NOTE: menuconfig contains an entry "Halt when an SMP-untested function is called
 
 ## Using FreeRTOS software timers in ESP-IDF  
 	
-bla
+first error:
+	![first error] https://github.com/goofy2k/ESP32_faust2/sound_engines/faust2api/elguitarmidi/esp_idf/faust_mqtt_tcp5_v1/timer%20error.png
 	
 ------------------------------------------------------------------------------------------------------------------------------------------------------------ 
  # Faust API (taken from README generated with FaustSawtooth)
