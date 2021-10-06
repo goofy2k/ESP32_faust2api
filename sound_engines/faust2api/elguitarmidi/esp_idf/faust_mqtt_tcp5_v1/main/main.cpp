@@ -818,7 +818,7 @@ void play_timed_keys(DspFaust * aDSP){  //uses keyOn / keyOff   uses software ti
      // has been started means the timers will start running immediately that
      // the scheduler starts.
      for( x = 0; x < NUM_TIMERS; x++ )
-     {
+     {   //first error on creation!
          xTimers[ x ] = xTimerCreate(    "Timer",       // Just a text name, not used by the kernel.
                                          ( 100 * x ),   // The timer period in ticks.
                                          pdTRUE,        // The timers will auto-reload themselves when they expire.
