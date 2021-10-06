@@ -22,6 +22,8 @@
 #include "freertos/task.h"
 #include "freertos/semphr.h"
 #include "freertos/queue.h"
+#include "freertos/timers.h" //for using software timers
+
 #include "freertos/event_groups.h"
 
 #include "esp_spi_flash.h"
@@ -85,6 +87,18 @@ extern "C" {
 }
 
 */
+
+//software timer parameters. See example in: https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos.html#timer-api
+#define NUM_TIMERS 5
+
+// An array to hold handles to the created timers.
+TimerHandle_t xTimers[ NUM_TIMERS ];
+
+// An array to hold a count of the number of times each timer expires.
+int32_t lExpireCounters[ NUM_TIMERS ] = { 0 };
+
+//timer callback to be defined just before main (OR should it be just before the sequencer procedure that uses it?
+
 int msg_id;
 
 //audio codec parameters WM8978 
@@ -682,6 +696,32 @@ static esp_mqtt_client * mqtt_app_start(void){
     return client;
 }
 
+// Define a callback function that will be used by multiple timer instances.
+// The callback function does nothing but count the number of times the
+// associated timer expires, and stop the timer once the timer has expired
+// 10 times.
+void vTimerCallback( TimerHandle_t pxTimer )
+{
+ESP_LOGI(TAG, "TIMER_CALLBACK");    
+int32_t lArrayIndex;
+const int32_t xMaxExpiryCountBeforeStopping = 10;
+     ESP_LOGI(TAG, "TIMER ... EXPIRED"); 
+    // Optionally do something if the pxTimer parameter is NULL.
+    configASSERT( pxTimer );
+    // Which timer expired?
+    lArrayIndex = ( int32_t ) pvTimerGetTimerID( pxTimer );
+    // Increment the number of times that pxTimer has expired.
+    lExpireCounters[ lArrayIndex ] += 1;
+    // If the timer has expired 10 times then stop it from running.
+    if( lExpireCounters[ lArrayIndex ] == xMaxExpiryCountBeforeStopping )
+    {
+        // Do not use a block time if calling a timer API function from a
+        // timer callback function, as doing so could cause a deadlock!
+         xTimerStop( pxTimer, 0 );
+    }
+ }
+
+
 #define OCTAVE_OFFSET 0
 
 float freqs[] = { 0,
@@ -762,6 +802,89 @@ void play_keys(DspFaust * aDSP){  //uses keyOn / keyOff
         aDSP->keyOff(50);
         */
 }
+
+
+void play_timed_keys(DspFaust * aDSP){  //uses keyOn / keyOff   uses software timer for delays
+       // start continuous background voice for testing polyphony
+       static const char *TAG = "PLAY_KEYS";
+       int res;
+       uintptr_t voiceAddress;
+       
+       //timer variables
+       TimerHandle_t xTimers[ NUM_TIMERS ];
+ int32_t x;
+
+     // Create then start some timers.  Starting the timers before the scheduler
+     // has been started means the timers will start running immediately that
+     // the scheduler starts.
+     for( x = 0; x < NUM_TIMERS; x++ )
+     {
+         xTimers[ x ] = xTimerCreate(    "Timer",       // Just a text name, not used by the kernel.
+                                         ( 100 * x ),   // The timer period in ticks.
+                                         pdTRUE,        // The timers will auto-reload themselves when they expire.
+                                         ( void * ) x,  // Assign each timer a unique id equal to its array index.
+                                         vTimerCallback // Each timer calls the same callback when it expires.
+                                     );
+
+         if( xTimers[ x ] == NULL )
+         {
+             // The timer was not created.
+         }
+         else
+         {
+             // Start the timer.  No block time is specified, and even if one was
+             // it would be ignored because the scheduler has not yet been
+             // started.
+             if( xTimerStart( xTimers[ x ], 0 ) != pdPASS )
+             {
+                 // The timer could not be set into the Active state.
+             }
+         }
+     }
+
+     // ...
+     // Create tasks here.
+     // ...
+
+     // Starting the scheduler will start the timers running as they have already
+     // been set into the active state.
+     vTaskStartScheduler();
+//--------------------------------------end of timer example code       
+       
+       ESP_LOGI(TAG, "starting play_keys");
+       /*
+       aDSP->keyOn(50, 126);
+       vTaskDelay(3000 / portTICK_PERIOD_MS);
+       */
+        int vel1 = 126;
+        for (int pitch = 48; pitch < 69; pitch++){
+   
+        //printf("counter ii %d \n",ii);    
+        vTaskDelay(100 / portTICK_PERIOD_MS);
+           
+        ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1);      
+        voiceAddress = aDSP->keyOn(pitch,vel1);
+        //update_controls(voiceAddress,aDSP);
+        ESP_LOGI(TAG, "after keyOn");  
+        //cannot use update_controls as used here for this kind of voice ?? 
+        //update_controls(voiceAddress,aDSP); 
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        //aDSP->setVoiceParamValue(5,voiceAddress,110);
+        //update_controls(voiceAddress,aDSP);
+        //aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,110);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1);  
+        res = aDSP->keyOff(pitch);
+        } 
+         ESP_LOGI(TAG, "end of sequence");        
+         vTaskDelay(3000 / portTICK_PERIOD_MS);
+         
+        /*
+        //release continuous background voice
+        aDSP->keyOff(50);
+        */
+}
+
 
 void play_keys2(DspFaust * aDSP){  //uses keyOn / keyOff
        // start continuous background voice
@@ -1342,7 +1465,6 @@ void play_mono_rtttl(char *p, DspFaust * aDSP)
   } //song player    
  
 
-
 void app_main(void)
 {
     ESP_LOGI(TAG, "[APP] Startup..");
@@ -1434,7 +1556,8 @@ void app_main(void)
                  printf("\r>>>>>Loop<<<<<");};
             while(play_flag){
                 msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop started", 0, 0, 0);
-               play_keys(DSP);                  // OK uses keyOn/keyOff  how to update controls??
+               //play_keys(DSP);                  // OK uses keyOn/keyOff  how to update controls??
+               play_timed_keys(DSP);                  // OK uses keyOn/keyOff  how to update controls??  uses software timer
                //play_setVoiceParam_path(DSP);     //OK
                // play_mono_rtttl(song, DSP);     // NOK uses setParamValue(path
                // play_poly_rtttl(song, DSP);     //  NOK uses setVoiceParamValue(path
