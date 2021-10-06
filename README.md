@@ -367,12 +367,9 @@ Any changes implemented during write up of this consolidation are done in faust_
  - keyOn keyOff      OK
  - setVoicePramValue OK
 	
-#### encounter problems with creating a note sequence based on the above two procedures
-     when entering more notes in a sequence the program tends to hang
-     strange enough this depends on the debug level
-	it looks like a timing problem
-	vTaskDelay is used to define the separation between notes, but this is **blocking** code. This may cause other parts of the program to fail.
-	a way out may be the use of non-blocking timers. See FreeRTOS.
+#### encountering problems with creating a note sequence based on the above two procedures  
+When entering more notes in a sequence the program tends to hang.Strange enough this depends on the debug level. It looks like a timing problem:
+vTaskDelay is used to define the separation between notes, but this is **blocking** code. This may cause other parts of the program to fail. A way out may be the use of non-blocking timers. See FreeRTOS.  
 An additional remark: for polyphony, where notes can overlap, sequencing based on definition of delays between notes is intrinsicly not suitable.  
 **be aware** that ESP-IDF FreeRTOS is not the native FreeRTOS. Have a look at: [ESP-IDF FreeRTOS SMP Changes](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/freertos-smp.html#) (what is SMP?) and [FreeRTOS Additions](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos_additions.html) for ESP-IDF. It may be wise to use the [ESP-IDF FreeRTOS API description and further documentation](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos.html) rather than the documentation on the [FreeRTOS site](https://freertos.org/). Also note that a number of FreeRTOS settings can be configured in ESP-IDF via idf.py menuconfig.
 	
