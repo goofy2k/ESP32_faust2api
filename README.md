@@ -359,12 +359,30 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
 Any changes implemented during write up of this consolidation are done in faust_mqtt_tcp5_v1	
 	
 ## Basic ESP32 faust2api example  
-	(	
+		
  
  #### Testing some API calls:
  
- -- DSP->isRunning()  OK
- 
+ - DSP->isRunning()  OK  
+ - keyOn keyOff      OK
+ - setVoicePramValue OK
+	
+#### encounter problems with creating a note sequence based on the above two procedures
+     when entering more notes in a sequence the program tends to hang
+     strange enough this depends on the debug level
+	it looks like a timing problem
+	vTaskDelay is used to define the separation between notes, but this is **blocking** code. This may cause other parts of the program to fail.
+	a way out may be the use of non-blocking timers. See FreeRTOS.
+An additional remark: for polyphony, where notes can overlap, sequencing based on definition of delays between notes is intrinsicly not suitable.  
+**be aware** that ESP-IDF FreeRTOS is not the native FreeRTOS. Have a look at: [ESP-IDF FreeRTOS SMP Changes](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/freertos-smp.html#) (what is SMP?) and [FreeRTOS Additions](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos_additions.html) for ESP-IDF. It may be wise to use the [ESP-IDF FreeRTOS API description and further documentation](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos.html) rather than the documentation on the [FreeRTOS site](https://freertos.org/). Also note that a number of FreeRTOS settings can be configured in ESP-IDF via idf.py menuconfig.
+	
+NOTE: menuconfig contains an entry "Halt when an SMP-untested function is called". Can this be the root cause for the hanging program?  What is SMP-untested?
+
+## Using FreeRTOS software timers in ESP-IDF  
+	
+bla
+	
+------------------------------------------------------------------------------------------------------------------------------------------------------------ 
  # Faust API (taken from README generated with FaustSawtooth)
 
 This API allows to interact with a Faust object and its associated audio engine at a high level. The idea is that all the audio part of the app is implemented in Faust allowing developers to focus on the design of the application itself. 
