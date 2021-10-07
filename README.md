@@ -371,15 +371,15 @@ Any changes implemented during write up of this consolidation are done in faust_
 When entering more notes in a sequence the program tends to hang.Strange enough this depends on the debug level. It looks like a timing problem:
 vTaskDelay is used to define the separation between notes, but this is **blocking** code. This may cause other parts of the program to fail. A way out may be the use of non-blocking timers. See FreeRTOS.  
 An additional remark: for polyphony, where notes can overlap, sequencing based on definition of delays between notes is intrinsicly not suitable.  
-**be aware** that ESP-IDF FreeRTOS is not the native FreeRTOS. Have a look at: [ESP-IDF FreeRTOS SMP Changes](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/freertos-smp.html#) (what is SMP?) and [FreeRTOS Additions](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos_additions.html) for ESP-IDF. It may be wise to use the [ESP-IDF FreeRTOS API description and further documentation](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos.html) rather than the documentation on the [FreeRTOS site](https://freertos.org/). Also note that a number of FreeRTOS settings can be configured in ESP-IDF via idf.py menuconfig.
+**be aware** that ESP-IDF FreeRTOS is not the native FreeRTOS. Have a look at: [ESP-IDF FreeRTOS SMP Changes](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/freertos-smp.html#) (SMP: Symmetric Multi Processing) and [FreeRTOS Additions](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos_additions.html) for ESP-IDF. It may be wise to use the [ESP-IDF FreeRTOS API description and further documentation](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos.html) rather than the documentation on the [FreeRTOS site](https://freertos.org/). Also note that a number of FreeRTOS settings can be configured in ESP-IDF via idf.py menuconfig.
 	
-NOTE: menuconfig contains an entry "Halt when an SMP-untested function is called". Can this be the root cause for the hanging program?  What is SMP-untested?
+The solution for the hanging code is:  do not use vTaskDelay. This is blocking other freeRTOS tasks. For playing a sequence of non-overlapping notes, use the self-defined non-blocking function nbDelay (as of faust_mqtt_tcp5_v1). It was tested in sequence playing procedures ending with _nb and found OK for non-overlapping notes. These routines now play the sequence independent of the logging level!
 
 ## Using FreeRTOS software timers in ESP-IDF  
 	
 first error:
 	![first error](/images/timer%20error.png)
-	
+Root cause: timer period of 0 is not allowed. This is related to the timer number (x) in the example. Let x start at 1 OR calulate timer period based on x+1.	
 ------------------------------------------------------------------------------------------------------------------------------------------------------------ 
  # Faust API (taken from README generated with FaustSawtooth)
 
