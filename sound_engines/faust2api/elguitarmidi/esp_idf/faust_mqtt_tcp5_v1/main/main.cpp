@@ -1224,10 +1224,11 @@ void play_setVoiceParam_path_nb(DspFaust * aDSP)
     aDSP->setVoiceParamValue("/WaveSynth_FX/gain",bg_voiceAddress,1);  
     aDSP->setVoiceParamValue("/WaveSynth_FX/freq",bg_voiceAddress,110.0);
     aDSP->setVoiceParamValue("/WaveSynth_FX/gate",bg_voiceAddress,1.0);
-    vTaskDelay(500 / portTICK_PERIOD_MS);  
+    nbDelay(5000);  
 */
 
-   /*
+  
+   //BACKGROUND VOICE  ONE LONG NOTE 
     uintptr_t bg_voiceAddress = aDSP->newVoice(); //create main voice    
     aDSP->setVoiceParamValue("/WaveSynth_FX/gain",bg_voiceAddress,1);
     update_controls(bg_voiceAddress,aDSP);
@@ -1237,9 +1238,9 @@ void play_setVoiceParam_path_nb(DspFaust * aDSP)
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",bg_voiceAddress,1.0);
            //vTaskDelay(500 / portTICK_PERIOD_MS); 
            nbDelay(5000); 
-    */
+   
     
-    
+    //DEFINE SEQUENCE ON FOREGROUND VOICE
     uintptr_t voiceAddress = aDSP->newVoice(); //create main voice
     aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress,1);
     //update_controls(voiceAddress,aDSP);
@@ -1278,7 +1279,7 @@ void play_setVoiceParam_path_nb(DspFaust * aDSP)
            //aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,440.0);
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1.0);
            //vTaskDelay(100 / portTICK_PERIOD_MS); 
- nbDelay(100);            
+           nbDelay(100);            
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
            //vTaskDelay(100 / portTICK_PERIOD_MS);
             nbDelay(100);           
@@ -1308,18 +1309,25 @@ void play_setVoiceParam_path_nb(DspFaust * aDSP)
            
            //vTaskDelay(100 / portTICK_PERIOD_MS);
             nbDelay(100); 
-      /*     
+            
+  
+           
+        }
+        
+        
+        
+        
+        
+        ESP_LOGI(TAG, "end of sequence");
+           aDSP->deleteVoice(voiceAddress); //delete main voice
+         
+            
            //vTaskDelay(500 / portTICK_PERIOD_MS);          
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",bg_voiceAddress,0);
            //vTaskDelay(500 / portTICK_PERIOD_MS); 
-           nbDelay(100); 
-      */     
-           
-        }
-        ESP_LOGI(TAG, "end of sequence");
-           aDSP->deleteVoice(voiceAddress); //delete main voice
-  
-        //   aDSP->deleteVoice(bg_voiceAddress); //delete background voice
+           nbDelay(100);       
+        aDSP->deleteVoice(bg_voiceAddress); //delete background voice
+        
 };
 
 
