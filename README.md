@@ -373,7 +373,7 @@ vTaskDelay is used to define the separation between notes, but this is **blockin
 An additional remark: for polyphony, where notes can overlap, sequencing based on definition of delays between notes is intrinsicly not suitable.  
 **be aware** that ESP-IDF FreeRTOS is not the native FreeRTOS. Have a look at: [ESP-IDF FreeRTOS SMP Changes](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/freertos-smp.html#) (SMP: Symmetric Multi Processing) and [FreeRTOS Additions](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos_additions.html) for ESP-IDF. It may be wise to use the [ESP-IDF FreeRTOS API description and further documentation](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos.html) rather than the documentation on the [FreeRTOS site](https://freertos.org/). Also note that a number of FreeRTOS settings can be configured in ESP-IDF via idf.py menuconfig.
 	
-NOTE: menuconfig contains an entry "Halt when an SMP-untested function is called". Can this be the root cause for the hanging program?  What is SMP-untested?
+The solution for the hanging code is:  do not use vTaskDelay. This is blocking other freeRTOS tasks. For playing a sequence of non-overlapping notes, use the self-defined non-blocking function nbDelay (as of faust_mqtt_tcp5_v1). It was tested in sequence playing procedures ending with _nb and found OK for non-overlapping notes. These routines now play the sequence independent of the logging level!
 
 ## Using FreeRTOS software timers in ESP-IDF  
 	
