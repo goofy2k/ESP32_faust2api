@@ -379,7 +379,7 @@ NOTE: menuconfig contains an entry "Halt when an SMP-untested function is called
 	
 first error:
 	![first error](/images/timer%20error.png)
-	
+Root cause: timer period of 0 is not allowed. This is related to the timer number (x) in the example. Let x start at 1 OR calulate timer period based on x+1.	
 ------------------------------------------------------------------------------------------------------------------------------------------------------------ 
  # Faust API (taken from README generated with FaustSawtooth)
 
