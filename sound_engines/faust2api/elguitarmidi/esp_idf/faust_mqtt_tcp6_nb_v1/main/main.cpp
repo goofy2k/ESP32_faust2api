@@ -22,7 +22,7 @@
 #include "freertos/task.h"
 #include "freertos/semphr.h"
 #include "freertos/queue.h"
-#include "freertos/timers.h" //for using software timers
+#include "freertos/timers.h" //for using software timers, NOT required for the nbDelay (?)
 
 #include "freertos/event_groups.h"
 
@@ -140,6 +140,14 @@ int lfoDepthBaseId = 8;
 int lfoFreqBaseId = 9;
 int waveTravelBaseId = 10;
 
+static const char *TAG = "MQTT Faust";
+
+
+/* WIFI functionality, taken from ESP-IDF example: xxxxxxxxxxxx
+*
+*  modifications: xxxxxxxxxxxx
+*/
+
 /* FreeRTOS event group to signal when we are connected*/
 static EventGroupHandle_t s_wifi_event_group;
 
@@ -148,8 +156,6 @@ static EventGroupHandle_t s_wifi_event_group;
  * - we failed to connect after the maximum amount of retries */
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT      BIT1
-
-static const char *TAG = "MQTT Faust";
 
 static int s_retry_num = 0;
 
@@ -240,6 +246,14 @@ void wifi_init_sta(void)
     vEventGroupDelete(s_wifi_event_group);
 }
 
+// END of WIFI functionality
+
+
+/*
+* update DSP parameters, based on the values set in the input storage
+* input storage is updated asynchronously in MQTT callbacks (API , API2)
+* update_controls is called at strategically suitable moments in e.g. playing sequences
+*/
 void update_controls(uintptr_t voiceAddress, DspFaust * aDSP){  //maybe do this in a cyclic freertos timer task
   static const char *TAG = "update_controls"; 
   if (incoming_updates) {
@@ -296,7 +310,11 @@ void update_controls(uintptr_t voiceAddress, DspFaust * aDSP){  //maybe do this 
 
 }
 
-
+/*
+* API command handler
+* called in MQTT events with topics starting with /faust/api/
+* it is the intention to reserve this handler for API commands of the faust2api generated DspFaust 
+*/
 static void call_faust_api(esp_mqtt_event_handle_t event){
     //printf("HANDLING FAUST API CALL=%s\n"," /faust/api");
     static const char *TAG = "MQTT Faust API";
@@ -477,7 +495,11 @@ static void call_faust_api(esp_mqtt_event_handle_t event){
           }            
     }
 
-
+/*
+* API2 command handler
+* called in MQTT events with topics starting with /faust/api2/
+* it is the intention to reserve this handler for API2 commands defined for this particular application  
+*/
 static void call_faust_api2(esp_mqtt_event_handle_t event){
     static const char *TAG = "MQTT Faust API2";
     incoming_updates = true;
@@ -535,7 +557,9 @@ static void call_faust_api2(esp_mqtt_event_handle_t event){
           }            
     }
 
-
+/*
+* MQTT callback based on the code in ESP-IDF example xxxxxxxxxx
+*/
 static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event){  
     //ESP_LOGI(TAG, "FCKX: HANDLER_CB CALLED");  //FCKX
     esp_mqtt_client_handle_t client = event->client;
@@ -609,8 +633,11 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event){
     }
     return ESP_OK;
 }
-//throws a compilation error! May be obsolete when registering is done i a different way
 
+/*
+* MQTT event handler based on the code in ESP-IDF example xxxxxxxxxx
+* throws a compilation error! May be obsolete when registering is done i a different way
+*/
 /*
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
 
@@ -619,7 +646,9 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 }
 */
 
-//FCKX guess
+/* MQTT event handler based on the code in ESP-IDF example xxxxxxxxxx
+* repair by FCKX of the original code, see above
+*/
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, esp_mqtt_event_handle_t event_data) {
     
     ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%d", base, event_id);
@@ -644,19 +673,17 @@ And remove both definition of the mqtt_event_handler() and registration of the h
 
 */
 
+/* MQTT client based on the code in ESP-IDF example xxxxxxxxxx
+*  some adaptations were necessary
+*/
 static esp_mqtt_client * mqtt_app_start(void){
 //static void mqtt_app_start(void){
-
-       
+   
     //FCKX
-    esp_mqtt_client_config_t mqtt_cfg = {0};
-
+    esp_mqtt_client_config_t mqtt_cfg = {0}; // adapted by FCKX, see above
     mqtt_cfg.uri = SECRET_ESP_MQTT_BROKER_URI;
-
     mqtt_cfg.username = SECRET_ESP_MQTT_BROKER_USERNAME;
-
     mqtt_cfg.password = SECRET_ESP_MQTT_BROKER_PASSWORD;
-
     mqtt_cfg.client_id = SECRET_ESP_MQTT_CLIENT_ID;
     
 #if CONFIG_BROKER_URL_FROM_STDIN
@@ -687,19 +714,23 @@ static esp_mqtt_client * mqtt_app_start(void){
     esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
     //mqtt_cfg.event_handle = mqtt_event_handler_cb;
     //esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, client);
-    esp_mqtt_client_register_event(client, (esp_mqtt_event_id_t)ESP_EVENT_ANY_ID, (esp_event_handler_t)mqtt_event_handler, client);  //trial, added 2x type casting 
-  
-    ESP_LOGI(TAG, "START MQTT CLIENT");  //FCKX
+    esp_mqtt_client_register_event(client, (esp_mqtt_event_id_t)ESP_EVENT_ANY_ID, (esp_event_handler_t)mqtt_event_handler, client);  //FCKX, added 2x type casting 
     esp_mqtt_client_start(client);
     ESP_LOGI(TAG, "MQTT CLIENT STARTED");  //FCKX
     
     return client;
 }
 
+
+/* Use of freeRTOS software timers for non-blocking code in sequencing routines (experimental)
+*
+* Taken from freeRTOS part in ESP-IDF documentation
+
 // Define a callback function that will be used by multiple timer instances.
 // The callback function does nothing but count the number of times the
 // associated timer expires, and stop the timer once the timer has expired
 // 10 times.
+*/
 void vTimerCallback( TimerHandle_t pxTimer )
 {
 ESP_LOGI(TAG, "TIMER_CALLBACK");    
@@ -723,24 +754,23 @@ const int32_t xMaxExpiryCountBeforeStopping = 10;
     }
  }
 
- bool expired;
+/*
+* experimental code for using software timers
+*/
+bool expired;
  
 void myDelayTimerCallback( TimerHandle_t pxTimer )
 {
 ESP_LOGI(TAG, "delayTimer_CALLBACK: expired!");    
 xTimerStop( pxTimer, 0 );
-expired = true;
-     
+expired = true;    
 
  }
-
-
 
 void non_blocking_Delay( int myTicks){
 //non_blocking delay based on freertos timer
  TimerHandle_t delayTimer;
 
- 
 //create timer
         ESP_LOGI(TAG, "Creating delay timer");
         expired = false;         
@@ -775,6 +805,19 @@ while(!expired) {
 } //
 
 
+void nbDelay(int delayTicks) {        
+        TickType_t startTick = xTaskGetTickCount();
+        while( (xTaskGetTickCount()-startTick) < pdMS_TO_TICKS(delayTicks)){
+          //…
+        } 
+    };
+
+/* note playing routines using the Faust API commands
+*
+*/
+
+/* definitions for use in rtttl sequencers 
+*/
 #define OCTAVE_OFFSET 0
 
 float freqs[] = { 0,
@@ -856,12 +899,6 @@ void play_keys(DspFaust * aDSP){  //uses keyOn / keyOff
         */
 }
 
-
-void nbDelay(int delayTicks) {        
-        TickType_t startTick = xTaskGetTickCount();
-        while( (xTaskGetTickCount()-startTick) < pdMS_TO_TICKS(delayTicks)){
-          //…
-        }    };
 
 void play_keys_nb(DspFaust * aDSP){  //uses keyOn / keyOff
     // start continuous background voice for testing polyphony
