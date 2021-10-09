@@ -380,6 +380,10 @@ The solution for the hanging code is:  do not use vTaskDelay. This is blocking o
 first error:
 	![first error](/images/timer%20error.png)
 Root cause: timer period of 0 is not allowed. This is related to the timer number (x) in the example. Let x start at 1 OR calulate timer period based on x+1.	
+	
+## NOTE: have a look at a parser/dispatcher implementation in void addGenericZone( . Learn from that for you API implementation.
+        	
+	
 ------------------------------------------------------------------------------------------------------------------------------------------------------------ 
  # Faust API (taken from README generated with FaustSawtooth)
 
