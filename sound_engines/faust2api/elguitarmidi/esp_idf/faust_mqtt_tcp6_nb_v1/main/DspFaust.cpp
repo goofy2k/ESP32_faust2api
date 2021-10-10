@@ -1,4 +1,6 @@
 #define ESP32_DRIVER 1
+#define MIDICTRL 1
+
 #define NVOICES 2
 /* ------------------------------------------------------------
 name: "WaveSynth_FX"

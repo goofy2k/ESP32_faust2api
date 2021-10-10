@@ -6,6 +6,7 @@
    software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
    CONDITIONS OF ANY KIND, either express or implied.
 */
+//#define MIDICTRL 1
 
 #include <stdio.h>
 #include <stdint.h>
@@ -115,7 +116,7 @@ int gate = 0;
 float synthA = 0.01;
 float synthD = 0.6;
 float synthS = 0.2;
-float synthR = 0.8;
+float synthR = 0.9;
 bool incoming_updates = false;
 float bend = 0;
 float synthFreq = 440;
@@ -900,6 +901,75 @@ void play_keys(DspFaust * aDSP){  //uses keyOn / keyOff
 }
 
 
+void play_midi(DspFaust * aDSP){  //uses propagateMidi
+       // start continuous background voice for testing polyphony
+       static const char *TAG = "PLAY_MIDI";
+       int res;
+       uintptr_t voiceAddress;
+       ESP_LOGI(TAG, "starting play_keys");
+       /*
+       aDSP->keyOn(50, 126);
+       vTaskDelay(3000 / portTICK_PERIOD_MS);
+       */
+        int vel1 = 126;
+        
+        int count;
+        double time;
+        int type;
+        int channel;
+        int data1;       
+        int data2;
+        
+        
+        for (int pitch = 48; pitch < 69; pitch++){
+   
+        //printf("counter ii %d \n",ii);    
+        vTaskDelay(100 / portTICK_PERIOD_MS);
+        nbDelay(100);
+        
+        count = 3;
+        time = 0;
+        type = 9*16; //status
+        channel = 0;
+        data1 = 4*16+pitch-64;//pitch       
+        data2 = 127;//4*16;//attack
+        
+        ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1);      
+        //voiceAddress = aDSP->keyOn(pitch,vel1);
+        aDSP->propagateMidi(count, time, type, channel, data1, data2);
+        
+        //update_controls(voiceAddress,aDSP);
+        ESP_LOGI(TAG, "after keyOn");  
+        //cannot use update_controls as used here for this kind of voice ?? 
+        //update_controls(voiceAddress,aDSP); 
+        //vTaskDelay(1000 / portTICK_PERIOD_MS);
+        nbDelay(1000);
+        //aDSP->setVoiceParamValue(5,voiceAddress,110);
+        //update_controls(voiceAddress,aDSP);
+        //aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,110);
+        //vTaskDelay(1000 / portTICK_PERIOD_MS);
+        nbDelay(1000);
+        ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1);  
+        //res = aDSP->keyOff(pitch);
+        count = 3;
+        time = 0;
+        type = 8*16; //staus
+        channel = 0;
+        data1 = 4*16+pitch-64; //pitch      
+        data2 = 0*16; //attack
+
+        aDSP->propagateMidi(count, time, type, channel, data1, data2);
+        } 
+         ESP_LOGI(TAG, "end of sequence");        
+         //vTaskDelay(3000 / portTICK_PERIOD_MS);
+         nbDelay(3000);
+        /*
+        //release continuous background voice
+        aDSP->keyOff(50);
+        */
+}
+
+
 void play_keys_nb(DspFaust * aDSP){  //uses keyOn / keyOff
     // start continuous background voice for testing polyphony
     static const char *TAG = "PLAY_KEYS";
@@ -934,8 +1004,6 @@ void play_keys_nb(DspFaust * aDSP){  //uses keyOn / keyOff
     aDSP->keyOff(50);
     */
     }
-
-
 
 
 void play_timed_keys_test(DspFaust * aDSP){  //uses keyOn / keyOff   uses software timer for delays
@@ -1028,7 +1096,6 @@ void play_timed_keys_test(DspFaust * aDSP){  //uses keyOn / keyOff   uses softwa
         aDSP->keyOff(50);
         */
 }
-
 
 
 void play_timed_keys_test2(DspFaust * aDSP){  //uses keyOn / keyOff   uses software timer for delays
@@ -1124,7 +1191,6 @@ void play_timed_keys_test2(DspFaust * aDSP){  //uses keyOn / keyOff   uses softw
         aDSP->keyOff(50);
         */
 }
-
 
 
 void play_keys2(DspFaust * aDSP){  //uses keyOn / keyOff
@@ -1908,9 +1974,9 @@ void app_main(void)
        while(play_flag){
                 msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop started", 0, 0, 0);
                //play_keys(DSP);                  // OK uses keyOn/keyOff  how to update controls??
-     
+               play_midi(DSP);
                //play_keys_nb(DSP);  //OK 
-                play_setVoiceParam_path_nb(DSP);     //OK
+           //play_setVoiceParam_path_nb(DSP);     //OK
                //play_timed_keys_test(DSP);                  // OK uses keyOn/keyOff  how to update controls??  uses software timer
                //play_timed_keys_test2(DSP);
                //play_setVoiceParam_path(DSP);     //OK
