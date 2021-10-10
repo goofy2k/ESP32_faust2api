@@ -1,6 +1,7 @@
 #define ESP32_DRIVER 1
-#define MIDICTRL 1
-
+#define MIDICTRL 0       //explicitly switch on midi
+#define FCKX_MQTT_MIDI 0 //but use the MQTT implementation
+                         //which prevents using the jdskmidi lib
 #define NVOICES 2
 /* ------------------------------------------------------------
 name: "WaveSynth_FX"
@@ -18699,7 +18700,7 @@ class teensy_midi : public midi_handler {
 
 #endif
 /**************************  END  teensy-midi.h **************************/
-#elif ESP32_DRIVER
+#elif ESP32_DRIVER & !FCKX_MQTT_MIDI
 /************************** BEGIN esp32-midi.h **************************/
 /************************************************************************
  FAUST Architecture File
@@ -18884,6 +18885,12 @@ class esp32_midi : public midi_handler {
 
 #endif
 /**************************  END  esp32-midi.h **************************/
+
+#elif ESP32_DRIVER & FCKX_MQTT_MIDI
+
+#include "FCKX_MQTT_midi.h"
+
+
 #else
 /************************** BEGIN rt-midi.h **************************/
 /************************************************************************

@@ -549,7 +549,24 @@ static void call_faust_api2(esp_mqtt_event_handle_t event){
             else { ESP_LOGI(TAG,"play_flag: false");} ;          
              //play_flag = atob(event_data); //try to implement playing a song in a separate task             
     } else  
-
+    if (strncmp(event->topic, "/faust/api2/midi/single",strlen("/faust/api2/midi/single")) == 0)        {
+             //receive a single midi message 3 bytes, coded by Nodered as a 24 bit integer
+             ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data);
+             int myvalue = atoi(event->data);
+             int data2 = myvalue & 0x000000ff;
+             int data1 = (myvalue & 0x0000ff00)>>8;
+             int status = (myvalue & 0x00ff0000)>>16;
+             ESP_LOGI(TAG,"NUMERICAL VALUE:%u ", myvalue);
+             ESP_LOGI(TAG,"STATUS: %u (0x%X)", status, status);
+             ESP_LOGI(TAG,"DATA1: %u (0x%X)", data1, data1);
+             ESP_LOGI(TAG,"DATA2: %u (0x%X)", data2, data2) ; //integers are 32 bits!!!!             
+             ESP_LOGI(TAG,"...to be implemented...(store msg and) call mqtt_midi"); 
+        
+    } else 
+    if (strncmp(event->topic, "/faust/api2/midi/seq",strlen("/faust/api2/midi/seq")) == 0)        {
+             ESP_LOGI(TAG,"...to be implemented...(store msg and) call mqtt_midi"); 
+             //poly = atoi(event->data);             
+    } else         
     {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
