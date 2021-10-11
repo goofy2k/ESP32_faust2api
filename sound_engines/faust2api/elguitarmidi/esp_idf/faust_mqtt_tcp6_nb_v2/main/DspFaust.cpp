@@ -9087,20 +9087,14 @@ struct MidiMeta : public Meta, public std::map<std::string, std::string> {
     static void analyse(dsp* mono_dsp, bool& midi_sync, int& nvoices)
     {
         static const char *TAG = "MidiMeta::analyse";
-        ESP_LOGW(TAG, "after entering"); 
         JSONUI jsonui;
-        ESP_LOGW(TAG, "after JSONUI intantiation");        
         mono_dsp->buildUserInterface(&jsonui);
-        ESP_LOGW(TAG, "after mono_dsp->");  
-        
         std::string json = jsonui.JSON();
-         ESP_LOGW(TAG, "after mono_dsp-> 2"); 
         midi_sync = ((json.find("midi") != std::string::npos) &&
                      ((json.find("start") != std::string::npos) ||
                       (json.find("stop") != std::string::npos) ||
                       (json.find("clock") != std::string::npos) ||
                       (json.find("timestamp") != std::string::npos)));
-    ESP_LOGW(TAG, "after mono_dsp-> 3");
     #if defined(NVOICES) && NVOICES!=NUM_VOICES
         nvoices = NVOICES;
     #else
@@ -18796,7 +18790,12 @@ class esp32_midi : public midi_handler {
                 int rxBytes = uart_read_bytes(UART_NUM_1, data, RX_BUF_SIZE, 1);
                 if (rxBytes > 0) {
                     for (int i = 0; i < rxBytes; i++) {
-                        if (parser.Parse((uchar)data[i], &message)) {
+                        if (parser.Parse((uchar)data[i], &message)) {    //points at byte i in data array,   if true the message contains a valid message taken from the array
+                                                                         //the same can be done with a data array filled by MQTT!
+                                                                         //how is the data array refreshed? NOT. It is overwritten
+                                                                         //don't you loose bytes?
+                                                                         //no, this is dealt with by parity etc
+                                                                         //the data array always contains a set of complete messages!
                             unsigned char status = message.GetStatus();
                             if (status < 0xF0)
                             { // channel/system message discriminator.

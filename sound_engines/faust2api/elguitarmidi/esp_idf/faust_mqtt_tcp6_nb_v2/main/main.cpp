@@ -259,7 +259,7 @@ static const char *TAG = "EXECUTE_SINGLE_COMMAND";
              ESP_LOGI(TAG,"STATUS: %u (0x%X)", status, status);
              ESP_LOGI(TAG,"DATA1: %u (0x%X)", data1, data1);
              ESP_LOGI(TAG,"DATA2: %u (0x%X)", data2, data2) ; //integers are 32 bits!!!!             
-             ESP_LOGI(TAG,"...to be implemented...(store msg and) call mqtt_midi"); 
+             //ESP_LOGI(TAG,"...to be implemented...(store msg and) call mqtt_midi"); 
              int type = status & 0xf0;
              int channel = status & 0x0f;
              int count = 3;
@@ -429,7 +429,10 @@ static void call_faust_api(esp_mqtt_event_handle_t event){
              printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
     } else    
     if (strncmp(event->topic, "/faust/api/allNotesOff",strlen("/faust/api/allNotesOff")) == 0) {
-             printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
+            ESP_LOGW(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
+            ESP_LOGW(TAG,"VALUE:%.*s\r ", event->data_len, event->data);
+            DSP->allNotesOff();
+            //ESP_LOGI(TAG,"...to be implemented...");
     } else    
     if (strncmp(event->topic, "/faust/api/propagateMidi",strlen("/faust/api/propagateMidi")) == 0) {
              printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
@@ -640,15 +643,11 @@ static void call_faust_api2(esp_mqtt_event_handle_t event){
              ESP_LOGI(TAG,"STATUS: %u (0x%X)", status, status);
              ESP_LOGI(TAG,"DATA1: %u (0x%X)", data1, data1);
              ESP_LOGI(TAG,"DATA2: %u (0x%X)", data2, data2) ; //integers are 32 bits!!!!
-
              ESP_LOGI(TAG,"TYPE: %u (0x%X)", type, type);
              ESP_LOGI(TAG,"CHANNEL: %u (0x%X)", channel, channel);             
-             ESP_LOGI(TAG,"...to be implemented...(store msg and) call mqtt_midi"); 
-
-             //aDSP->propagateMidi(3, 0, type, channel, data1, data2);
              update_all_controls(DSP);
              execute_single_midi_command(DSP, mididata);
-             ESP_LOGI(TAG, "after single command");  
+
 
                           
              
