@@ -1,14 +1,7 @@
 #define ESP32_DRIVER 1
-#define MIDICTRL 1       //explicitly switch on midi  depends on jdksmid
-#define JDKSMIDI 0       //switch off jdksmidi dependent parts
-#define FCKXMIDI 1       //but use the FCKX MIDI implementation
-                         //which prevents using the jdskmidi lib
-
-//#define FCKX_MQTT_MIDI 0 //but use the MQTT implementation
-                         //which prevents using the jdskmidi lib
-#define NVOICES 12
+#define NVOICES 2
 /* ------------------------------------------------------------
-name: "WaveSynth_FX"
+name: "simpleSynth_Analog"
 Code generated with Faust 2.34.6 (https://faust.grame.fr)
 Compilation options: -a api/DspFaust.cpp -lang cpp -es 1 -single -ftz 0
 ------------------------------------------------------------ */
@@ -38,7 +31,6 @@ Compilation options: -a api/DspFaust.cpp -lang cpp -es 1 -single -ftz 0
 #include <cmath>
 #include <cstring>
 #include <stdio.h>
-#include "esp_log.h" //FCKX
 
 /************************** BEGIN misc.h **************************/
 /************************************************************************
@@ -4812,146 +4804,9 @@ class SoundUI : public SoundUIInterface
 #include <cstdint>
 #include <math.h>
 
-class mydspSIG0 {
-	
-  public:
-	
-	int iRec2[2];
-	
-  public:
-	
-	int getNumInputsmydspSIG0() {
-		return 0;
-	}
-	int getNumOutputsmydspSIG0() {
-		return 1;
-	}
-	
-	void instanceInitmydspSIG0(int sample_rate) {
-		for (int l3 = 0; (l3 < 2); l3 = (l3 + 1)) {
-			iRec2[l3] = 0;
-		}
-	}
-	
-	void fillmydspSIG0(int count, float* table) {
-		for (int i1 = 0; (i1 < count); i1 = (i1 + 1)) {
-			iRec2[0] = (iRec2[1] + 1);
-			table[i1] = (std::fabs((std::fmod(((0.015625f * float((iRec2[0] + -1))) + 1.0f), 4.0f) + -2.0f)) + -1.0f);
-			iRec2[1] = iRec2[0];
-		}
-	}
-
-};
-
-static mydspSIG0* newmydspSIG0() { return (mydspSIG0*)new mydspSIG0(); }
-static void deletemydspSIG0(mydspSIG0* dsp) { delete dsp; }
-
-class mydspSIG1 {
-	
-  public:
-	
-	int iRec7[2];
-	
-  public:
-	
-	int getNumInputsmydspSIG1() {
-		return 0;
-	}
-	int getNumOutputsmydspSIG1() {
-		return 1;
-	}
-	
-	void instanceInitmydspSIG1(int sample_rate) {
-		for (int l8 = 0; (l8 < 2); l8 = (l8 + 1)) {
-			iRec7[l8] = 0;
-		}
-	}
-	
-	void fillmydspSIG1(int count, float* table) {
-		for (int i2 = 0; (i2 < count); i2 = (i2 + 1)) {
-			iRec7[0] = (iRec7[1] + 1);
-			table[i2] = (std::fabs((std::fmod(((0.0078125f * float((iRec7[0] + -1))) + 1.0f), 4.0f) + -2.0f)) + -1.0f);
-			iRec7[1] = iRec7[0];
-		}
-	}
-
-};
-
-static mydspSIG1* newmydspSIG1() { return (mydspSIG1*)new mydspSIG1(); }
-static void deletemydspSIG1(mydspSIG1* dsp) { delete dsp; }
-
-class mydspSIG2 {
-	
-  public:
-	
-	int iRec8[2];
-	
-  public:
-	
-	int getNumInputsmydspSIG2() {
-		return 0;
-	}
-	int getNumOutputsmydspSIG2() {
-		return 1;
-	}
-	
-	void instanceInitmydspSIG2(int sample_rate) {
-		for (int l9 = 0; (l9 < 2); l9 = (l9 + 1)) {
-			iRec8[l9] = 0;
-		}
-	}
-	
-	void fillmydspSIG2(int count, float* table) {
-		for (int i3 = 0; (i3 < count); i3 = (i3 + 1)) {
-			iRec8[0] = (iRec8[1] + 1);
-			table[i3] = (std::fabs((std::fmod(((0.005859375f * float((iRec8[0] + -1))) + 1.0f), 4.0f) + -2.0f)) + -1.0f);
-			iRec8[1] = iRec8[0];
-		}
-	}
-
-};
-
-static mydspSIG2* newmydspSIG2() { return (mydspSIG2*)new mydspSIG2(); }
-static void deletemydspSIG2(mydspSIG2* dsp) { delete dsp; }
-
-class mydspSIG3 {
-	
-  public:
-	
-	int iRec9[2];
-	
-  public:
-	
-	int getNumInputsmydspSIG3() {
-		return 0;
-	}
-	int getNumOutputsmydspSIG3() {
-		return 1;
-	}
-	
-	void instanceInitmydspSIG3(int sample_rate) {
-		for (int l10 = 0; (l10 < 2); l10 = (l10 + 1)) {
-			iRec9[l10] = 0;
-		}
-	}
-	
-	void fillmydspSIG3(int count, float* table) {
-		for (int i4 = 0; (i4 < count); i4 = (i4 + 1)) {
-			iRec9[0] = (iRec9[1] + 1);
-			table[i4] = (std::fabs((std::fmod(((0.00390625f * float((iRec9[0] + -1))) + 1.0f), 4.0f) + -2.0f)) + -1.0f);
-			iRec9[1] = iRec9[0];
-		}
-	}
-
-};
-
-static mydspSIG3* newmydspSIG3() { return (mydspSIG3*)new mydspSIG3(); }
-static void deletemydspSIG3(mydspSIG3* dsp) { delete dsp; }
-
-static float ftbl0mydspSIG0[1024];
-static float ftbl1mydspSIG1[1024];
-static float ftbl2mydspSIG2[1024];
-static float ftbl3mydspSIG3[1024];
+static float mydsp_faustpower2_f(float value) {
+	return (value * value);
+}
 
 #ifndef FAUSTCLASS 
 #define FAUSTCLASS mydsp
@@ -4967,28 +4822,51 @@ class mydsp : public dsp {
  public:
 	
 	FAUSTFLOAT fEntry0;
-	FAUSTFLOAT fButton0;
 	int iVec0[2];
+	FAUSTFLOAT fButton0;
+	int iVec1[2];
 	FAUSTFLOAT fHslider0;
 	int iRec1[2];
 	int fSampleRate;
 	float fConst0;
+	float fConst1;
 	FAUSTFLOAT fHslider1;
 	FAUSTFLOAT fHslider2;
-	float fConst1;
+	float fConst2;
 	FAUSTFLOAT fHslider3;
 	float fRec0[2];
-	FAUSTFLOAT fEntry1;
-	FAUSTFLOAT fHslider4;
-	float fRec3[2];
-	FAUSTFLOAT fHslider5;
-	float fConst2;
-	FAUSTFLOAT fHslider6;
 	float fConst3;
-	float fRec4[2];
+	float fConst4;
+	FAUSTFLOAT fHslider4;
+	float fConst5;
+	float fRec7[2];
+	FAUSTFLOAT fEntry1;
+	FAUSTFLOAT fHslider5;
+	FAUSTFLOAT fHslider6;
+	float fRec9[2];
 	FAUSTFLOAT fHslider7;
+	float fRec11[2];
+	float fRec10[2];
+	float fRec8[2];
+	float fVec2[2];
+	int IOTA;
+	float fVec3[4096];
+	float fConst6;
+	float fRec12[2];
+	float fConst7;
+	float fConst8;
+	FAUSTFLOAT fHslider8;
+	float fRec14[2];
+	FAUSTFLOAT fHslider9;
+	FAUSTFLOAT fHslider10;
+	float fRec15[2];
+	FAUSTFLOAT fHslider11;
+	float fRec16[2];
 	float fRec6[2];
 	float fRec5[2];
+	float fRec4[2];
+	float fRec3[2];
+	float fRec2[2];
 	
  public:
 	
@@ -5001,19 +4879,30 @@ class mydsp : public dsp {
 		m->declare("envelopes.lib/license", "LGPL with exception");
 		m->declare("envelopes.lib/name", "Faust Envelope Library");
 		m->declare("envelopes.lib/version", "0.1");
-		m->declare("filename", "WaveSynth_FX.dsp");
+		m->declare("filename", "simpleSynth_Analog.dsp");
+		m->declare("filters.lib/lowpass0_highpass1", "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>");
+		m->declare("filters.lib/name", "Faust Filters Library");
+		m->declare("filters.lib/pole:author", "Julius O. Smith III");
+		m->declare("filters.lib/pole:copyright", "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>");
+		m->declare("filters.lib/pole:license", "MIT-style STK-4.3 license");
+		m->declare("filters.lib/version", "0.3");
 		m->declare("maths.lib/author", "GRAME");
 		m->declare("maths.lib/copyright", "GRAME");
 		m->declare("maths.lib/license", "LGPL with exception");
 		m->declare("maths.lib/name", "Faust Math Library");
 		m->declare("maths.lib/version", "2.4");
-		m->declare("name", "WaveSynth_FX");
+		m->declare("name", "simpleSynth_Analog");
 		m->declare("oscillators.lib/name", "Faust Oscillator Library");
 		m->declare("oscillators.lib/version", "0.1");
 		m->declare("platform.lib/name", "Generic Platform Library");
 		m->declare("platform.lib/version", "0.1");
 		m->declare("signals.lib/name", "Faust Signal Routing Library");
 		m->declare("signals.lib/version", "0.0");
+		m->declare("vaeffects.lib/moog_vcf:author", "Julius O. Smith III");
+		m->declare("vaeffects.lib/moog_vcf:copyright", "Copyright (C) 2003-2019 by Julius O. Smith III <jos@ccrma.stanford.edu>");
+		m->declare("vaeffects.lib/moog_vcf:license", "MIT-style STK-4.3 license");
+		m->declare("vaeffects.lib/name", "Faust Virtual Analog Filter Effect Library");
+		m->declare("vaeffects.lib/version", "0.0");
 	}
 
 	virtual int getNumInputs() {
@@ -5024,44 +4913,37 @@ class mydsp : public dsp {
 	}
 	
 	static void classInit(int sample_rate) {
-		mydspSIG0* sig0 = newmydspSIG0();
-		sig0->instanceInitmydspSIG0(sample_rate);
-		sig0->fillmydspSIG0(1024, ftbl0mydspSIG0);
-		mydspSIG1* sig1 = newmydspSIG1();
-		sig1->instanceInitmydspSIG1(sample_rate);
-		sig1->fillmydspSIG1(1024, ftbl1mydspSIG1);
-		mydspSIG2* sig2 = newmydspSIG2();
-		sig2->instanceInitmydspSIG2(sample_rate);
-		sig2->fillmydspSIG2(1024, ftbl2mydspSIG2);
-		mydspSIG3* sig3 = newmydspSIG3();
-		sig3->instanceInitmydspSIG3(sample_rate);
-		sig3->fillmydspSIG3(1024, ftbl3mydspSIG3);
-		deletemydspSIG0(sig0);
-		deletemydspSIG1(sig1);
-		deletemydspSIG2(sig2);
-		deletemydspSIG3(sig3);
 	}
 	
 	virtual void instanceConstants(int sample_rate) {
 		fSampleRate = sample_rate;
 		fConst0 = std::min<float>(192000.0f, std::max<float>(1.0f, float(fSampleRate)));
-		fConst1 = (1.0f / fConst0);
-		fConst2 = (44.0999985f / fConst0);
-		fConst3 = (1.0f - fConst2);
+		fConst1 = (0.00999999978f * fConst0);
+		fConst2 = (1.0f / fConst0);
+		fConst3 = (0.25f * fConst0);
+		fConst4 = (44.0999985f / fConst0);
+		fConst5 = (1.0f - fConst4);
+		fConst6 = (0.5f * fConst0);
+		fConst7 = (6.28318548f / fConst0);
+		fConst8 = (0.125f * fConst0);
 	}
 	
 	virtual void instanceResetUserInterface() {
 		fEntry0 = FAUSTFLOAT(0.5f);
 		fButton0 = FAUSTFLOAT(0.0f);
-		fHslider0 = FAUSTFLOAT(0.80000000000000004f);
-		fHslider1 = FAUSTFLOAT(0.01f);
-		fHslider2 = FAUSTFLOAT(0.59999999999999998f);
+		fHslider0 = FAUSTFLOAT(100.0f);
+		fHslider1 = FAUSTFLOAT(0.10000000000000001f);
+		fHslider2 = FAUSTFLOAT(60.0f);
 		fHslider3 = FAUSTFLOAT(0.20000000000000001f);
+		fHslider4 = FAUSTFLOAT(0.5f);
 		fEntry1 = FAUSTFLOAT(440.0f);
-		fHslider4 = FAUSTFLOAT(0.0f);
 		fHslider5 = FAUSTFLOAT(0.0f);
 		fHslider6 = FAUSTFLOAT(0.0f);
-		fHslider7 = FAUSTFLOAT(0.10000000000000001f);
+		fHslider7 = FAUSTFLOAT(6.0f);
+		fHslider8 = FAUSTFLOAT(15.0f);
+		fHslider9 = FAUSTFLOAT(1.0f);
+		fHslider10 = FAUSTFLOAT(50.0f);
+		fHslider11 = FAUSTFLOAT(0.5f);
 	}
 	
 	virtual void instanceClear() {
@@ -5069,22 +4951,62 @@ class mydsp : public dsp {
 			iVec0[l0] = 0;
 		}
 		for (int l1 = 0; (l1 < 2); l1 = (l1 + 1)) {
-			iRec1[l1] = 0;
+			iVec1[l1] = 0;
 		}
 		for (int l2 = 0; (l2 < 2); l2 = (l2 + 1)) {
-			fRec0[l2] = 0.0f;
+			iRec1[l2] = 0;
+		}
+		for (int l3 = 0; (l3 < 2); l3 = (l3 + 1)) {
+			fRec0[l3] = 0.0f;
 		}
 		for (int l4 = 0; (l4 < 2); l4 = (l4 + 1)) {
-			fRec3[l4] = 0.0f;
+			fRec7[l4] = 0.0f;
 		}
 		for (int l5 = 0; (l5 < 2); l5 = (l5 + 1)) {
-			fRec4[l5] = 0.0f;
+			fRec9[l5] = 0.0f;
 		}
 		for (int l6 = 0; (l6 < 2); l6 = (l6 + 1)) {
-			fRec6[l6] = 0.0f;
+			fRec11[l6] = 0.0f;
 		}
 		for (int l7 = 0; (l7 < 2); l7 = (l7 + 1)) {
-			fRec5[l7] = 0.0f;
+			fRec10[l7] = 0.0f;
+		}
+		for (int l8 = 0; (l8 < 2); l8 = (l8 + 1)) {
+			fRec8[l8] = 0.0f;
+		}
+		for (int l9 = 0; (l9 < 2); l9 = (l9 + 1)) {
+			fVec2[l9] = 0.0f;
+		}
+		IOTA = 0;
+		for (int l10 = 0; (l10 < 4096); l10 = (l10 + 1)) {
+			fVec3[l10] = 0.0f;
+		}
+		for (int l11 = 0; (l11 < 2); l11 = (l11 + 1)) {
+			fRec12[l11] = 0.0f;
+		}
+		for (int l12 = 0; (l12 < 2); l12 = (l12 + 1)) {
+			fRec14[l12] = 0.0f;
+		}
+		for (int l13 = 0; (l13 < 2); l13 = (l13 + 1)) {
+			fRec15[l13] = 0.0f;
+		}
+		for (int l14 = 0; (l14 < 2); l14 = (l14 + 1)) {
+			fRec16[l14] = 0.0f;
+		}
+		for (int l15 = 0; (l15 < 2); l15 = (l15 + 1)) {
+			fRec6[l15] = 0.0f;
+		}
+		for (int l16 = 0; (l16 < 2); l16 = (l16 + 1)) {
+			fRec5[l16] = 0.0f;
+		}
+		for (int l17 = 0; (l17 < 2); l17 = (l17 + 1)) {
+			fRec4[l17] = 0.0f;
+		}
+		for (int l18 = 0; (l18 < 2); l18 = (l18 + 1)) {
+			fRec3[l18] = 0.0f;
+		}
+		for (int l19 = 0; (l19 < 2); l19 = (l19 + 1)) {
+			fRec2[l19] = 0.0f;
 		}
 	}
 	
@@ -5107,27 +5029,35 @@ class mydsp : public dsp {
 	}
 	
 	virtual void buildUserInterface(UI* ui_interface) {
-		ui_interface->openVerticalBox("WaveSynth_FX");
+		ui_interface->openVerticalBox("simpleSynth_Analog");
 		ui_interface->declare(&fHslider1, "midi", "ctrl 73");
-		ui_interface->addHorizontalSlider("A", &fHslider1, FAUSTFLOAT(0.00999999978f), FAUSTFLOAT(0.00999999978f), FAUSTFLOAT(4.0f), FAUSTFLOAT(0.00999999978f));
+		ui_interface->addHorizontalSlider("attack", &fHslider1, FAUSTFLOAT(0.100000001f), FAUSTFLOAT(0.100000001f), FAUSTFLOAT(400.0f), FAUSTFLOAT(0.00100000005f));
+		ui_interface->declare(&fHslider5, "midi", "pitchwheel");
+		ui_interface->addHorizontalSlider("bend", &fHslider5, FAUSTFLOAT(0.0f), FAUSTFLOAT(-2.0f), FAUSTFLOAT(2.0f), FAUSTFLOAT(0.00999999978f));
 		ui_interface->declare(&fHslider2, "midi", "ctrl 76");
-		ui_interface->addHorizontalSlider("D", &fHslider2, FAUSTFLOAT(0.600000024f), FAUSTFLOAT(0.00999999978f), FAUSTFLOAT(8.0f), FAUSTFLOAT(0.00999999978f));
-		ui_interface->declare(&fHslider0, "midi", "ctrl 72");
-		ui_interface->addHorizontalSlider("R", &fHslider0, FAUSTFLOAT(0.800000012f), FAUSTFLOAT(0.00999999978f), FAUSTFLOAT(8.0f), FAUSTFLOAT(0.00999999978f));
-		ui_interface->declare(&fHslider3, "midi", "ctrl 77");
-		ui_interface->addHorizontalSlider("S", &fHslider3, FAUSTFLOAT(0.200000003f), FAUSTFLOAT(0.0f), FAUSTFLOAT(1.0f), FAUSTFLOAT(0.00999999978f));
-		ui_interface->declare(&fHslider4, "midi", "pitchwheel");
-		ui_interface->addHorizontalSlider("bend", &fHslider4, FAUSTFLOAT(0.0f), FAUSTFLOAT(-2.0f), FAUSTFLOAT(2.0f), FAUSTFLOAT(0.00999999978f));
+		ui_interface->addHorizontalSlider("decay", &fHslider2, FAUSTFLOAT(60.0f), FAUSTFLOAT(0.100000001f), FAUSTFLOAT(400.0f), FAUSTFLOAT(0.00100000005f));
+		ui_interface->declare(&fHslider10, "BELA", "ANALOG_3");
+		ui_interface->addHorizontalSlider("envMod", &fHslider10, FAUSTFLOAT(50.0f), FAUSTFLOAT(0.0f), FAUSTFLOAT(100.0f), FAUSTFLOAT(0.00999999978f));
+		ui_interface->declare(&fHslider8, "BELA", "ANALOG_1");
+		ui_interface->addHorizontalSlider("fc", &fHslider8, FAUSTFLOAT(15.0f), FAUSTFLOAT(15.0f), FAUSTFLOAT(12000.0f), FAUSTFLOAT(0.00100000005f));
 		ui_interface->declare(&fEntry1, "unit", "Hz");
 		ui_interface->addNumEntry("freq", &fEntry1, FAUSTFLOAT(440.0f), FAUSTFLOAT(20.0f), FAUSTFLOAT(20000.0f), FAUSTFLOAT(1.0f));
-		ui_interface->addNumEntry("gain", &fEntry0, FAUSTFLOAT(0.5f), FAUSTFLOAT(0.0f), FAUSTFLOAT(1.0f), FAUSTFLOAT(0.00999999978f));
+		ui_interface->addNumEntry("gain", &fEntry0, FAUSTFLOAT(0.5f), FAUSTFLOAT(0.0f), FAUSTFLOAT(0.5f), FAUSTFLOAT(0.00999999978f));
 		ui_interface->addButton("gate", &fButton0);
+		ui_interface->declare(&fHslider7, "midi", "ctrl 78");
+		ui_interface->addHorizontalSlider("lfoFreq", &fHslider7, FAUSTFLOAT(6.0f), FAUSTFLOAT(0.00100000005f), FAUSTFLOAT(10.0f), FAUSTFLOAT(0.00100000005f));
 		ui_interface->declare(&fHslider6, "midi", "ctrl 1");
-		ui_interface->addHorizontalSlider("lfoDepth", &fHslider6, FAUSTFLOAT(0.0f), FAUSTFLOAT(0.0f), FAUSTFLOAT(1.0f), FAUSTFLOAT(0.00100000005f));
-		ui_interface->declare(&fHslider7, "midi", "ctrl 14");
-		ui_interface->addHorizontalSlider("lfoFreq", &fHslider7, FAUSTFLOAT(0.100000001f), FAUSTFLOAT(0.00999999978f), FAUSTFLOAT(10.0f), FAUSTFLOAT(0.00100000005f));
-		ui_interface->declare(&fHslider5, "midi", "ctrl");
-		ui_interface->addHorizontalSlider("waveTravel", &fHslider5, FAUSTFLOAT(0.0f), FAUSTFLOAT(0.0f), FAUSTFLOAT(1.0f), FAUSTFLOAT(0.00999999978f));
+		ui_interface->addHorizontalSlider("modwheel", &fHslider6, FAUSTFLOAT(0.0f), FAUSTFLOAT(0.0f), FAUSTFLOAT(0.5f), FAUSTFLOAT(0.00100000005f));
+		ui_interface->declare(&fHslider0, "midi", "ctrl 72");
+		ui_interface->addHorizontalSlider("release", &fHslider0, FAUSTFLOAT(100.0f), FAUSTFLOAT(0.100000001f), FAUSTFLOAT(400.0f), FAUSTFLOAT(0.00100000005f));
+		ui_interface->declare(&fHslider11, "BELA", "ANALOG_2");
+		ui_interface->addHorizontalSlider("resonnance", &fHslider11, FAUSTFLOAT(0.5f), FAUSTFLOAT(0.0f), FAUSTFLOAT(1.0f), FAUSTFLOAT(0.00100000005f));
+		ui_interface->declare(&fHslider3, "midi", "ctrl 77");
+		ui_interface->addHorizontalSlider("sustain", &fHslider3, FAUSTFLOAT(0.200000003f), FAUSTFLOAT(0.0f), FAUSTFLOAT(1.0f), FAUSTFLOAT(0.00100000005f));
+		ui_interface->declare(&fHslider9, "midi", "ctrl 79");
+		ui_interface->addHorizontalSlider("tracking", &fHslider9, FAUSTFLOAT(1.0f), FAUSTFLOAT(0.0f), FAUSTFLOAT(2.0f), FAUSTFLOAT(0.00100000005f));
+		ui_interface->declare(&fHslider4, "BELA", "ANALOG_0");
+		ui_interface->addHorizontalSlider("waveform", &fHslider4, FAUSTFLOAT(0.5f), FAUSTFLOAT(0.0f), FAUSTFLOAT(1.0f), FAUSTFLOAT(0.00100000005f));
 		ui_interface->closeBox();
 	}
 	
@@ -5136,40 +5066,85 @@ class mydsp : public dsp {
 		float fSlow0 = float(fEntry0);
 		int iSlow1 = (float(fButton0) > 0.0f);
 		int iSlow2 = iSlow1;
-		float fSlow3 = float(fHslider0);
+		float fSlow3 = (0.00999999978f * float(fHslider0));
 		float fSlow4 = float(fHslider1);
-		int iSlow5 = int((fConst0 * fSlow4));
-		float fSlow6 = float(fHslider2);
-		float fSlow7 = float(iSlow1);
-		float fSlow8 = (float(fHslider3) * fSlow7);
-		float fSlow9 = (fConst1 * (float(fEntry1) * std::pow(2.0f, (0.0833333358f * float(fHslider4)))));
-		float fSlow10 = float(fHslider5);
-		float fSlow11 = (fConst2 * float(fHslider6));
-		float fSlow12 = (fConst2 * float(fHslider7));
+		int iSlow5 = int((fConst1 * fSlow4));
+		float fSlow6 = (0.00999999978f * float(fHslider2));
+		float fSlow7 = (0.00999999978f * fSlow4);
+		float fSlow8 = float(iSlow1);
+		float fSlow9 = (float(fHslider3) * fSlow8);
+		float fSlow10 = (fConst4 * float(fHslider4));
+		float fSlow11 = (float(fEntry1) * std::pow(2.0f, (0.0833333358f * float(fHslider5))));
+		float fSlow12 = (fConst4 * float(fHslider6));
+		float fSlow13 = (fConst4 * float(fHslider7));
+		float fSlow14 = (fConst4 * float(fHslider8));
+		float fSlow15 = float(fHslider9);
+		float fSlow16 = (fConst4 * float(fHslider10));
+		float fSlow17 = (fConst4 * float(fHslider11));
 		for (int i0 = 0; (i0 < count); i0 = (i0 + 1)) {
-			iVec0[0] = iSlow1;
+			iVec0[0] = 1;
+			iVec1[0] = iSlow1;
 			iRec1[0] = (iSlow1 * (iRec1[1] + 1));
-			int iTemp0 = (iSlow1 - iVec0[1]);
+			int iTemp0 = (iSlow1 - iVec1[1]);
 			int iTemp1 = ((iRec1[0] < iSlow5) | (iTemp0 * (iTemp0 > 0)));
-			float fTemp2 = (0.144717798f * (iSlow2 ? (iTemp1 ? fSlow4 : fSlow6) : fSlow3));
+			float fTemp2 = (0.144717798f * (iSlow2 ? (iTemp1 ? fSlow7 : fSlow6) : fSlow3));
 			int iTemp3 = (std::fabs(fTemp2) < 1.1920929e-07f);
-			float fTemp4 = (iTemp3 ? 0.0f : std::exp((0.0f - (fConst1 / (iTemp3 ? 1.0f : fTemp2)))));
-			fRec0[0] = ((fRec0[1] * fTemp4) + ((iSlow2 ? (iTemp1 ? fSlow7 : fSlow8) : 0.0f) * (1.0f - fTemp4)));
-			fRec3[0] = (fSlow9 + (fRec3[1] - std::floor((fSlow9 + fRec3[1]))));
-			int iTemp5 = int((1024.0f * fRec3[0]));
-			fRec4[0] = (fSlow11 + (fConst3 * fRec4[1]));
-			fRec6[0] = (fSlow12 + (fConst3 * fRec6[1]));
-			float fTemp6 = (fRec5[1] + (fConst1 * fRec6[0]));
-			fRec5[0] = (fTemp6 - std::floor(fTemp6));
-			float fTemp7 = std::max<float>(0.0f, std::min<float>(1.0f, (fSlow10 + (fRec4[0] * (1.0f - std::fabs(((2.0f * fRec5[0]) + -1.0f)))))));
-			output0[i0] = FAUSTFLOAT((fSlow0 * (fRec0[0] * ((((ftbl0mydspSIG0[iTemp5] * std::max<float>(0.0f, std::cos((4.71238518f * fTemp7)))) + (ftbl1mydspSIG1[iTemp5] * std::max<float>(0.0f, std::cos((4.71238518f * (fTemp7 + -0.333333343f)))))) + (ftbl2mydspSIG2[iTemp5] * std::max<float>(0.0f, std::cos((4.71238518f * (fTemp7 + -0.666666687f)))))) + (ftbl3mydspSIG3[iTemp5] * std::max<float>(0.0f, std::cos((4.71238518f * (fTemp7 + -1.0f)))))))));
+			float fTemp4 = (iTemp3 ? 0.0f : std::exp((0.0f - (fConst2 / (iTemp3 ? 1.0f : fTemp2)))));
+			fRec0[0] = ((fRec0[1] * fTemp4) + ((iSlow2 ? (iTemp1 ? fSlow8 : fSlow9) : 0.0f) * (1.0f - fTemp4)));
+			fRec7[0] = (fSlow10 + (fConst5 * fRec7[1]));
+			fRec9[0] = (fSlow12 + (fConst5 * fRec9[1]));
+			fRec11[0] = (fSlow13 + (fConst5 * fRec11[1]));
+			float fTemp5 = (fRec10[1] + (fConst2 * fRec11[0]));
+			fRec10[0] = (fTemp5 - std::floor(fTemp5));
+			float fTemp6 = (fSlow11 + (10.0f * (fRec9[0] * ((2.0f * (1.0f - std::fabs(((2.0f * fRec10[0]) + -1.0f)))) + -1.0f))));
+			float fTemp7 = std::max<float>(fTemp6, 23.4489498f);
+			float fTemp8 = std::max<float>(20.0f, std::fabs(fTemp7));
+			float fTemp9 = (fRec8[1] + (fConst2 * fTemp8));
+			fRec8[0] = (fTemp9 - std::floor(fTemp9));
+			float fTemp10 = mydsp_faustpower2_f(((2.0f * fRec8[0]) + -1.0f));
+			fVec2[0] = fTemp10;
+			float fTemp11 = ((float(iVec0[1]) * (fTemp10 - fVec2[1])) / fTemp8);
+			fVec3[(IOTA & 4095)] = fTemp11;
+			float fTemp12 = std::max<float>(0.0f, std::min<float>(2047.0f, (fConst6 / fTemp7)));
+			int iTemp13 = int(fTemp12);
+			float fTemp14 = std::floor(fTemp12);
+			float fTemp15 = std::max<float>(1.1920929e-07f, std::fabs(fTemp6));
+			float fTemp16 = (fRec12[1] + (fConst2 * fTemp15));
+			float fTemp17 = (fTemp16 + -1.0f);
+			int iTemp18 = (fTemp17 < 0.0f);
+			fRec12[0] = (iTemp18 ? fTemp16 : fTemp17);
+			float fRec13 = (iTemp18 ? fTemp16 : (fTemp16 + (fTemp17 * (1.0f - (fConst0 / fTemp15)))));
+			fRec14[0] = (fSlow14 + (fConst5 * fRec14[1]));
+			fRec15[0] = (fSlow16 + (fConst5 * fRec15[1]));
+			float fTemp19 = (fConst7 * std::min<float>(fConst8, ((fRec14[0] + (fSlow15 * fTemp6)) + (fSlow0 * (fRec15[0] * fRec0[0])))));
+			float fTemp20 = (1.0f - fTemp19);
+			fRec16[0] = (fSlow17 + (fConst5 * fRec16[1]));
+			fRec6[0] = ((fConst3 * (fRec7[0] * ((fTemp11 - (fVec3[((IOTA - iTemp13) & 4095)] * (fTemp14 + (1.0f - fTemp12)))) - ((fTemp12 - fTemp14) * fVec3[((IOTA - (iTemp13 + 1)) & 4095)])))) + (((1.0f - fRec7[0]) * ((2.0f * fRec13) + -1.0f)) + ((fTemp20 * fRec6[1]) + (fRec2[1] * (0.0f - (4.0f * std::max<float>(0.0f, std::min<float>(fRec16[0], 0.999998987f))))))));
+			fRec5[0] = (fRec6[0] + (fTemp20 * fRec5[1]));
+			fRec4[0] = (fRec5[0] + (fTemp20 * fRec4[1]));
+			fRec3[0] = (fRec4[0] + (fRec3[1] * fTemp20));
+			fRec2[0] = (fRec3[0] * std::pow(fTemp19, 4.0f));
+			output0[i0] = FAUSTFLOAT((fSlow0 * (fRec0[0] * fRec2[0])));
 			iVec0[1] = iVec0[0];
+			iVec1[1] = iVec1[0];
 			iRec1[1] = iRec1[0];
 			fRec0[1] = fRec0[0];
-			fRec3[1] = fRec3[0];
-			fRec4[1] = fRec4[0];
+			fRec7[1] = fRec7[0];
+			fRec9[1] = fRec9[0];
+			fRec11[1] = fRec11[0];
+			fRec10[1] = fRec10[0];
+			fRec8[1] = fRec8[0];
+			fVec2[1] = fVec2[0];
+			IOTA = (IOTA + 1);
+			fRec12[1] = fRec12[0];
+			fRec14[1] = fRec14[0];
+			fRec15[1] = fRec15[0];
+			fRec16[1] = fRec16[0];
 			fRec6[1] = fRec6[0];
 			fRec5[1] = fRec5[0];
+			fRec4[1] = fRec4[0];
+			fRec3[1] = fRec3[0];
+			fRec2[1] = fRec2[0];
 		}
 	}
 
@@ -5177,37 +5152,45 @@ class mydsp : public dsp {
 
 #ifdef FAUST_UIMACROS
 	
-	#define FAUST_FILE_NAME "WaveSynth_FX.dsp"
+	#define FAUST_FILE_NAME "simpleSynth_Analog.dsp"
 	#define FAUST_CLASS_NAME "mydsp"
 	#define FAUST_INPUTS 0
 	#define FAUST_OUTPUTS 1
-	#define FAUST_ACTIVES 11
+	#define FAUST_ACTIVES 15
 	#define FAUST_PASSIVES 0
 
-	FAUST_ADDHORIZONTALSLIDER("A", fHslider1, 0.01f, 0.01f, 4.0f, 0.01f);
-	FAUST_ADDHORIZONTALSLIDER("D", fHslider2, 0.59999999999999998f, 0.01f, 8.0f, 0.01f);
-	FAUST_ADDHORIZONTALSLIDER("R", fHslider0, 0.80000000000000004f, 0.01f, 8.0f, 0.01f);
-	FAUST_ADDHORIZONTALSLIDER("S", fHslider3, 0.20000000000000001f, 0.0f, 1.0f, 0.01f);
-	FAUST_ADDHORIZONTALSLIDER("bend", fHslider4, 0.0f, -2.0f, 2.0f, 0.01f);
+	FAUST_ADDHORIZONTALSLIDER("attack", fHslider1, 0.10000000000000001f, 0.10000000000000001f, 400.0f, 0.001f);
+	FAUST_ADDHORIZONTALSLIDER("bend", fHslider5, 0.0f, -2.0f, 2.0f, 0.01f);
+	FAUST_ADDHORIZONTALSLIDER("decay", fHslider2, 60.0f, 0.10000000000000001f, 400.0f, 0.001f);
+	FAUST_ADDHORIZONTALSLIDER("envMod", fHslider10, 50.0f, 0.0f, 100.0f, 0.01f);
+	FAUST_ADDHORIZONTALSLIDER("fc", fHslider8, 15.0f, 15.0f, 12000.0f, 0.001f);
 	FAUST_ADDNUMENTRY("freq", fEntry1, 440.0f, 20.0f, 20000.0f, 1.0f);
-	FAUST_ADDNUMENTRY("gain", fEntry0, 0.5f, 0.0f, 1.0f, 0.01f);
+	FAUST_ADDNUMENTRY("gain", fEntry0, 0.5f, 0.0f, 0.5f, 0.01f);
 	FAUST_ADDBUTTON("gate", fButton0);
-	FAUST_ADDHORIZONTALSLIDER("lfoDepth", fHslider6, 0.0f, 0.0f, 1.0f, 0.001f);
-	FAUST_ADDHORIZONTALSLIDER("lfoFreq", fHslider7, 0.10000000000000001f, 0.01f, 10.0f, 0.001f);
-	FAUST_ADDHORIZONTALSLIDER("waveTravel", fHslider5, 0.0f, 0.0f, 1.0f, 0.01f);
+	FAUST_ADDHORIZONTALSLIDER("lfoFreq", fHslider7, 6.0f, 0.001f, 10.0f, 0.001f);
+	FAUST_ADDHORIZONTALSLIDER("modwheel", fHslider6, 0.0f, 0.0f, 0.5f, 0.001f);
+	FAUST_ADDHORIZONTALSLIDER("release", fHslider0, 100.0f, 0.10000000000000001f, 400.0f, 0.001f);
+	FAUST_ADDHORIZONTALSLIDER("resonnance", fHslider11, 0.5f, 0.0f, 1.0f, 0.001f);
+	FAUST_ADDHORIZONTALSLIDER("sustain", fHslider3, 0.20000000000000001f, 0.0f, 1.0f, 0.001f);
+	FAUST_ADDHORIZONTALSLIDER("tracking", fHslider9, 1.0f, 0.0f, 2.0f, 0.001f);
+	FAUST_ADDHORIZONTALSLIDER("waveform", fHslider4, 0.5f, 0.0f, 1.0f, 0.001f);
 
 	#define FAUST_LIST_ACTIVES(p) \
-		p(HORIZONTALSLIDER, A, "A", fHslider1, 0.01f, 0.01f, 4.0f, 0.01f) \
-		p(HORIZONTALSLIDER, D, "D", fHslider2, 0.59999999999999998f, 0.01f, 8.0f, 0.01f) \
-		p(HORIZONTALSLIDER, R, "R", fHslider0, 0.80000000000000004f, 0.01f, 8.0f, 0.01f) \
-		p(HORIZONTALSLIDER, S, "S", fHslider3, 0.20000000000000001f, 0.0f, 1.0f, 0.01f) \
-		p(HORIZONTALSLIDER, bend, "bend", fHslider4, 0.0f, -2.0f, 2.0f, 0.01f) \
+		p(HORIZONTALSLIDER, attack, "attack", fHslider1, 0.10000000000000001f, 0.10000000000000001f, 400.0f, 0.001f) \
+		p(HORIZONTALSLIDER, bend, "bend", fHslider5, 0.0f, -2.0f, 2.0f, 0.01f) \
+		p(HORIZONTALSLIDER, decay, "decay", fHslider2, 60.0f, 0.10000000000000001f, 400.0f, 0.001f) \
+		p(HORIZONTALSLIDER, envMod, "envMod", fHslider10, 50.0f, 0.0f, 100.0f, 0.01f) \
+		p(HORIZONTALSLIDER, fc, "fc", fHslider8, 15.0f, 15.0f, 12000.0f, 0.001f) \
 		p(NUMENTRY, freq, "freq", fEntry1, 440.0f, 20.0f, 20000.0f, 1.0f) \
-		p(NUMENTRY, gain, "gain", fEntry0, 0.5f, 0.0f, 1.0f, 0.01f) \
+		p(NUMENTRY, gain, "gain", fEntry0, 0.5f, 0.0f, 0.5f, 0.01f) \
 		p(BUTTON, gate, "gate", fButton0, 0.0f, 0.0f, 1.0f, 1.0f) \
-		p(HORIZONTALSLIDER, lfoDepth, "lfoDepth", fHslider6, 0.0f, 0.0f, 1.0f, 0.001f) \
-		p(HORIZONTALSLIDER, lfoFreq, "lfoFreq", fHslider7, 0.10000000000000001f, 0.01f, 10.0f, 0.001f) \
-		p(HORIZONTALSLIDER, waveTravel, "waveTravel", fHslider5, 0.0f, 0.0f, 1.0f, 0.01f) \
+		p(HORIZONTALSLIDER, lfoFreq, "lfoFreq", fHslider7, 6.0f, 0.001f, 10.0f, 0.001f) \
+		p(HORIZONTALSLIDER, modwheel, "modwheel", fHslider6, 0.0f, 0.0f, 0.5f, 0.001f) \
+		p(HORIZONTALSLIDER, release, "release", fHslider0, 100.0f, 0.10000000000000001f, 400.0f, 0.001f) \
+		p(HORIZONTALSLIDER, resonnance, "resonnance", fHslider11, 0.5f, 0.0f, 1.0f, 0.001f) \
+		p(HORIZONTALSLIDER, sustain, "sustain", fHslider3, 0.20000000000000001f, 0.0f, 1.0f, 0.001f) \
+		p(HORIZONTALSLIDER, tracking, "tracking", fHslider9, 1.0f, 0.0f, 2.0f, 0.001f) \
+		p(HORIZONTALSLIDER, waveform, "waveform", fHslider4, 0.5f, 0.0f, 1.0f, 0.001f) \
 
 	#define FAUST_LIST_PASSIVES(p) \
 
@@ -9083,24 +9066,18 @@ struct MidiMeta : public Meta, public std::map<std::string, std::string> {
     {
         return (this->find(key) != this->end()) ? (*this)[key] : def;
     }
-    
+    /*
     static void analyse(dsp* mono_dsp, bool& midi_sync, int& nvoices)
     {
-        static const char *TAG = "MidiMeta::analyse";
-        ESP_LOGW(TAG, "after entering"); 
         JSONUI jsonui;
-        ESP_LOGW(TAG, "after JSONUI intantiation");        
         mono_dsp->buildUserInterface(&jsonui);
-        ESP_LOGW(TAG, "after mono_dsp->");  
-        
         std::string json = jsonui.JSON();
-         ESP_LOGW(TAG, "after mono_dsp-> 2"); 
         midi_sync = ((json.find("midi") != std::string::npos) &&
                      ((json.find("start") != std::string::npos) ||
                       (json.find("stop") != std::string::npos) ||
                       (json.find("clock") != std::string::npos) ||
                       (json.find("timestamp") != std::string::npos)));
-    ESP_LOGW(TAG, "after mono_dsp-> 3");
+    
     #if defined(NVOICES) && NVOICES!=NUM_VOICES
         nvoices = NVOICES;
     #else
@@ -9125,10 +9102,8 @@ struct MidiMeta : public Meta, public std::map<std::string, std::string> {
         }
         nvoices = std::max<int>(0, nvoices);
     #endif
-    
-    
     }
-   
+    */
     static bool checkPolyphony(dsp* mono_dsp)
     {
         MapUI map_ui;
@@ -11908,12 +11883,9 @@ class FaustPolyEngine {
             bool midi_sync = false;
             int nvoices = 0;
             fRunning = false;
-            //FCKX
-             MidiMeta::analyse(mono_dsp, midi_sync, nvoices);
-             //midi_sync = true;
-             //nvoices = NVOICES;  // NVOICES equals 2
             
-            //FCKX
+            //MidiMeta::analyse(mono_dsp, midi_sync, nvoices);
+            
             // Getting the UI JSON
             JSONUI jsonui1(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
             mono_dsp->buildUserInterface(&jsonui1);
@@ -11935,8 +11907,6 @@ class FaustPolyEngine {
             #endif
                 
                 // Update JSONs with Poly version
-                //FCKX
-               
                 JSONUI jsonui2(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
                 fFinalDSP->buildUserInterface(&jsonui2);
                 fJSONUI = jsonui2.JSON();
@@ -11944,7 +11914,6 @@ class FaustPolyEngine {
                 JSONUI jsonui2M(mono_dsp->getNumInputs(), mono_dsp->getNumOutputs());
                 fFinalDSP->metadata(&jsonui2M);
                 fJSONMeta = jsonui2M.JSON();
-                
                 
             } else {
                 fPolyDSP = NULL;
@@ -18704,7 +18673,7 @@ class teensy_midi : public midi_handler {
 
 #endif
 /**************************  END  teensy-midi.h **************************/
-#elif ESP32_DRIVER //& !FCKX_MQTT_MIDI
+#elif ESP32_DRIVER
 /************************** BEGIN esp32-midi.h **************************/
 /************************************************************************
  FAUST Architecture File
@@ -18736,30 +18705,14 @@ class teensy_midi : public midi_handler {
 
 #include "driver/uart.h"
 
-# if JDKSMIDI 
-
 #include "jdksmidi/world.h"
 #include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
 #include "jdksmidi/parser.h"
 
+
 using namespace jdksmidi;
-
-#elif FCKXMIDI
-
-//using namespace jdksmidi;
-typedef unsigned char uchar;  //world.h
-
-#include "world.h"
-#include "midi.h"
-#include "msg.h"
-#include "sysex.h"
-#include "parser.h"
-
-#endif
-
-
 
 #ifndef RX1
 #define RX1 GPIO_NUM_5
@@ -18775,10 +18728,6 @@ typedef unsigned char uchar;  //world.h
 /**
  * MIDI handler for the ESP32 boards.
  */
- 
- 
-#if JDKSMIDI
- 
 class esp32_midi : public midi_handler {
     
     private:
@@ -18789,8 +18738,8 @@ class esp32_midi : public midi_handler {
         {
             double time = 0;
             uint8_t data[RX_BUF_SIZE];
-            MIDIParser parser;        //JDKSMIDI
-            jdksMIDIMessage message;  //JDKSMIDI
+            MIDIParser parser;
+            jdksMIDIMessage message;
             
             while (true) {
                 int rxBytes = uart_read_bytes(UART_NUM_1, data, RX_BUF_SIZE, 1);
@@ -18907,154 +18856,8 @@ class esp32_midi : public midi_handler {
    
 };
 
-
-#elif FCKXMIDI
-
- 
-class esp32_midi : public midi_handler {
-    
-    private:
-    
-        TaskHandle_t fProcessMidiHandle;
-    
-        void processMidi()
-        {
-            double time = 0;
-            uint8_t data[RX_BUF_SIZE];
-            jdksmidi::MIDIParser parser;        //JDKSMIDI
-            //jdksMIDIMessage message;  //JDKSMIDI
-            jdksmidi::MIDIMessage message; //FCKX
-            
-            while (true) {
-                int rxBytes = uart_read_bytes(UART_NUM_1, data, RX_BUF_SIZE, 1);
-                if (rxBytes > 0) {
-                    for (int i = 0; i < rxBytes; i++) {
-                        if (parser.Parse((jdksmidi::uchar)data[i], &message)) {   //FCKX
-                        
-                            unsigned char status = message.GetStatus();
-                            if (status < 0xF0)
-                            { // channel/system message discriminator.
-                                unsigned char type = message.GetType();
-                                switch (type)
-                                {
-                                case 0x80: // Note Off
-                                    handleKeyOff(time, message.GetChannel(), message.GetNote(), message.GetVelocity());
-                                    break;
-                                case 0x90: // Note On
-                                    handleKeyOn(time, message.GetChannel(), message.GetNote(), message.GetVelocity());
-                                    break;
-                                case 0xA0: // Poly Key Pressure
-                                    handlePolyAfterTouch(time, message.GetChannel(), message.GetNote(), message.GetByte2());
-                                    break;
-                                case 0xB0: // Control Change
-                                    handleCtrlChange(time, message.GetChannel(), message.GetController(), message.GetControllerValue());
-                                    break;
-                                case 0xC0: // Program Change // No Bank Select in faust?
-                                    handleProgChange(time, message.GetChannel(), message.GetPGValue());
-                                    break;
-                                case 0xD0: // Channel Pressure
-                                    handleAfterTouch(time, message.GetChannel(), message.GetChannelPressure());
-                                    break;
-                                case 0xE0: // Pitch Bend
-                                    handlePitchWheel(time, message.GetChannel(), message.GetByte1(), message.GetByte2());
-                                    break;
-                                default:
-                                    break;
-                                }
-                            }
-                            else
-                            {
-                                switch (status)
-                                {
-                                case 0xF8: // Timing Clock
-                                    handleClock(time);
-                                    break;
-                                // We can consider start and continue as identical messages.
-                                case 0xFA: // Start
-                                case 0xFB: // Continue
-                                    handleStart(time);
-                                    break;
-                                case 0xFC: // Stop
-                                    handleStop(time);
-                                    break;
-                                case 0xF0: // SysEx Start
-                                    // TODO
-                                    break;
-                                case 0xF7: // SysEx Stop
-                                    // TODO
-                                    break;
-                                default:
-                                    break;
-                                }
-                            }
-                        }
-                        // Synchronize all GUI controllers
-                        GUI::updateAllGuis();
-                    }
-                }
-            }
-        }
-  
-        static void processMidiHandler(void* arg)
-        {
-            static_cast<esp32_midi*>(arg)->processMidi();
-        }
-    
-    public:
-    
-        esp32_midi():midi_handler("esp32"),fProcessMidiHandle(NULL)
-        {
-            // Setup UART for MIDI
-            const uart_config_t uart_config = {
-                .baud_rate = 31250,
-                .data_bits = UART_DATA_8_BITS,
-                .parity = UART_PARITY_DISABLE,
-                .stop_bits = UART_STOP_BITS_1,
-                .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
-                .rx_flow_ctrl_thresh = 122,
-                .use_ref_tick = false
-            };
-            uart_param_config(PORT_NUM, &uart_config);
-            uart_set_pin(PORT_NUM, TX1, RX1, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-            // We won't use a buffer for sending data.
-            uart_driver_install(PORT_NUM, RX_BUF_SIZE * 2, 0, 0, NULL, 0);
-        }
-    
-        virtual ~esp32_midi()
-        {
-            stopMidi();
-        }
-
-        bool startMidi()
-        {
-            // Start MIDI receive task
-            return (xTaskCreatePinnedToCore(processMidiHandler, "Faust MIDI Task", 4096, (void*)this, 5, &fProcessMidiHandle, 1) == pdPASS);
-        }
-
-        void stopMidi()
-        {
-            if (fProcessMidiHandle != nullptr) {
-                vTaskDelete(fProcessMidiHandle);
-                fProcessMidiHandle = nullptr;
-            }
-        }
-   
-};
-
-
-
-
-#endif
-    
-
 #endif
 /**************************  END  esp32-midi.h **************************/
-
-#elif ESP32_DRIVER & FCKX_MQTT_MIDI
-
-#include "FCKX_MQTT_midi.h"
-
-
 #else
 /************************** BEGIN rt-midi.h **************************/
 /************************************************************************
