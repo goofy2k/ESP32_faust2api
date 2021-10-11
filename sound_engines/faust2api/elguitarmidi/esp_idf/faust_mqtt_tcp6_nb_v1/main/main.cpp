@@ -250,11 +250,89 @@ void wifi_init_sta(void)
 // END of WIFI functionality
 
 
+void execute_single_midi_command(DspFaust * aDSP, int mididata){  //uses propagateMidi
+static const char *TAG = "EXECUTE_SINGLE_COMMAND";
+             int data2 = mididata & 0x000000ff;
+             int data1 = (mididata & 0x0000ff00)>>8;
+             int status = (mididata & 0x00ff0000)>>16;
+             ESP_LOGI(TAG,"NUMERICAL VALUE:%u ", mididata);
+             ESP_LOGI(TAG,"STATUS: %u (0x%X)", status, status);
+             ESP_LOGI(TAG,"DATA1: %u (0x%X)", data1, data1);
+             ESP_LOGI(TAG,"DATA2: %u (0x%X)", data2, data2) ; //integers are 32 bits!!!!             
+             ESP_LOGI(TAG,"...to be implemented...(store msg and) call mqtt_midi"); 
+             int type = status & 0xf0;
+             int channel = status & 0x0f;
+             int count = 3;
+             int time = 0;
+             aDSP->propagateMidi(count, time, type, channel, data1, data2);
+
+};
+
+
+
+
 /*
 * update DSP parameters, based on the values set in the input storage
 * input storage is updated asynchronously in MQTT callbacks (API , API2)
 * update_controls is called at strategically suitable moments in e.g. playing sequences
 */
+
+void update_all_controls (DspFaust * aDSP){
+ static const char *TAG = "update_all_controls"; 
+  if (incoming_updates) {
+  
+  wm8978.hpVolSet(hpVol_R, hpVol_L);
+  ESP_LOGI(TAG, "poly: %d", poly); 
+  //if (poly == 1){
+    //found out that the BaseId is sufficient, poly = 0
+    poly = 1;
+    
+    //later, use a struct, better: re-use an existing struct
+    //and or use MACROS and a loop
+ /*   
+        aDSP->setParamValue(synthFreqBaseId+poly,voiceAddress, synthFreq);
+    ESP_LOGI(TAG, "synthFreqBaseId %d, set gain %6.2f", synthFreqBaseId, synthFreq);  //FCKX  
+         aDSP->setParamValue(gateBaseId+poly,voiceAddress, gate);
+  //  ESP_LOGI(TAG, "gateBaseId %d, set gate %6.2f", gateBaseId, gate);  //FCKX    
+    
+           aDSP->setParamValue(waveTravelBaseId+poly,voiceAddress, waveTravel);
+    ESP_LOGI(TAG, "waveTravelBaseId %d, set waveTravel %6.2f", waveTravelBaseId, waveTravel);  //FCKX    
+    
+  */  
+    aDSP->setParamValue(bendBaseId+poly, bend);
+    ESP_LOGI(TAG, "bendBaseId %d, set bend %6.2f", bendBaseId, bend);  //FCKX   
+    aDSP->setParamValue(gainBaseId+poly, gain);
+    ESP_LOGI(TAG, "gainBaseId %d, set gain %6.2f", gainBaseId, gain);  //FCKX
+    
+    
+    aDSP->setParamValue(lfoFreqBaseId+poly, lfoFreq);
+    ESP_LOGI(TAG, "lfoFreqBaseId %d, set lfoFreq %6.2f", lfoFreqBaseId, lfoFreq);  //FCKX
+    aDSP->setParamValue(lfoDepthBaseId+poly, lfoDepth);
+    ESP_LOGI(TAG, "lfoDepthBaseId %d, set lfoDepth %6.2f", lfoDepthBaseId, lfoDepth);  //FCKX  
+    aDSP->setParamValue(synthABaseId+poly, synthA);
+    ESP_LOGI(TAG, "synthABaseId %d, set synthA %6.2f", synthABaseId, synthA);  //FCKX
+    aDSP->setParamValue(synthDBaseId+poly, synthD);
+    ESP_LOGI(TAG, "synthDBaseId %d, set synthD %6.2f", synthDBaseId, synthD);  //FCKX
+    aDSP->setParamValue(synthSBaseId+poly, synthS);
+    ESP_LOGI(TAG, "synthSBaseId %d, set synthS %6.2f", synthSBaseId, synthS);  //FCKX
+    aDSP->setParamValue(synthRBaseId+poly, synthR);
+    ESP_LOGI(TAG, "synthRBaseId %d, set synthR %6.2f", synthRBaseId, synthR);  //FCKX
+/* 
+ } else { //poly == 0
+    DSP->setParamValue(lfoFreqBaseId+poly, lfoFreq);
+    ESP_LOGI(TAG, "lfoFreqBaseId %d, set lfoFreq %6.2f", lfoFreqBaseId, lfoFreq);  //FCKX
+    aDSP->setParamValue(lfoDepthBaseId+poly, lfoDepth); 
+    aDSP->setParamValue(synthABaseId+poly, synthA);
+    aDSP->setParamValue(synthDBaseId+poly, synthD);
+    aDSP->setParamValue(synthSBaseId+poly, synthS);
+    aDSP->setParamValue(synthRBaseId+poly, synthR);    
+      
+  }
+*/    
+  }
+  incoming_updates = false;
+
+}
 void update_controls(uintptr_t voiceAddress, DspFaust * aDSP){  //maybe do this in a cyclic freertos timer task
   static const char *TAG = "update_controls"; 
   if (incoming_updates) {
@@ -551,22 +629,41 @@ static void call_faust_api2(esp_mqtt_event_handle_t event){
     } else  
     if (strncmp(event->topic, "/faust/api2/midi/single",strlen("/faust/api2/midi/single")) == 0)        {
              //receive a single midi message 3 bytes, coded by Nodered as a 24 bit integer
-             ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data);
-             int myvalue = atoi(event->data);
-             int data2 = myvalue & 0x000000ff;
-             int data1 = (myvalue & 0x0000ff00)>>8;
-             int status = (myvalue & 0x00ff0000)>>16;
-             ESP_LOGI(TAG,"NUMERICAL VALUE:%u ", myvalue);
+             //ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data);
+             int mididata = atoi(event->data);
+             int data2 = mididata & 0x000000ff;
+             int data1 = (mididata & 0x0000ff00)>>8;
+             int status = (mididata & 0x00ff0000)>>16;
+             int type = status & 0xf0;
+             int channel = status & 0x0f;
+             ESP_LOGI(TAG,"NUMERICAL VALUE:%u ", mididata);
              ESP_LOGI(TAG,"STATUS: %u (0x%X)", status, status);
              ESP_LOGI(TAG,"DATA1: %u (0x%X)", data1, data1);
-             ESP_LOGI(TAG,"DATA2: %u (0x%X)", data2, data2) ; //integers are 32 bits!!!!             
+             ESP_LOGI(TAG,"DATA2: %u (0x%X)", data2, data2) ; //integers are 32 bits!!!!
+
+             ESP_LOGI(TAG,"TYPE: %u (0x%X)", type, type);
+             ESP_LOGI(TAG,"CHANNEL: %u (0x%X)", channel, channel);             
              ESP_LOGI(TAG,"...to be implemented...(store msg and) call mqtt_midi"); 
-        
+
+             //aDSP->propagateMidi(3, 0, type, channel, data1, data2);
+             update_all_controls(DSP);
+             execute_single_midi_command(DSP, mididata);
+             ESP_LOGI(TAG, "after single command");  
+
+                          
+             
+             
+             //here , implement playing immidiately 
     } else 
     if (strncmp(event->topic, "/faust/api2/midi/seq",strlen("/faust/api2/midi/seq")) == 0)        {
              ESP_LOGI(TAG,"...to be implemented...(store msg and) call mqtt_midi"); 
-             //poly = atoi(event->data);             
-    } else         
+             //poly = atoi(event->data);
+             //here, implement storing the (timestamped) midi data (= recording) in a buffer, for later playback (             
+             //notes: recording = receive midi data and ADD timestamp based on moment of receipt
+             //       this can be data received from an instrument
+             //       another function is receiving and storing pre-rorded (=timestamped) data
+             //       this can be data from a midi-file streamed by another device
+    } else   
     {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
