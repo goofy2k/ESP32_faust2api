@@ -362,6 +362,9 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
 	
 7. Receiving MIDI messages over MQTT is not particularly real-time. A solution would be to add timestamped MQTT note messages in a buffer and play those shifted real time with the same algorithm to read the UART buffer. Note: this is suitable for a sequencer-like application, but not for real real-time applications.
    - first step: investigate if a midi or note handler is in the DspFaust code (so a code like midi-handler in esp32_midi, but using a different buffer that the one supplied by the UART.
+8. For solving the polyphony hum problem, start a high level audio task: class esp32audio
+9. For creation of alternative MIDI input (non) uart,  start at base class in midi.h  , derived esp32_midi  and have a look at other midi_handlers (teensy_midi , juce_midi_handler, ...). Is it possible to re-use jdsk code?
+  - start: look how esp32 midi handler uses the base class in midi.h
 	
 ![external ram options](images/External%20RAM.png) 
 ### We now have a working basic example app (faust_mqtt_tcp4_v3_KEEP). The file Basic ESP32 faust2api example.md contains a walkthrough on how to create and use this example.  
