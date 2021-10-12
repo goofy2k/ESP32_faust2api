@@ -975,6 +975,10 @@ char *song = "GoodBad:d=4,o=5,b=56:32p,32a#,32d#6,32a#,32d#6,8a#.,16f#.,16g#.,d#
 
 #define isdigit(n) (n >= '0' && n <= '9')
 
+/* 
+* keyOn / keyOff players
+*/
+
 void play_keys(DspFaust * aDSP){  //uses keyOn / keyOff
        // start continuous background voice for testing polyphony
        static const char *TAG = "PLAY_KEYS";
@@ -989,7 +993,9 @@ void play_keys(DspFaust * aDSP){  //uses keyOn / keyOff
         for (int pitch = 48; pitch < 69; pitch++){
    
         //printf("counter ii %d \n",ii);    
-        vTaskDelay(100 / portTICK_PERIOD_MS);
+        nbDelay(100);
+        //vTaskDelay(100 / portTICK_PERIOD_MS);
+        
            
         ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1);      
         voiceAddress = aDSP->keyOn(pitch,vel1);
@@ -997,22 +1003,102 @@ void play_keys(DspFaust * aDSP){  //uses keyOn / keyOff
         ESP_LOGI(TAG, "after keyOn");  
         //cannot use update_controls as used here for this kind of voice ?? 
         //update_controls(voiceAddress,aDSP); 
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+         nbDelay(1000);
+        //vTaskDelay(1000 / portTICK_PERIOD_MS);
         //aDSP->setVoiceParamValue(5,voiceAddress,110);
         //update_controls(voiceAddress,aDSP);
         //aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,110);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+         nbDelay(1000);
+        //vTaskDelay(1000 / portTICK_PERIOD_MS);
         ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1);  
         res = aDSP->keyOff(pitch);
         } 
          ESP_LOGI(TAG, "end of sequence");        
-         vTaskDelay(3000 / portTICK_PERIOD_MS);
+          nbDelay(3000);
+         //vTaskDelay(3000 / portTICK_PERIOD_MS);
          
         /*
         //release continuous background voice
         aDSP->keyOff(50);
         */
 }
+
+
+void play_keys_nb(DspFaust * aDSP){  //uses keyOn / keyOff
+    // start continuous background voice for testing polyphony
+    static const char *TAG = "PLAY_KEYS";
+    int res;
+    uintptr_t voiceAddress;
+    ESP_LOGI(TAG, "starting play_keys");
+
+    nbDelay(3000); 
+    int vel1 = 126;
+    for (int pitch = 48; pitch < 69; pitch++){
+
+    //printf("counter ii %d \n",ii);  
+
+    nbDelay(100);        
+       
+    ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1);      
+    voiceAddress = aDSP->keyOn(pitch,vel1);
+    //update_controls(voiceAddress,aDSP);
+    ESP_LOGI(TAG, "after keyOn");  
+
+    nbDelay(100);         
+
+    ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1); 
+
+    nbDelay(100);         
+    res = aDSP->keyOff(pitch);
+    } 
+     ESP_LOGI(TAG, "end of sequence");     
+    nbDelay(100); 
+    /*
+    //release continuous background voice
+    aDSP->keyOff(50);
+    */
+    }
+
+
+void play_keys2(DspFaust * aDSP){  //uses keyOn / keyOff
+       // start continuous background voice
+       
+      
+       aDSP->keyOn(50, 126);
+       nbDelay(3000);
+       //vTaskDelay(3000 / portTICK_PERIOD_MS);
+/*       
+       //release continuous background voice
+       //aDSP->keyOff(50); 
+       */
+       
+        for (int ii = 52; ii < 71; ii++){
+        printf("counter ii %d \n",ii);    
+        nbDelay(100);
+        //vTaskDelay(100 / portTICK_PERIOD_MS);    
+        uintptr_t voiceAddress = aDSP->keyOn(ii,126);
+        //cannot use update_controls as used here for this kind of voice 
+        //update_controls(voiceAddress,aDSP); 
+        nbDelay(1000);
+        //vTaskDelay(1000 / portTICK_PERIOD_MS);
+        //aDSP->setVoiceParamValue(5,voiceAddress,110);
+        aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,110);
+        nbDelay(1000);
+        //vTaskDelay(1000 / portTICK_PERIOD_MS);
+        int res = aDSP->keyOff(ii);
+        
+        }  
+         vTaskDelay(3000 / portTICK_PERIOD_MS);
+        
+        //release continuous background voice
+        aDSP->keyOff(50);
+        
+}
+
+
+/* 
+*propagateMidi players
+*/
 
 
 void play_midi(DspFaust * aDSP){  //uses propagateMidi
@@ -1038,7 +1124,7 @@ void play_midi(DspFaust * aDSP){  //uses propagateMidi
         for (int pitch = 48; pitch < 69; pitch++){
    
         //printf("counter ii %d \n",ii);    
-        vTaskDelay(100 / portTICK_PERIOD_MS);
+        //vTaskDelay(100 / portTICK_PERIOD_MS);
         nbDelay(100);
         
         count = 3;
@@ -1084,259 +1170,9 @@ void play_midi(DspFaust * aDSP){  //uses propagateMidi
 }
 
 
-void play_keys_nb(DspFaust * aDSP){  //uses keyOn / keyOff
-    // start continuous background voice for testing polyphony
-    static const char *TAG = "PLAY_KEYS";
-    int res;
-    uintptr_t voiceAddress;
-    ESP_LOGI(TAG, "starting play_keys");
-
-    nbDelay(3000); 
-    int vel1 = 126;
-    for (int pitch = 48; pitch < 69; pitch++){
-
-    //printf("counter ii %d \n",ii);  
-
-    nbDelay(100);        
-       
-    ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1);      
-    voiceAddress = aDSP->keyOn(pitch,vel1);
-    //update_controls(voiceAddress,aDSP);
-    ESP_LOGI(TAG, "after keyOn");  
-
-    nbDelay(100);         
-
-    ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1); 
-
-    nbDelay(100);         
-    res = aDSP->keyOff(pitch);
-    } 
-     ESP_LOGI(TAG, "end of sequence");     
-    nbDelay(100); 
-    /*
-    //release continuous background voice
-    aDSP->keyOff(50);
-    */
-    }
-
-
-void play_timed_keys_test(DspFaust * aDSP){  //uses keyOn / keyOff   uses software timer for delays
-       // start continuous background voice for testing polyphony
-       static const char *TAG = "PLAY_TIMED_KEYS_TEST";
-       int res;
-       uintptr_t voiceAddress;
-       ESP_LOGI(TAG, "entered routine");
-       
-      
-       //timer variables
-       TimerHandle_t xTimers[ NUM_TIMERS ];
- int32_t x;
-
-     // Create then start some timers.  Starting the timers before the scheduler
-     // has been started means the timers will start running immediately that
-     // the scheduler starts.
-     for( x = 0; x < NUM_TIMERS; x++ )
-     {   
-         ESP_LOGI(TAG, "Creating timer x = %d",x); 
-         //first error on creation!
-         xTimers[ x ] = xTimerCreate(    "Timer",       // Just a text name, not used by the kernel.
-                                         ( 100 * (x+1) ),   // The timer period in ticks.
-                                         pdTRUE,        // The timers will auto-reload themselves when they expire.
-                                         ( void * ) x,  // Assign each timer a unique id equal to its array index.
-                                         vTimerCallback // Each timer calls the same callback when it expires.
-                                     );
-
-         if( xTimers[ x ] == NULL )
-         {
-             // The timer was not created.
-             ESP_LOGI(TAG, "Timer  x = %d was not created!",x);
-         }
-         else
-         {
-             // Start the timer.  No block time is specified, and even if one was
-             // it would be ignored because the scheduler has not yet been
-             // started.
-             ESP_LOGI(TAG, "Timer  x = %d to be started!",x);
-             if( xTimerStart( xTimers[ x ], 0 ) != pdPASS )
-             {
-                 // The timer could not be set into the Active state.
-                 ESP_LOGI(TAG, "Timer  x = %d could not be set into the Active state",x);
-             }
-         }
-     }
-
-     // ...
-     // Create tasks here.
-     // ...
-
-     // Starting the scheduler will start the timers running as they have already
-     // been set into the active state.
-     // vTaskStartScheduler();
-//--------------------------------------end of timer example code       
-      
-       ESP_LOGI(TAG, "starting play_keys TEMP SWITCHED OFF");
-       /*
-       aDSP->keyOn(50, 126);
-       vTaskDelay(3000 / portTICK_PERIOD_MS);
-      
-       
-      
-        int vel1 = 126;
-        for (int pitch = 48; pitch < 69; pitch++){
-   
-        //printf("counter ii %d \n",ii);    
-        vTaskDelay(100 / portTICK_PERIOD_MS);
-           
-        ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1);      
-        voiceAddress = aDSP->keyOn(pitch,vel1);
-        //update_controls(voiceAddress,aDSP);
-        ESP_LOGI(TAG, "after keyOn");  
-        //cannot use update_controls as used here for this kind of voice ?? 
-        //update_controls(voiceAddress,aDSP); 
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-        //aDSP->setVoiceParamValue(5,voiceAddress,110);
-        //update_controls(voiceAddress,aDSP);
-        //aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,110);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-        ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1);  
-        res = aDSP->keyOff(pitch);
-        } 
-         ESP_LOGI(TAG, "end of sequence"); 
-                 
-         vTaskDelay(3000 / portTICK_PERIOD_MS);
-         */
-        /*
-        //release continuous background voice
-        aDSP->keyOff(50);
-        */
-}
-
-
-void play_timed_keys_test2(DspFaust * aDSP){  //uses keyOn / keyOff   uses software timer for delays
-       // start continuous background voice for testing polyphony
-       static const char *TAG = "PLAY_TIMED_KEYS_TEST";
-       int res;
-       uintptr_t voiceAddress;
-       ESP_LOGI(TAG, "entered routine");
-       
-      
-       //timer variables
-       //TimerHandle_t xTimers[ NUM_TIMERS ];
-       //int32_t x;
-       TimerHandle_t delayTimer;
-       TimerHandle_t durationTimer;
-/*
-     // Create then start some timers.  Starting the timers before the scheduler
-     // has been started means the timers will start running immediately that
-     // the scheduler starts.
-     for( x = 0; x < NUM_TIMERS; x++ )
-     {   
-         ESP_LOGI(TAG, "Creating timer x = %d",x); 
-         //first error on creation!
-         xTimers[ x ] = xTimerCreate(    "Timer",       // Just a text name, not used by the kernel.
-                                         ( 100 * (x+1) ),   // The timer period in ticks.
-                                         pdTRUE,        // The timers will auto-reload themselves when they expire.
-                                         ( void * ) x,  // Assign each timer a unique id equal to its array index.
-                                         vTimerCallback // Each timer calls the same callback when it expires.
-                                     );
-
-         if( xTimers[ x ] == NULL )
-         {
-             // The timer was not created.
-             ESP_LOGI(TAG, "Timer  x = %d was not created!",x);
-         }
-         else
-         {
-             // Start the timer.  No block time is specified, and even if one was
-             // it would be ignored because the scheduler has not yet been
-             // started.
-             ESP_LOGI(TAG, "Timer  x = %d to be started!",x);
-             if( xTimerStart( xTimers[ x ], 0 ) != pdPASS )
-             {
-                 // The timer could not be set into the Active state.
-                 ESP_LOGI(TAG, "Timer  x = %d could not be set into the Active state",x);
-             }
-         }
-     }
-
-     // ...
-     // Create tasks here.
-     // ...
-
-     // Starting the scheduler will start the timers running as they have already
-     // been set into the active state.
-     // vTaskStartScheduler();
-     */
-//--------------------------------------end of timer example code       
-      
-       ESP_LOGI(TAG, "starting play_keys ");
-       
-       aDSP->keyOn(50, 126);
-       vTaskDelay(3000 / portTICK_PERIOD_MS);
-      
-       
-      
-        int vel1 = 126;
-        for (int pitch = 48; pitch < 69; pitch++){
-   
-        //printf("counter ii %d \n",ii);    
-        vTaskDelay(100 / portTICK_PERIOD_MS);
-           
-        ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1);      
-        voiceAddress = aDSP->keyOn(pitch,vel1);
-        //update_controls(voiceAddress,aDSP);
-        ESP_LOGI(TAG, "after keyOn");  
-        //cannot use update_controls as used here for this kind of voice ?? 
-        //update_controls(voiceAddress,aDSP); 
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-        //aDSP->setVoiceParamValue(5,voiceAddress,110);
-        //update_controls(voiceAddress,aDSP);
-        //aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,110);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-        ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1);  
-        res = aDSP->keyOff(pitch);
-        } 
-         ESP_LOGI(TAG, "end of sequence"); 
-                 
-         vTaskDelay(3000 / portTICK_PERIOD_MS);
-         
-        /*
-        //release continuous background voice
-        aDSP->keyOff(50);
-        */
-}
-
-
-void play_keys2(DspFaust * aDSP){  //uses keyOn / keyOff
-       // start continuous background voice
-       
-      
-       aDSP->keyOn(50, 126);
-       vTaskDelay(3000 / portTICK_PERIOD_MS);
-/*       
-       //release continuous background voice
-       //aDSP->keyOff(50); 
-       */
-       
-        for (int ii = 52; ii < 71; ii++){
-        printf("counter ii %d \n",ii);    
-        vTaskDelay(100 / portTICK_PERIOD_MS);    
-        uintptr_t voiceAddress = aDSP->keyOn(ii,126);
-        //cannot use update_controls as used here for this kind of voice 
-        //update_controls(voiceAddress,aDSP); 
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-        //aDSP->setVoiceParamValue(5,voiceAddress,110);
-        aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,110);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-        int res = aDSP->keyOff(ii);
-        
-        }  
-         vTaskDelay(3000 / portTICK_PERIOD_MS);
-        
-        //release continuous background voice
-        aDSP->keyOff(50);
-        
-}
+/* 
+* setVoiceParamValue path players
+*/
 
 void play_setVoiceParam_path(DspFaust * aDSP) 
 { //uses setVoiceParamValue(path
@@ -1370,10 +1206,12 @@ void play_setVoiceParam_path(DspFaust * aDSP)
            aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,220.0);
            ESP_LOGI(TAG, "going to set gate ON"); 
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1.0);
-           vTaskDelay(500 / portTICK_PERIOD_MS); 
+           nbDelay(500);
+           //vTaskDelay(500 / portTICK_PERIOD_MS); 
            ESP_LOGI(TAG, "going to set gate OFF");            
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
-           vTaskDelay(5000 / portTICK_PERIOD_MS);
+           nbDelay(5000);
+           //vTaskDelay(5000 / portTICK_PERIOD_MS);
 
 
            
@@ -1383,41 +1221,52 @@ void play_setVoiceParam_path(DspFaust * aDSP)
 
            //aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,440.0);
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1.0);
-           vTaskDelay(100 / portTICK_PERIOD_MS);          
+           nbDelay(100);
+           //vTaskDelay(100 / portTICK_PERIOD_MS);          
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
-           vTaskDelay(100 / portTICK_PERIOD_MS);
+           nbDelay(100);
+           //vTaskDelay(100 / portTICK_PERIOD_MS);  
            
            //adding subsequent short notes does not work!
            //the strange thing is that when the third note is added, also the two first ones do not fire .....
           
            //aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,440.0);
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1.0);
-           vTaskDelay(100 / portTICK_PERIOD_MS);          
+           nbDelay(100);
+           //vTaskDelay(100 / portTICK_PERIOD_MS);           
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
-           vTaskDelay(100 / portTICK_PERIOD_MS);
+           nbDelay(100);
+           //vTaskDelay(100 / portTICK_PERIOD_MS);  
            
            
            
            
            aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,440.0);
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1);
-           vTaskDelay(100 / portTICK_PERIOD_MS);          
+           nbDelay(100);
+           //vTaskDelay(100 / portTICK_PERIOD_MS);            
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
-           vTaskDelay(100 / portTICK_PERIOD_MS); 
+           nbDelay(100);
+           //vTaskDelay(100 / portTICK_PERIOD_MS);  
                       
                       
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1);
-           vTaskDelay(100 / portTICK_PERIOD_MS);          
+           nbDelay(100);
+           //vTaskDelay(100 / portTICK_PERIOD_MS);           
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
-           vTaskDelay(100 / portTICK_PERIOD_MS);
+           nbDelay(100);
+           //vTaskDelay(100 / portTICK_PERIOD_MS);  
            
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1);
-           vTaskDelay(100 / portTICK_PERIOD_MS);          
+           nbDelay(100);
+           //vTaskDelay(100 / portTICK_PERIOD_MS);            
            aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
-           vTaskDelay(100 / portTICK_PERIOD_MS);
+           nbDelay(100);
+           //vTaskDelay(100 / portTICK_PERIOD_MS);  
            
            
-           vTaskDelay(100 / portTICK_PERIOD_MS);
+           nbDelay(100);
+           //vTaskDelay(100 / portTICK_PERIOD_MS);  
            
            /*
            vTaskDelay(500 / portTICK_PERIOD_MS);          
@@ -1539,64 +1388,6 @@ void play_setVoiceParam_path_nb(DspFaust * aDSP)
         //   aDSP->deleteVoice(bg_voiceAddress); //delete background voice
 };
 
-
-void play_setVoiceParam_Id(DspFaust * aDSP) 
-{
-ESP_LOGI(TAG, "play_poly_without_midi_Id");
-
-  /*
-    //start background voice
-    uintptr_t background_voiceAddress = aDSP->newVoice(); //create main voice
-    aDSP->setVoiceParamValue(freqId,background_voiceAddress,110.0);
-    aDSP->setVoiceParamValue(gainId,background_voiceAddress,0.02);
-    ESP_LOGI(TAG, "setVoiceParamValue(freqId,voiceAddress,110) set freq");  //FCKX
-    aDSP->setVoiceParamValue(gateId,background_voiceAddress,1);
-    ESP_LOGI(TAG, "setVoiceParamValue(gateId,background_voiceAddress,1) GATE ON");  //FCKX
-  */
-     
-    //loop with subsequential triggers on the same voice  
-    uintptr_t voiceAddress = aDSP->newVoice(); //create main voice
-
-    for (int ii = 0; ii < 50; ii++){
-        
-        update_controls(voiceAddress,aDSP);        
-        aDSP->setVoiceParamValue(synthFreqBaseId+poly,voiceAddress,440.0);
-        ESP_LOGI(TAG, "synthFreqBaseId %d, set freq %6.2f", synthFreqBaseId, 440.0);  //FCKX
-        aDSP->setVoiceParamValue(gateBaseId+poly,voiceAddress,1);
-        ESP_LOGI(TAG, "gateBaseId %d, set gate %d", gateBaseId, 1);  //FCKX
-        vTaskDelay(500 / portTICK_PERIOD_MS); 
-        ESP_LOGI(TAG, "delay");  //FCKX
-        aDSP->setVoiceParamValue(gateBaseId+poly,voiceAddress,0);
-        ESP_LOGI(TAG, "gateBaseId %d, set gate %d", gateBaseId, 0);  //FCKX
-        vTaskDelay(500 / portTICK_PERIOD_MS); 
-        ESP_LOGI(TAG, "delay");  //FCKX
-
-        update_controls(voiceAddress,aDSP);        
-        aDSP->setVoiceParamValue(synthFreqBaseId+poly,voiceAddress,220.0);
-        ESP_LOGI(TAG, "setVoiceParamValue(synthFreqBaseId+poly,voiceAddress,440.0)");  //FCKX
-        aDSP->setVoiceParamValue(gateBaseId+poly,voiceAddress,1);
-        ESP_LOGI(TAG, "gateBaseId %d, set gate %d", gateBaseId, 1);  //FCKX
-        vTaskDelay(500 / portTICK_PERIOD_MS); 
-        ESP_LOGI(TAG, "delay");  //FCKX
-        aDSP->setVoiceParamValue(gateBaseId+poly,voiceAddress,0);
-        ESP_LOGI(TAG, "gateBaseId %d, set gate %d", gateBaseId, 0);  //FCKX
-        vTaskDelay(500 / portTICK_PERIOD_MS); 
-        ESP_LOGI(TAG, "delay");  //FCKX
-        
-        }
-
-          //release background voice
-         // aDSP->setVoiceParamValue(gateId,background_voiceAddress,0);
-         // ESP_LOGI(TAG, "setVoiceParamValue(gateId,background_voiceAddress,1) GATE OFF");  //FCKX
-          
-          //clean up voices
-           
-          aDSP->deleteVoice(voiceAddress);            //delete main voice 
-           
-          
-       //   aDSP->deleteVoice(background_voiceAddress); //delete background voice  
-           
-};
 
 void play_poly_rtttl(char *p, DspFaust * aDSP)
 {
@@ -1773,8 +1564,8 @@ void play_poly_rtttl(char *p, DspFaust * aDSP)
       aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,freqs[(scale-4) * 12 + note]);
       aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1); 
 
-      
-      vTaskDelay(duration / portTICK_PERIOD_MS);
+      nbDelay(duration);
+      //vTaskDelay(duration / portTICK_PERIOD_MS);
       //printf("%s \n",DSP->getJSONUI());
       //DSP->setParamValue("gain",0);
       //aDSP->setParamValue("/simpleSynt_Analog/gate",0); 
@@ -1792,11 +1583,18 @@ void play_poly_rtttl(char *p, DspFaust * aDSP)
     {
       //Serial.print("Pausing: ");
       //Serial.println(duration, 10);
-      vTaskDelay(5*duration/ portTICK_PERIOD_MS);
+      nbDelay(5*duration);
+      //vTaskDelay(5*duration/ portTICK_PERIOD_MS);
     }
   }  //while (p*)
   } //song player    
  
+
+/* 
+* setParamValue path players
+*/
+
+
 void play_mono_rtttl(char *p, DspFaust * aDSP)
 {
  // aDSP->allNotesOff();  
@@ -1969,8 +1767,8 @@ void play_mono_rtttl(char *p, DspFaust * aDSP)
       aDSP->setParamValue("/WaveSynth_FX/freq",freqs[(scale-4) * 12 + note]);
       aDSP->setParamValue("/WaveSynth_FX/gate",1); 
 
-      
-      vTaskDelay(duration / portTICK_PERIOD_MS);
+      nbDelay(duration);
+      //vTaskDelay(duration / portTICK_PERIOD_MS);
       //printf("%s \n",DSP->getJSONUI());
       //DSP->setParamValue("gain",0);
     //  aDSP->setParamValue("/simpleSynt_Analog/gate",0); 
@@ -1988,11 +1786,88 @@ void play_mono_rtttl(char *p, DspFaust * aDSP)
     {
       //Serial.print("Pausing: ");
       //Serial.println(duration, 10);
-      vTaskDelay(5*duration/ portTICK_PERIOD_MS);
+      
+      nbDelay(5*duration);
+      //vTaskDelay(5*duration/ portTICK_PERIOD_MS);
     }
   }  //while (p*)
   } //song player    
  
+
+
+/* 
+* setVoiceParamValue ID players
+*/
+
+void play_setVoiceParam_Id(DspFaust * aDSP) 
+{
+ESP_LOGI(TAG, "play_poly_without_midi_Id");
+
+  /*
+    //start background voice
+    uintptr_t background_voiceAddress = aDSP->newVoice(); //create main voice
+    aDSP->setVoiceParamValue(freqId,background_voiceAddress,110.0);
+    aDSP->setVoiceParamValue(gainId,background_voiceAddress,0.02);
+    ESP_LOGI(TAG, "setVoiceParamValue(freqId,voiceAddress,110) set freq");  //FCKX
+    aDSP->setVoiceParamValue(gateId,background_voiceAddress,1);
+    ESP_LOGI(TAG, "setVoiceParamValue(gateId,background_voiceAddress,1) GATE ON");  //FCKX
+  */
+     
+    //loop with subsequential triggers on the same voice  
+    uintptr_t voiceAddress = aDSP->newVoice(); //create main voice
+
+    for (int ii = 0; ii < 50; ii++){
+        
+        update_controls(voiceAddress,aDSP);        
+        aDSP->setVoiceParamValue(synthFreqBaseId+poly,voiceAddress,440.0);
+        ESP_LOGI(TAG, "synthFreqBaseId %d, set freq %6.2f", synthFreqBaseId, 440.0);  //FCKX
+        aDSP->setVoiceParamValue(gateBaseId+poly,voiceAddress,1);
+        ESP_LOGI(TAG, "gateBaseId %d, set gate %d", gateBaseId, 1);  //FCKX
+        nbDelay(500);
+        //vTaskDelay(500 / portTICK_PERIOD_MS); 
+        ESP_LOGI(TAG, "delay");  //FCKX
+        aDSP->setVoiceParamValue(gateBaseId+poly,voiceAddress,0);
+        ESP_LOGI(TAG, "gateBaseId %d, set gate %d", gateBaseId, 0);  //FCKX
+        nbDelay(500);
+        //vTaskDelay(500 / portTICK_PERIOD_MS); 
+        ESP_LOGI(TAG, "delay");  //FCKX
+
+        update_controls(voiceAddress,aDSP);        
+        aDSP->setVoiceParamValue(synthFreqBaseId+poly,voiceAddress,220.0);
+        ESP_LOGI(TAG, "setVoiceParamValue(synthFreqBaseId+poly,voiceAddress,440.0)");  //FCKX
+        aDSP->setVoiceParamValue(gateBaseId+poly,voiceAddress,1);
+        ESP_LOGI(TAG, "gateBaseId %d, set gate %d", gateBaseId, 1);  //FCKX
+        nbDelay(500);
+        //vTaskDelay(500 / portTICK_PERIOD_MS); 
+        ESP_LOGI(TAG, "delay");  //FCKX
+        aDSP->setVoiceParamValue(gateBaseId+poly,voiceAddress,0);
+        ESP_LOGI(TAG, "gateBaseId %d, set gate %d", gateBaseId, 0);  //FCKX
+        nbDelay(500);
+        //vTaskDelay(500 / portTICK_PERIOD_MS); 
+        ESP_LOGI(TAG, "delay");  //FCKX
+        
+        }
+
+          //release background voice
+         // aDSP->setVoiceParamValue(gateId,background_voiceAddress,0);
+         // ESP_LOGI(TAG, "setVoiceParamValue(gateId,background_voiceAddress,1) GATE OFF");  //FCKX
+          
+          //clean up voices
+           
+          aDSP->deleteVoice(voiceAddress);            //delete main voice 
+           
+          
+       //   aDSP->deleteVoice(background_voiceAddress); //delete background voice  
+           
+};
+
+
+/* 
+* not yet categorized players
+*/
+
+
+
 
 void app_main(void)
 {
@@ -2048,10 +1923,11 @@ void app_main(void)
  //   YOU MUST USE faust2api API calls
     int SR = 48000;
     int BS = 32; //was 8
-   
+    nbDelay(100);
     DSP = new DspFaust(SR,BS); 
-
+    //nbDelay(100); //doesn't help
     DSP->start();
+    //nbDelay(100); //doesn't help
     if (DSP->isRunning()) {
                      ESP_LOGW(TAG,"DSP is running"); 
                         // int msg_id;
@@ -2087,20 +1963,45 @@ void app_main(void)
        
        while(play_flag){
                 msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop started", 0, 0, 0);
-               //play_keys(DSP);                  // OK uses keyOn/keyOff  how to update controls??
-               play_midi(DSP);
-               //play_keys_nb(DSP);  //OK 
-           //play_setVoiceParam_path_nb(DSP);     //OK
-               //play_timed_keys_test(DSP);                  // OK uses keyOn/keyOff  how to update controls??  uses software timer
-               //play_timed_keys_test2(DSP);
-               //play_setVoiceParam_path(DSP);     //OK
+               
+               //players based on different ways of starting a tone
+/* 
+* keyOn / keyOff players
+*/           
+             //how to update controls??  VERY PREF OUTSIDE THE PLAYER
+       
+               //play_keys(DSP);                 // OK clean
+               //play_keys_nb(DSP);              // OK with distortions
+               //play_keys2(DSP);                // NOK overlapping keys, hangs?            
 
-               // play_mono_rtttl(song, DSP);     // NOK uses setParamValue(path
-               // play_poly_rtttl(song, DSP);     //  NOK uses setVoiceParamValue(path
+/* 
+* propagateMidi players
+*/
 
-               // play_setVoiceParam_Id(DSP);     //to be tested
 
-               // play_keys2(DSP);                // NOK overlapping keys uses keyOn/keyOff
+               //play_midi(DSP);  //OK with distartions at long release times midi over Nodered
+ 
+/* 
+* setVoiceParamValue path players
+*/
+              //play_setVoiceParam_path_nb(DSP);  //OK no distortions at all
+              //play_poly_rtttl(song, DSP);       //OK, clean responds to controls 
+                                                  //loop ends....
+             //play_setVoiceParam_path(DSP);        //OK clean responds to controls, not flawless
+            
+/* 
+* setParamValue path players
+*/
+
+               //play_mono_rtttl(song, DSP);     // NOK crashes
+
+/* 
+* setVoiceParamValue ID players
+*/
+
+               play_setVoiceParam_Id(DSP);     //OK, clean responds cleanly to controls
+
+
                 msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop finished", 0, 0, 0);
                 }
                 
