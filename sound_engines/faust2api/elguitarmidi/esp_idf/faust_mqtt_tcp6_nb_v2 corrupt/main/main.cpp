@@ -2086,8 +2086,8 @@ void app_main(void)
        
        while(play_flag){
                 msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "song loop started", 0, 0, 0);
-               //play_keys(DSP);                  // OK uses keyOn/keyOff  how to update controls??
-               play_midi(DSP);
+               play_keys(DSP);                  // OK uses keyOn/keyOff  how to update controls??
+               //play_midi(DSP);
                //play_keys_nb(DSP);  //OK 
            //play_setVoiceParam_path_nb(DSP);     //OK
                //play_timed_keys_test(DSP);                  // OK uses keyOn/keyOff  how to update controls??  uses software timer
