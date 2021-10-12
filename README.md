@@ -354,6 +354,12 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
    - https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/performance/ram-usage.html  
    - prevent glitches: WIFI task core  change from 0 to 1	
 	
+6. Clean up jdksmidi files  
+   - from V6.1 the files of the jdksmidi lib (Thomas Hofman hack) have been **added to the project** 
+   - because of circular includes in this lib, some files are present more than one time and have been renamed  
+   - clean this up and put the lib in a separate include folder (see issue #10)	
+	
+	
 ![external ram options](images/External%20RAM.png) 
 ### We now have a working basic example app (faust_mqtt_tcp4_v3_KEEP). The file Basic ESP32 faust2api example.md contains a walkthrough on how to create and use this example.  
 Any changes implemented during write up of this consolidation are done in faust_mqtt_tcp5_v1	
