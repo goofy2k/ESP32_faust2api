@@ -334,8 +334,10 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
 	
 3. ONGOING External communication (UI), e.g. with:
    - Nodered (via WIFI)
-     - keep status of widgets in GUI synchronized with status of parameters on board  
-       how to deal with parameters per voice?  
+     - keep status of widgets in GUI synchronized with status of parameters on board (see DspFaust, modifyZon, reflectZone 
+     - if a widget setting is changed, the change should be introduced to the board
+     - if the board firmware changes a setting of a parameter, the change should be introduced to the GUI widget(s)
+     - how to deal with parameters per voice?  
      - differentiate between Faust UI parameters and self defined parameters
      - inititalize specific widgets on GUI startup/reset   or on board startup/reset  
  
@@ -372,6 +374,12 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
 	
 9. For creation of alternative MIDI input (non) uart,  start at base class in midi.h  , derived esp32_midi  and have a look at other midi_handlers (teensy_midi , juce_midi_handler, ...). Is it possible to re-use jdsk code?
   - start: look how esp32 midi handler uses the base class in midi.h
+
+10. Upload an RTTTL song via MQTT (flexible ringtone)  
+
+11. Do not accept keyOff command right after startup
+
+
 	
 ![external ram options](images/External%20RAM.png) 
 ### We now have a working basic example app (faust_mqtt_tcp4_v3_KEEP). The file Basic ESP32 faust2api example.md contains a walkthrough on how to create and use this example.  
