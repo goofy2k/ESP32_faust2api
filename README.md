@@ -338,6 +338,7 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
 	https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/api-guides/memory-types.html  
 	REMOVED more UI functionality.   
 	disabled watchdog timer on IDLEtask CPU0, to prevent runtime error
+	In the end the solution was increasing stack size
 	
 3. External communication (UI), e.g. with:
    - Nodered (via WIFI)
@@ -359,6 +360,8 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
    - because of circular includes in this lib, some files are present more than one time and have been renamed  
    - clean this up and put the lib in a separate include folder (see issue #10)	
 	
+7. Receiving MIDI messages over MQTT is not particularly real-time. A solution would be to add timestamped MQTT note messages in a buffer and play those shifted real time with the same algorithm to read the UART buffer. Note: this is suitable for a sequencer-like application, but not for real real-time applications.
+   - first step: investigate if a midi or note handler is in the DspFaust code (so a code like midi-handler in esp32_midi, but using a different buffer that the one supplied by the UART.
 	
 ![external ram options](images/External%20RAM.png) 
 ### We now have a working basic example app (faust_mqtt_tcp4_v3_KEEP). The file Basic ESP32 faust2api example.md contains a walkthrough on how to create and use this example.  
