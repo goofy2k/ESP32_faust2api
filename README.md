@@ -334,8 +334,10 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
 	
 3. ONGOING External communication (UI), e.g. with:
    - Nodered (via WIFI)
-     - keep status of widgets in GUI synchronized with status of parameters on board
-     - inititalize specific widgets on GUI startup/reset   or on board startup/reset
+     - keep status of widgets in GUI synchronized with status of parameters on board  
+       how to deal with parameters per voice?  
+     - differentiate between Faust UI parameters and self defined parameters
+     - inititalize specific widgets on GUI startup/reset   or on board startup/reset  
  
    - Browser (via USB/serial)
    MAY NEED tot solve memory issues, e.g. by:
