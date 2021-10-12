@@ -324,36 +324,34 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
 	
 ## TODO  
 
-1. test API calls (see API overview below)
+1. ONGOING test API calls (see API overview below)
    - put API calls in a loop to enable multiple different calls that repeat	
    - polyphony commands do not work (newVoice command gives result 0, no polyphony)
      - create and test sound engine with polyphony enabled
 	
-2. Repair JSONUI failure (Midimeta::analyze)  
-   - this interacts with activation of polyphony
-	POSSIBLE CLUE:   unset SPI_MASTER_ISR_IN_IRAM  
-	menuconfig / Component config / Driver config / SPI config   
-	Google: Cache disabled but cached memory region accessed  
-	https://blog.espressif.com/esp32-programmers-memory-model-259444d89387  
-	https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/api-guides/memory-types.html  
-	REMOVED more UI functionality.   
-	disabled watchdog timer on IDLEtask CPU0, to prevent runtime error
-	In the end the solution was increasing stack size
+2. DONE Repair JSONUI failure (Midimeta::analyze)  
+   - this interacts with activation of polyphony. In the end the solution was increasing stack size
 	
-3. External communication (UI), e.g. with:
+3. ONGOING External communication (UI), e.g. with:
    - Nodered (via WIFI)
+     - keep status of widgets in GUI synchronized with status of parameters on board
+     - inititalize specific widgets on GUI startup/reset   or on board startup/reset
+ 
    - Browser (via USB/serial)
-   NEED tot solve memory issues, e.g. by:
+   MAY NEED tot solve memory issues, e.g. by:
 	- setting low requirements for logging (esp-idf reduce firmware size)
 	- using a less memory-hungry connection method (e.g wired UART/I2C to peer ESP32 as hub) 
+
+   - reconnect wifi or mqtt on disconnect
 
 4. Use external RAM	
    - https://faustdoc.grame.fr/tutorials/esp32/ (this is about static data..)
    - https://docs.espressif.com/projects/esp-idf/en/release-v3.3/api-guides/external-ram.html (Note: this link is for esp-idf V3.3)	
    - https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/performance/size.html (use this to see % used)  
+
 5. Optimize WIFI memory usage	
    - https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/performance/ram-usage.html  
-   - prevent glitches: WIFI task core  change from 0 to 1	
+   - DONE prevent glitches: WIFI task core  change from 0 to 1	
 	
 6. Clean up jdksmidi files  
    - from V6.1 the files of the jdksmidi lib (Thomas Hofman hack) have been **added to the project** 
@@ -362,10 +360,12 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
 	
 7. Receiving MIDI messages over MQTT is not particularly real-time. A solution would be to add timestamped MQTT note messages in a buffer and play those shifted real time with the same algorithm to read the UART buffer. Note: this is suitable for a sequencer-like application, but not for real real-time applications.
    - first step: investigate if a midi or note handler is in the DspFaust code (so a code like midi-handler in esp32_midi, but using a different buffer that the one supplied by the UART.
+
 8. For solving the polyphony hum problem, start a high level audio task: class esp32audio
    - but first, there are two time critical tasks in DspFaust 
-	- xTaskCreatePinnedToCore(processMidiHandler, "Faust MIDI Task", 4096, (void*)this, 5, &fProcessMidiHandle, 1) == pdPASS
-	- xTaskCreatePinnedToCore(audioTaskHandler, "Faust DSP Task", 4096, (void*)this, 24, &fHandle, 0) == pdPASS
+	- xTaskCreatePinnedToCore(processMidiHandler, "Faust MIDI Task", 4096, (void*)this, 5, &fProcessMidiHandle, 1) == pdPASS  so midi is handled by CPU1
+	- xTaskCreatePinnedToCore(audioTaskHandler, "Faust DSP Task", 4096, (void*)this, 24, &fHandle, 0) == pdPASS so audio is handled by CPU0
+
    - see how these interfere with the chosen stratey for WiFi and MQTT (main.cpp or ESP-IDF menuconfig)	
 	
 9. For creation of alternative MIDI input (non) uart,  start at base class in midi.h  , derived esp32_midi  and have a look at other midi_handlers (teensy_midi , juce_midi_handler, ...). Is it possible to re-use jdsk code?
