@@ -1542,9 +1542,7 @@ static void call_faust_api2(esp_mqtt_event_handle_t event){
     ESP_LOGI(TAG,"HANDLING Faust API2 CALL:%.*s\r ", event->topic_len, event->topic);
     ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
     //printf("HANDLING FAUST API2 CALL=%s\n"," /faust/api2");
-    if (strncmp(event->topic, "/faust/api2/rtttl",strlen("/faust/api2/rtttl")) == 0) {
-             ESP_LOGI(TAG,"...to be implemented..."); 
-    } else
+
     if (strncmp(event->topic, "/faust/api2/gate",strlen("/faust/api2/gate")) == 0) {
             ESP_LOGI(TAG,"...to be implemented..."); 
     } else 
@@ -1956,25 +1954,22 @@ void app_main(void)
     DSP->start();
     //nbDelay(100); //doesn't help
     if (DSP->isRunning()) {
-                     ESP_LOGW(TAG,"DSP is running"); 
-                        // int msg_id;
-    msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "init OK!", 0, 0, 0);
-    ESP_LOGW(TAG,"Sent MQTT message to Nodered"); 
+        ESP_LOGW(TAG,"DSP is running"); 
+        msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "init OK!", 0, 0, 0);
+        ESP_LOGW(TAG,"Sent SUCCES MQTT message to Nodered"); 
+        msg_id = esp_mqtt_client_subscribe(mqtt_client, "/faust/api/#", 1);
+        ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+        msg_id = esp_mqtt_client_subscribe(mqtt_client, "/faust/api2/#", 1);
+        ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
+        //send JSONUI to Nodered
+        msg_id = esp_mqtt_client_publish(mqtt_client, "/faust/jsonui", DSP->getJSONUI(), 0, 0, 0);  //to be implemented: publish the UI by remote request
+            } else {
+        ESP_LOGE(TAG,"DSP not running");
+        msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "init NOK", 0, 0, 0);
+        ESP_LOGW(TAG,"Sent FAILURE MQTT message to Nodered");           
+        } ;
 
-       
-        } else {
-            ESP_LOGE(TAG,"DSP not running");
-                        // int msg_id;
-    msg_id = esp_mqtt_client_publish(mqtt_client, "/faust", "init NOK", 0, 0, 0);
-    ESP_LOGW(TAG,"Sent MQTT message to Nodered");            } ;
 
-    msg_id = esp_mqtt_client_subscribe(mqtt_client, "/faust/api/#", 1);
-    ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
-    msg_id = esp_mqtt_client_subscribe(mqtt_client, "/faust/api2/#", 1);
-    ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
-
-    //send JSONUI to Nodered
-    msg_id = esp_mqtt_client_publish(mqtt_client, "/faust/jsonui", DSP->getJSONUI(), 0, 0, 0);  //to be implemented: publish the UI by remote request
 
     bool even = true;
     printf("                    ");
