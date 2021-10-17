@@ -2007,11 +2007,11 @@ void app_main(void)
 * setVoiceParamValue path players
 */
               //play_setVoiceParam_path_nb(DSP);  //OK no distortions at all
-              play_poly_rtttl(song, DSP);       //OK, clean responds to controls 
+              //play_poly_rtttl(song, DSP);       //OK, clean responds to controls 
                                                   //loop ends....
                                                   
                   //play_poly_rtttl(songbuffer, DSP);                                 
-             //play_setVoiceParam_path(DSP);        //OK clean responds to controls, not flawless
+             play_setVoiceParam_path(DSP);        //OK clean responds to controls, not flawless
             
 /* 
 * setParamValue path players

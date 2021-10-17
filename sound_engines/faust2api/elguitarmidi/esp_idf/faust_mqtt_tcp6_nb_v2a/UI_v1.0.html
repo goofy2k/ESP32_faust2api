@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang = "en">
+  <head>
+    <title>My Site</title>
+      
+    <script type="text/javascript">
+        console.clear();
+        var ws;
+        var wsUri = "ws:";
+        var loc = window.location;
+        console.log(loc);
+        if (loc.protocol === "https:") { wsUri = "wss:"; }
+        // This needs to point to the web socket in the Node-RED flow
+        // ... in this case it's ws/simple
+        wsUri += "//" + loc.host + loc.pathname.replace("faustui","ws/faustui");
+
+//$(document).ready(function(e) {
+    
+//    console.log("document ready");
+//    console.log("now execute Faust page script");
+
+
+    function addSlider(label){
+        //http://jsfiddle.net/webdevel/Qmvam/
+        var slider = document.createElement('input');
+        slider.innerHTML = label;
+        slider.id = label;
+        slider.type = 'range';
+        slider.min = 0;
+        slider.max = 1;
+        slider.value = 0.5;
+        slider.step = 0.01;
+        document.body.appendChild(slider);   
+    }
+    
+    function addLabel(labeltext){
+        //https://www.codegrepper.com/code-examples/javascript/document.createelement%28%22label%22%29
+        var newlabel = document.createElement("Label");
+        //newlabel.setAttribute("for",id_from_input);
+        newlabel.innerHTML = labeltext;
+        //parentDiv.appendChild(newlabel);
+        document.body.appendChild(newlabel); 
+    }
+   
+    function addButton(label){
+        //https://sebhastian.com/javascript-create-button/ 
+        //https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement
+
+        let btn = document.createElement("button");
+        btn.innerHTML = label;
+        btn.addEventListener("click", function () {
+            alert("Button "+ label + " is clicked");
+             });
+        document.body.appendChild(btn);   
+     };
+    
+    function addNentry(label){
+        //https://www.w3schools.com/Jsref/tryit.asp?filename=tryjsref_number_create
+        var x = document.createElement("INPUT");
+        x.innerHTML = label;
+        x.setAttribute("type", "number");
+        x.setAttribute("value", "12345");
+        document.body.appendChild(x);      
+        }
+    
+    function addNentry3(nentryDef){
+        //https://www.w3schools.com/Jsref/tryit.asp?filename=tryjsref_number_create
+        var nentry = document.createElement("INPUT");
+       nentry.innerHTML = nentryDef.label;
+        nentry.setAttribute("type", "number");
+        nentry.setAttribute("value", nentryDef.init);
+        //???
+         nentry.setAttribute("min", nentryDef.min);
+          nentry.setAttribute("max", nentryDef.max);
+           nentry.setAttribute("step", nentryDef.step);
+        
+        document.body.appendChild(nentry);      
+        }
+    
+    function addSlider4(sliderDef,parentId){
+        //http://jsfiddle.net/webdevel/Qmvam/
+        console.log("parentId= ", parentId);
+        //https://www.codegrepper.com/code-examples/javascript/create+element+inside+div+javascript
+        var parElement = document.getElementById(parentId);
+        //var parElement = document;
+        const newDiv = parElement.createElement("div");      
+        
+        //var textToAdd = document.createTextNode("Text to be added");
+        //parElement.appendChild(textToAdd);
+        
+        
+        //https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement
+        // create a new div element
+        //const newDiv = document.createElement("div");
+
+        var slider = newDiv.createElement('input');
+        //var slider = parElement.createElement('input');
+        slider.innerHTML = sliderDef.label;   //is this correct?  maybe use addLabel for visible text
+                                              //elements may need an Id or tag.  maybe use address?
+        //slider.id = sliderDef.label;
+        slider.id = sliderDef.address;
+        slider.type = 'range';
+        slider.min = sliderDef.min;
+        slider.max = sliderDef.max;
+        slider.value = sliderDef.init;
+        slider.step = sliderDef.step;
+        //document.body.appendChild(slider); 
+        
+        addLabel(sliderDef.label);
+        parElement.appendChild(slider);
+        newDiv.appendChild(slider);
+        
+        const valueDiv = newDiv.createElement("valueDiv");
+        valueDiv.id = sliderDef.label+"Value";
+        valueDiv.innerHTML = "Slider "+slider.id+" " +slider.value;
+        slider.oninput = function() {    //use oninput to get values continously during changing (onchange only gives value after mouseup)
+            valueDiv.innerHTML = "Slider "+this.id+" " +this.value;
+            console.log("Slider "+ this.id + ": "+ this.value);
+            //add send message...
+            //console.dir(scope); //for debugging
+            //scope.send({topic:this.id, payload:this.value});
+        };
+        
+        newDiv.appendChild(valueDiv);
+        
+        
+        // add the newly created elements and its content into the DOM
+        const currentDiv = document.getElementById("div1");
+        document.body.insertBefore(newDiv, currentDiv);
+        
+        
+    }
+    
+    function addSlider3(sliderDef){
+        //http://jsfiddle.net/webdevel/Qmvam/
+        
+        //https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement
+                // create a new div element
+        const newDiv = document.createElement("div");
+        
+        var slider = document.createElement('input');
+        slider.innerHTML = sliderDef.label;   //is this correct?  maybe use addLabel for visible text
+                                              //elements may need an Id or tag.  maybe use address?
+        slider.id = "volume";
+        slider.type = 'range';
+        slider.min = sliderDef.min;
+        slider.max = sliderDef.max;
+        slider.value = sliderDef.init;
+        slider.step = sliderDef.step;
+        //document.body.appendChild(slider); 
+        addLabel("testlabel");
+             newDiv.appendChild(slider);
+  
+    // add the newly created element and its content into the DOM
+  const currentDiv = document.getElementById("div1");
+  document.body.insertBefore(newDiv, currentDiv);
+        
+        
+    }
+    
+    function addSlider2(label){
+        //http://jsfiddle.net/webdevel/Qmvam/
+        
+        //https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement
+                // create a new div element
+        const newDiv = document.createElement("div");
+        
+        var slider = document.createElement('input');
+        slider.innerHTML = label;
+        slider.id = "volume";
+        slider.type = 'range';
+        slider.min = 0;
+        slider.max = 1;
+        slider.value = 0.5;
+        slider.step = 0.01;
+        //document.body.appendChild(slider); 
+        
+             newDiv.appendChild(slider);
+  
+    // add the newly created element and its content into the DOM
+  const currentDiv = document.getElementById("div1");
+  document.body.insertBefore(newDiv, currentDiv);
+        
+        
+    }
+  
+    function addLabel2(labeltext){
+        //https://www.codegrepper.com/code-examples/javascript/document.createelement%28%22label%22%29
+                // create a new div element
+        const newDiv = document.createElement("div");
+        
+        var newlabel = document.createElement("Label");
+        //newlabel.setAttribute("for",id_from_input);
+        newlabel.innerHTML = labeltext;
+        //parentDiv.appendChild(newlabel);
+        //document.body.appendChild(newlabel); 
+        
+         newDiv.appendChild(newlabel);
+  
+    // add the newly created element and its content into the DOM
+  const currentDiv = document.getElementById("div1");
+  document.body.insertBefore(newDiv, currentDiv);
+        
+        
+    } 
+   
+    function addButton2(label){
+            
+        //https://sebhastian.com/javascript-create-button/ 
+        //https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement
+
+        // create a new div element
+        const newDiv = document.createElement("div");
+
+
+
+        let btn = document.createElement("button");
+        btn.innerHTML = label;
+        btn.addEventListener("click", function () {
+            alert("Button is clicked");
+             });
+        //document.body.appendChild(btn);  
+         // add the text node to the newly created div
+  newDiv.appendChild(btn);
+  
+    // add the newly created element and its content into the DOM
+  const currentDiv = document.getElementById("div1");
+  document.body.insertBefore(newDiv, currentDiv);
+    }
+    
+     /*   
+    function addNentry2(label){
+        //https://www.w3schools.com/Jsref/tryit.asp?filename=tryjsref_number_create
+        
+        // create a new div element
+        const newDiv = document.createElement("div");
+        
+        var nentry = document.createElement("INPUT");
+        nentry.innerHTML = label;
+        nentry.setAttribute("type", "number");
+        nentry.setAttribute("value", "12345");
+        //document.body.appendChild(x);  
+        
+        //newDiv.appendChild(nentry);
+  
+    // add the newly created element and its content into the DOM
+  const currentDiv = document.getElementById("div1");
+  document.body.insertBefore(newDiv, currentDiv);
+        
+        
+        };
+*/
+        
+
+    function addElement () {
+  // create a new div element
+  const newDiv = document.createElement("div");
+
+  // and give it some content
+  const newContent = document.createTextNode("Hi there and greetings!");
+
+  // add the text node to the newly created div
+  newDiv.appendChild(newContent);
+
+  // add the newly created element and its content into the DOM
+  const currentDiv = document.getElementById("div1");
+  document.body.insertBefore(newDiv, currentDiv);
+}
+    
+    function newParser(myvar, path, level, spacer){
+        level = level + 1;
+        //console.log("level: ", level);
+        var entries = Object.entries(myvar);
+        var keys = Object.keys(myvar);
+        var values = Object.values(myvar);
+        //console.log("ENTRIES",entries)
+        //console.log("KEYS",keys)
+        //console.log("VALUES",values)
+                //compose path string, but only use it later as address in non-group objects. Currently on for checking the parser result      
+                //if object.type exists add /label to path
+                if ("type" in myvar) {
+                    path = path +"/"+myvar.label;
+                    /*
+                    if (myvar.type == "tgroup"){
+                        addDiv("f_"+myvar.type, "f_jsonuiDiv");}  //create tgroup div in UI div
+               
+                */
+                };
+                
+        for (var key in keys) {
+            //console.log("key: ",keys[key], " value: ", values[key]);
+            next_obj = values[key];  //get the object belonging to this key
+            //console.log(next_obj);
+            if (typeof next_obj === 'object' && !Array.isArray(myvar) && myvar !== null) {    //if obj is obj then parse
+                //console.log("parse next level in object ", keys[key],":",values[key]);
+
+                
+                newParser(next_obj,path, level,spacer +"---");
+          
+            }
+            else  {if (Array.isArray(myvar)) {
+                 //console.log("parse array elements (same level)" , keys[key],":",values[key],"vvvvvvvvvvvvv");            
+                 for (var item in myvar) {
+                     newParser(myvar[item], path, level, spacer+"...");  //or? newParser(item, level);  ????
+                     
+                 }; 
+                 //console.log("end of array^^^^^^^^^^^^");
+             }}
+            console.log(path, level,spacer, keys[key],":",values[key]);
+            //console.log(spacer, "handle this level ",level," leaf " , keys[key],":",values[key]);
+            
+            
+
+            }
+                              //level = level - 1;
+                   return true;    
+        
+  
+        
+        }
+
+      
+        function addDiv(divClass, parentId){
+            console.log("divClass: ",divClass);
+            console.log("parentId: ",parentId);
+            var parElement = document.getElementById(parentId);
+            console.log("parElement: ");
+            console.dir(parElement);
+            const newDiv = parElement.createElement("div");     
+            newDiv.innerHTML = "NEW DIV";
+            //set class, set id
+            
+        };
+        
+        
+
+  
+  
+   /* 
+    function parseObject(myvar, level){
+        var entries = Object.entries(myvar);
+        //var keys = Object.entries(myvar);
+        //var values = Object.values(myvar);
+        //console.log("ENTRIES",entries)
+        
+        
+        //console.log("parsing object ", Object.keys(myvar)[0]);
+        //console.log("-parsing object ", Object.keys(myvar)[0]);
+        //level = level +1;
+         
+        //console.log("parsing level ",level, " object ", Object.entries(myvar).key);
+        //Object.keys(varObj)[0];
+        if (typeof myvar === 'object' && !Array.isArray(myvar) && myvar !== null) {
+            //variable is an object
+            //level = level +1;
+            console.log("parsing: ", Object.keys(myvar)[0]);
+            //console.log("Parsing variable is object");
+            /*
+            for(key in myvar)
+               console.log("  "+key + ': ' + myvar[key]);
+            */   
+            //if ("type" in myvar){console.log("type: ",myvar.type)};
+            //if ("label" in myvar){console.log("label: ",myvar.label)};
+            //parse the object's "elements"
+       //     for (var [ key, value] of Object.entries(myvar)) {
+            //for (entry of Object.entries(myvar)) {
+                //console.log("parsing object ", Object.keys(entry)[0]);
+                //console.log("parsing level... ",level, " object ", key, ": ", value);
+                //level = level + 1;
+          /*      
+            if (value == "tgroup") {
+                
+            };
+            
+            if (value == "vgroup") {
+                
+                if (myvar.label == "Voices"){} else {};
+            };
+                
+                
+            if (value == "hslider") {
+                   //addLabel2(myvar.label);
+
+                   addSlider4(myvar,"f_jsonuiDiv");
+               };
+               
+            if (value == "nentry") {
+                //addLabel2(myvar.label);
+                addNentry3(myvar);
+             };
+             
+            if (value == "button") {
+                 addButton2(myvar.label);
+             };
+
+                parseObject(value, level );
+                //level = level -1;
+           }
+            
+           // return true;
+            }
+             //console.log("is not an object")
+             if (Array.isArray(myvar)) {
+                 console.log("parse array");
+                 myvar.forEach (element=> {
+                     parseObject(element, level);
+                     //level = level -1;
+                 })
+             }; 
+           
+             //level = level-1;
+             return false;
+             
+        */
+    
+        /*    
+                for (let ui of jsonui.ui) {
+                    //   <h3>Type: </h3>
+                    //   <h3>Label: </h3>
+                    console.log("ui:");
+                    console.dir(ui);
+                    console.log("ui.label", ui.label);
+                    console.log("ui.type", ui.type);
+        
+                    for (let ui_item of ui.items){
+                        console.log("ui_items:");
+                        console.dir(ui_item);
+                        console.log("ui_item.label", ui_item.label);
+                        console.log("ui_item.type", ui_item.type);
+                       
+                        for (let ui_item_item of ui_item.items){
+                            console.log("ui_item_item.label", ui_item_item.label);
+                            console.log("ui_item_item.type", ui_item_item.type);      
+                            }
+                            
+                        }
+                    }
+          */    
+
+        
+     // }; 
+
+ 
+
+
+
+
+
+
+
+
+
+        function IsJsonString(str) {
+            try {
+                JSON.parse(str);
+            } catch (e) {
+                return false;
+            }
+            return true;
+        };
+
+        function wsConnect() {
+            console.log("connect",wsUri);
+            ws = new WebSocket(wsUri);
+            //var line = "";    // either uncomment this for a building list of messages
+            
+            ws.onmessage = function(msg) {
+                console.log("msg: ");
+                console.dir(msg);
+                
+                var line = "";  // or uncomment this to overwrite the existing message
+                // parse the incoming message as a JSON object
+
+                var data = msg.data;
+
+
+                if (IsJsonString(data)) {
+                    var dataObj = JSON.parse(data);
+                    console.log("dataObj: ");
+                    console.dir(dataObj);           
+                    //handle received object
+                    if (dataObj.name == "my Faust UI") {
+                        console.log("received dataObj.name: "+ dataObj.name);
+                        //document.getElementById('f_jsonuiDiv').innerHTML = "test";
+                        document.getElementById('status').innerHTML = "UI refreshed";
+                        console.log("now execute Faust page script");
+                        ws.send("received: "+ dataObj.name);
+              /*          
+                        if (parseObject(dataObj, 0)) {                        //FCKX
+                       
+                            console.log("jsonui successfully parsed");
+                            } else {
+                            console.log("jsonui is not an object");
+                            }
+            */                
+                            
+                            
+//create container div        
+var uiDiv = document.createElement("div");
+uiDiv.id = "f_jsonuiDiv";
+uiDiv.innerHTML = "jsonUI controls";
+console.log("uiDiv");
+console.dir(uiDiv);     //shows uiDiv object
+
+//select container div  
+const parentId = "f_jsonuiDiv";     //which is the id of the newly created container div
+console.log("parentId: ",parentId);
+var parElement = document.getElementById(parentId);
+console.log("parElement: ");
+console.dir(parElement);   //says: null !  
+
+//create directly
+//const newDiv = parElement.createElement("div"); //throws error as parElement does not exist ......
+
+//create first, then append
+const newDiv = document.createElement("div"); 
+newDiv.innerHTML = "NEW DIV"; 
+
+//parElement.appendChild(newDiv);  //throws error as parElement does not exist ......
+uiDiv.appendChild(newDiv);  //does not throw an error but shows nothing 
+
+var mainDiv =  document.getElementById("f_mainDiv");
+mainDiv.appendChild(newDiv);  //does not throw an error but shows nothing                             
+                            
+                            
+                        /*    
+                           if (newParser(dataObj, "", 0, "")) {                        //FCKX                      
+                                                    console.log("jsonui successfully analyzed");
+                            } else {
+                            console.log("jsonui is not an object");
+                            }
+                    */    
+                        document.getElementById('status').innerHTML = "UI refreshed";
+                        
+                    } else {console.log("received unknown JSON object")}; 
+                } else {
+                    
+                    console.log("msg.data: ");
+                    console.log(msg.data);
+                    // build the output from the topic and payload parts of the object
+                    line += "<p>"+data+"</p>";
+                    // replace the messages div with the new "line"
+                    document.getElementById('messages').innerHTML = line;
+                    //ws.send(JSON.stringify({data:data}));
+                };
+            }
+            
+            ws.onopen = function() {
+                // update the status div with the connection status
+                document.getElementById('status').innerHTML = "connected";
+                console.log("connected");
+
+                ws.send("Open for data");
+            }
+            ws.onclose = function() {
+                // update the status div with the connection status
+                document.getElementById('status').innerHTML = "not connected";
+                // in case of lost connection tries to reconnect every 3 secs
+                setTimeout(wsConnect,3000);
+            }
+        }
+        
+        function doit(m) {
+            if (ws) { ws.send(m); }
+        }
+    </script>
+
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <style>{{{payload.style}}}</style>
+  </head>  
+    
+    <body id= "faust_ui" onload="wsConnect();" onunload="ws.disconnect();">
+        <div class="f_mainDiv">
+            
+            <div class="f_titleDiv">
+                <h1>Digital Sound Processing</h1>
+                <h2>hardware: TTGO TAudio V1.6</h2>
+                <h2>software: DspFaust / faust2api (Faust Grame - https://faust.grame.fr/)</h2>
+            </div>
+       
+
+            <div class="f_serverStatus>
+                <font face="Arial">
+                <h3>Faust UI server status:</h3>
+                <div id="status">unknown</div>
+                <div id="messages"><h4>messages</h4></div>
+                <button type="button" onclick='doit("clickit");'>Click to send message</button>
+                <hr/>
+                </font>
+            </div>   
+            
+        </div>        
+    </body>
+
+</html>
+
+
+
