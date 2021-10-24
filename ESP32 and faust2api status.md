@@ -115,5 +115,22 @@ ESP-IDF project settings can be modified with the idf.py menuconfig command. The
    There are two additional occurrences of this code , these are still in. These are probably not active because of compilation directives.
  
  d. added #include esp_log.h ~ line 45 to add logging functionality
+ 
+ e. added includes for the jdksmidi lib files:
+``` 
+ #elif FCKXMIDI
+
+//using namespace jdksmidi;
+typedef unsigned char uchar;  //world.h
+
+#include "world.h"
+#include "midi.h"
+#include "msg.h"
+#include "sysex.h"
+#include "parser.h"
+
+#endif
+```
+ 
 
  NOTE: the changes a. and b. can be undone when the ESP32 main stack size is increased in the project settings (idf.py menuconfig).  Default: 3584. Now 14336 (factor of 4). Later this "huge" increase will have to be minimized as total firmware size may become critical.   
