@@ -113,5 +113,7 @@ ESP-IDF project settings can be modified with the idf.py menuconfig command. The
  
  c. comment throw std:: bad_alloc()  line 25276 (to allow C++ exceptions)  near  printf("You are not setting 'sample_rate' and 'buffer_size', but the audio driver needs it !\n");
    There are two additional occurrences of this code , these are still in. These are probably not active because of compilation directives.
+ 
+ d. added #include esp_log.h ~ line 45 to add logging functionality
 
  NOTE: the changes a. and b. can be undone when the ESP32 main stack size is increased in the project settings (idf.py menuconfig).  Default: 3584. Now 14336 (factor of 4). Later this "huge" increase will have to be minimized as total firmware size may become critical.   
