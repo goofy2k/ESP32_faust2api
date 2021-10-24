@@ -101,12 +101,17 @@ ESP-IDF project settings can be modified with the idf.py menuconfig command. The
 
  
 
-## 4. Descrition of modifications to the DspFaust.cpp file (case faust2api <options> elecGuitarMIDI.dsp  ) 
+## 4. Description of modifications to the DspFaust.cpp file (case faust2api <options> elecGuitarMIDI.dsp  ) 
 
+** NOTE ** of these adaptations, only c. (bad_alloc) is necesssary, PROVIDED that the jdksmidi lib .h files and their corresponding .cpp files mentioned under e. are placed in the main folder AND in a folder jdksmidi in main. I will investigate which of the two locations is essential at the current project settings. A solution might be in correct project settings.
+ 
+ ** NOTE 2 ** These files must be taken from the Thomas Hofman hack of the original jdksmidi lib, for reasons that are unclear to me.
+ 
+ 
  a. comment the call MidiMeta::analyses  appr line nr 11928 (for elecGuitarMIDI)  
       NOTE: addition of nvoices = NVOICES;
                                   midi_sync = true;  
-    to simulate the outtput of MidiMeta::analysis leads to a stack overflow error 
+    to simulate the output of MidiMeta::analysis leads to a stack overflow error 
  
  
  b. comment static void analyses line 9111 - 9147
