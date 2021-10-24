@@ -134,4 +134,8 @@ typedef unsigned char uchar;  //world.h
  
 These files are added to the main folder AND the jdksmidi folder and were taken from the repo of Thomas Hopman (Hofman?) You should use his lib and NOT the original lib. Inclusion for both libs is not (yet) successful with my project setup. Therefore I applied this dirty trick.....
 
+ f. relationg to this some changes (to be described) near line 18927....
+ 
+ 
+ 
  NOTE: the changes a. and b. can be undone when the ESP32 main stack size is increased in the project settings (idf.py menuconfig).  Default: 3584. Now 14336 (factor of 4). Later this "huge" increase will have to be minimized as total firmware size may become critical.   
