@@ -103,7 +103,7 @@ ESP-IDF project settings can be modified with the idf.py menuconfig command. The
 
 ## 4. Description of modifications to the DspFaust.cpp file (case faust2api <options> elecGuitarMIDI.dsp  ) 
 
-** NOTE ** all of these adaptations can be REVERTED. only c. (bad_alloc) is necesssary, PROVIDED that the jdksmidi lib .h files and their corresponding .cpp files mentioned under e. are placed in the main folder AND in a folder jdksmidi in main. I will investigate which of the two locations is essential at the current project settings. A solution might be in correct project settings.
+** NOTE ** all of these adaptations can be REVERTED. only c. (bad_alloc) is necesssary, PROVIDED that the jdksmidi lib .h files and their corresponding .cpp files mentioned under e. are placed in the main folder AND in a folder jdksmidi in main. I will investigate which of the two locations is essential at the current project settings. A solution for a problem with "circular" includes in the jdksmidilib might be in correct project settings.
  
  ** NOTE 2 ** These files must be taken from the Thomas Hofman hack of the original jdksmidi lib, for reasons that are unclear to me.
  
