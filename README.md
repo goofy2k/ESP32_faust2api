@@ -415,7 +415,7 @@ S -- Suspended, or Blocked without a timeout
 
 Note: (C) means it is configurable by menuconfig.
 
-- uiT. This task initializes the system, including peripherals, file system, user entry function and so on. This task will delete itself and free the resources after calling app_main.
+~~- uiT. This task initializes the system, including peripherals, file system, user entry function and so on. This task will delete itself and free the resources after calling app_main.
 - ppT. This task is to process Wi-Fi hardware driver and stack. It posts messages from the logic link layer to the upper layer TCP/IP stack after transforming them into ethernet packets.
 - tiT. The task is the main task of TCP-IP stack (LwIP), it is to deal with TCP-IP packets.
 - Tmr Svc. This task is the processor of FreeRTOS internal software timer.
