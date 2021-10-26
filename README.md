@@ -385,7 +385,8 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
 	
 	
 9. For creation of alternative MIDI input (non) uart,  start at base class in midi.h  , derived esp32_midi  and have a look at other midi_handlers (teensy_midi , juce_midi_handler, ...). Is it possible to re-use jdsk code?
-  - start: look how esp32 midi handler uses the base class in midi.h
+  - start: look how esp32 midi handler uses the base class in midi.h  
+  - when I copy the Hofmann files into the main folder and into a jdskmidi folder inside main, all changes in the DspFaust can be reverted !!! The only adaptation is with the throw bad_alloc command.	
 
 10. Upload an RTTTL song via MQTT (flexible ringtone)  
 
