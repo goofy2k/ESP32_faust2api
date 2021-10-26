@@ -1,7 +1,5 @@
 #define ESP32_DRIVER 1
-#define NVOICES 12
-
-static const char *TAG = "DSPFAUST";
+#define NVOICES 2
 /* ------------------------------------------------------------
 name: "WaveSynth_FX"
 Code generated with Faust 2.34.6 (https://faust.grame.fr)
@@ -11361,7 +11359,7 @@ class mydsp_poly : public dsp_voice_group, public dsp_poly {
     
         // Always returns a voice
         int getFreeVoice()
-        {   printf("FCKX getFreeVoice %d\n", 2);
+        {
             // Looks for the first available voice
             for (size_t i = 0; i < fVoiceTable.size(); i++) {
                 if (fVoiceTable[i]->fCurNote == kFreeVoice) {
@@ -18061,7 +18059,6 @@ class teensyaudio : public AudioStream, public audio {
 #include "freertos/task.h"
 #include "driver/i2s.h"
 
-#include "esp_log.h"
 
 #define MULT_S32 2147483647
 #define DIV_S32 4.6566129e-10
@@ -18110,8 +18107,7 @@ class esp32audio : public audio {
                 
                 // Call DSP
                 fDSP->compute(fBufferSize, fInChannel, fOutChannel);
-                //ESP_LOGW(TAG, "AUDIO TASK COMPUTE");
- 
+                
                 // Convert and copy outputs
                 int32_t samples_data_out[AUDIO_MAX_CHAN*fBufferSize];
                 if (OUTPUTS == AUDIO_MAX_CHAN) {
@@ -18131,12 +18127,9 @@ class esp32audio : public audio {
                 // Write to the card
                 size_t bytes_written = 0;
                 i2s_write((i2s_port_t)0, &samples_data_out, AUDIO_MAX_CHAN*sizeof(float)*fBufferSize, &bytes_written, portMAX_DELAY);
-                //ESP_LOGW(TAG, "AUDIO TASK AFTER WRITE");
-         }
+            }
             
             // Task has to deleted itself beforee returning
-            ESP_LOGW(TAG, "AUDIO TASK FINISH");
- 
             vTaskDelete(nullptr);
         }
     
@@ -18287,9 +18280,8 @@ class esp32audio : public audio {
         {
             if (!fRunning) {
                 fRunning = true;
-                //return (xTaskCreatePinnedToCore(audioTaskHandler, "Faust DSP Task", 4096, (void*)this, 24, &fHandle, 0) == pdPASS);
-return (xTaskCreatePinnedToCore(audioTaskHandler, "Faust DSP Task", 4096, (void*)this, 4, &fHandle, 1) == pdPASS);        
-        } else {
+                return (xTaskCreatePinnedToCore(audioTaskHandler, "Faust DSP Task", 4096, (void*)this, 24, &fHandle, 0) == pdPASS);
+            } else {
                 return true;
             }
         }
@@ -25224,7 +25216,7 @@ DspFaust::DspFaust(bool auto_connect)
     driver = new juceaudio();
 #else
     printf("You are not setting 'sample_rate' and 'buffer_size', but the audio driver needs it !\n");
-//    throw std::bad_alloc();
+    throw std::bad_alloc();
 #endif
     init(NULL, driver);
 }

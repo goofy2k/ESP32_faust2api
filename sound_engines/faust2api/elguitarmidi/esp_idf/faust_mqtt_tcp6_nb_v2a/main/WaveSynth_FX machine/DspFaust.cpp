@@ -18288,7 +18288,7 @@ class esp32audio : public audio {
             if (!fRunning) {
                 fRunning = true;
                 //return (xTaskCreatePinnedToCore(audioTaskHandler, "Faust DSP Task", 4096, (void*)this, 24, &fHandle, 0) == pdPASS);
-return (xTaskCreatePinnedToCore(audioTaskHandler, "Faust DSP Task", 4096, (void*)this, 4, &fHandle, 1) == pdPASS);        
+return (xTaskCreatePinnedToCore(audioTaskHandler, "Faust DSP Task", 4096, (void*)this, 24, &fHandle, 1) == pdPASS);        
         } else {
                 return true;
             }
