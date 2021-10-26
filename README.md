@@ -407,11 +407,11 @@ High Water Mark is the minimum amount of stack space that has remained for the t
 
 States are:
 
-R -- Ready
-X -- Running (the calling task is querying its own priority)
-D -- Deleted (waiting clean up)
-B -- Blocked
-S -- Suspended, or Blocked without a timeout	
+R -- Ready  
+X -- Running (the calling task is querying its own priority)  
+D -- Deleted (waiting clean up)  
+B -- Blocked  
+S -- Suspended, or Blocked without a timeout	 
 	
 	
 9. For creation of alternative MIDI input (non) uart,  start at base class in midi.h  , derived esp32_midi  and have a look at other midi_handlers (teensy_midi , juce_midi_handler, ...). Is it possible to re-use jdsk code?
