@@ -371,9 +371,66 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
 	- xTaskCreatePinnedToCore(audioTaskHandler, "Faust DSP Task", 4096, (void*)this, 24, &fHandle, 0) == pdPASS so audio is handled by CPU0
 
    - see how these interfere with the chosen stratey for WiFi and MQTT (main.cpp or ESP-IDF menuconfig)	
+   - the issues with polyphony remain when the WIFI and MQTT functionality is switched off !
+   - it looks from the code that no additional interrupts or tasks are created when using a second voice.  
+     the contributions of additional voices are simply computed in sequence and the voices are added before copying a buffer to the audio codec
+   - going further into this with logging messages....  
+	- when playing a sequence "over" a background note, the sequence "hangs" as soon as the newVoice has been called. 
+	- A hum appears and after some time " esp_timer: timer queue overflow" messages appear. 
+	- The next note is never played.
+	- MQTT messages for changing controls arrive OK
+	- changing Dsp parameters like ADRS, waveTravel etc arrive OK AND !!! result into changes in the sound. 
+	- it looks like Dsp processing goes on more or less OK
+   	- moving the audio task to CPU 1 helps!  Current status:  Audio: CPU 1,  MIDI (off?)  CPU 1	, WIFI CPU 1,  MQTT CPU 1
+	- move WiFi to core 0: Current status:  Audio: CPU 1,  MIDI (off?)  CPU 1	, WIFI CPU 0,  MQTT CPU 1  better??
+	- switch to other dsp (elecGuitarMidi)
+   - task list in loop, before starting player. (see [Github, mriksman
+/
+esp-idf-homekit](https://github.com/mriksman/esp-idf-homekit/wiki/Events,-Queues,-Tasks))
+
+|Name          | State |Priority | High Water |Stack Number |	
+|--------------|-------|---------|------------|-------------|	
+|DSP Task      |  R    |   24    |  3244      | 18          |
+|mqtt_task     |  R    |   5     |  4644      | 17          |
+|main          |  R    |   1     |  8244      |  5          |
+|**IDLE1**         |  R    |   0     |  1084      |  7          |
+|**IDLE0**         |  R    |   0     |  1080      |  6          |
+|**tiT**   (C)        |  B    |   18    |  2136      | 12          |
+|**Tmr Svc**  (C)     |  B    |   1     |  1636      |  8          |
+|ipc1          |  B    |   24    |  524       |  3          |
+|**sys_evt**  (C)     |  B    |   20    |  864       | 15          |
+|esp_timer     |  B    |   22    |  3384      |  1          |
+|wifi          |  B    |   23    |  1036      | 16          |
+|ipc0          |  B    |   24    |  564       |  2          |
+
+High Water Mark is the minimum amount of stack space that has remained for the task since the task was created. The closer this value is to zero the closer the task has come to overflowing its stack.
+
+States are:
+
+R -- Ready  
+X -- Running (the calling task is querying its own priority)  
+D -- Deleted (waiting clean up)  
+B -- Blocked  
+S -- Suspended, or Blocked without a timeout	 
+
+Note: (C) means it is configurable by menuconfig.
+
+- ~~uiT. This task initializes the system, including peripherals, file system, user entry function and so on. This task will delete itself and free the resources after calling app_main.~~
+- ~~ppT. This task is to process Wi-Fi hardware driver and stack. It posts messages from the logic link layer to the upper layer TCP/IP stack after transforming them into ethernet packets.~~
+- tiT. The task is the main task of TCP-IP stack (LwIP), it is to deal with TCP-IP packets.
+- Tmr Svc. This task is the processor of FreeRTOS internal software timer.
+- IDLE. This task is FreeRTOS internal idle callback task, it is created when starting the FreeRTOS. Its hook function is vApplicationIdleHook. The system's function of sleep and function of feeding task watch dog are called in the vApplicationIdleHook.
+- sys_evt. The task processes system events, for example, Wi-Fi and TCP-IP stack events.
+- ~~pmT. The task is for system power management. It will check if the system can sleep right now, and if it is, it will start preparing for system sleep.~~
+- ~~rtT. The task is the processor of high priority hardware timer. It mainly processes Wi-Fi real time events. It is suggested that functions based on this component should not be called in application, because it may block other low layer Wi-Fi functions.~~
+	
+	
+	
+	
 	
 9. For creation of alternative MIDI input (non) uart,  start at base class in midi.h  , derived esp32_midi  and have a look at other midi_handlers (teensy_midi , juce_midi_handler, ...). Is it possible to re-use jdsk code?
-  - start: look how esp32 midi handler uses the base class in midi.h
+  - start: look how esp32 midi handler uses the base class in midi.h  
+  - when I copy the Hofmann files into the main folder and into a jdskmidi folder inside main, all changes in the DspFaust can be reverted !!! The only adaptation is with the throw bad_alloc command.	
 
 10. Upload an RTTTL song via MQTT (flexible ringtone)  
 

@@ -101,17 +101,46 @@ ESP-IDF project settings can be modified with the idf.py menuconfig command. The
 
  
 
-## 4. Descrition of modifications to the DspFaust.cpp file (case faust2api <options> elecGuitarMIDI.dsp  ) 
+## 4. Description of modifications to the DspFaust.cpp file (case faust2api <options> elecGuitarMIDI.dsp  ) 
 
+** NOTE ** all of these adaptations can be REVERTED. only c. (bad_alloc) is necesssary, PROVIDED that the jdksmidi lib .h files and their corresponding .cpp files mentioned under e. are placed in the main folder AND in a folder jdksmidi in main. I will investigate which of the two locations is essential at the current project settings. A solution for a problem with "circular" includes in the jdksmidilib might be in correct project settings.
+ 
+ ** NOTE 2 ** These files must be taken from the Thomas Hofman hack of the original jdksmidi lib, for reasons that are unclear to me.
+ 
+ 
  a. comment the call MidiMeta::analyses  appr line nr 11928 (for elecGuitarMIDI)  
       NOTE: addition of nvoices = NVOICES;
                                   midi_sync = true;  
-    to simulate the outtput of MidiMeta::analysis leads to a stack overflow error 
+    to simulate the output of MidiMeta::analysis leads to a stack overflow error 
  
  
  b. comment static void analyses line 9111 - 9147
  
  c. comment throw std:: bad_alloc()  line 25276 (to allow C++ exceptions)  near  printf("You are not setting 'sample_rate' and 'buffer_size', but the audio driver needs it !\n");
    There are two additional occurrences of this code , these are still in. These are probably not active because of compilation directives.
+ 
+ d. added #include esp_log.h ~ line 45 to add logging functionality
+ 
+ e. added includes for the jdksmidi lib files:
+``` 
+ #elif FCKXMIDI
 
+//using namespace jdksmidi;
+typedef unsigned char uchar;  //world.h
+
+#include "world.h"
+#include "midi.h"
+#include "msg.h"
+#include "sysex.h"
+#include "parser.h"
+
+#endif
+```
+ 
+These files are added to the main folder AND the jdksmidi folder and were taken from the repo of Thomas Hopman (Hofman?) You should use his lib and NOT the original lib. Inclusion for both libs is not (yet) successful with my project setup. Therefore I applied this dirty trick.....
+
+ f. relationg to this some changes (to be described) near line 18927....
+ 
+ 
+ 
  NOTE: the changes a. and b. can be undone when the ESP32 main stack size is increased in the project settings (idf.py menuconfig).  Default: 3584. Now 14336 (factor of 4). Later this "huge" increase will have to be minimized as total firmware size may become critical.   
