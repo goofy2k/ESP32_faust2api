@@ -382,7 +382,8 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
 	- changing Dsp parameters like ADRS, waveTravel etc arrive OK AND !!! result into changes in the sound. 
 	- it looks like Dsp processing goes on more or less OK
    	- moving the audio task to CPU 1 helps!  Current status:  Audio: CPU 1,  MIDI (off?)  CPU 1	, WIFI CPU 1,  MQTT CPU 1
-	- move WiFi to core 0: Current status:  Audio: CPU 1,  MIDI (off?)  CPU 1	, WIFI CPU 0,  MQTT CPU 1
+	- move WiFi to core 0: Current status:  Audio: CPU 1,  MIDI (off?)  CPU 1	, WIFI CPU 0,  MQTT CPU 1  better??
+	- switch to other dsp (elecGuitarMidi)
 	
 	
 	
