@@ -384,7 +384,9 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
    	- moving the audio task to CPU 1 helps!  Current status:  Audio: CPU 1,  MIDI (off?)  CPU 1	, WIFI CPU 1,  MQTT CPU 1
 	- move WiFi to core 0: Current status:  Audio: CPU 1,  MIDI (off?)  CPU 1	, WIFI CPU 0,  MQTT CPU 1  better??
 	- switch to other dsp (elecGuitarMidi)
-   - task list in loop, before starting player. 
+   - task list in loop, before starting player. (see [Github, mriksman
+/
+esp-idf-homekit](https://github.com/mriksman/esp-idf-homekit/wiki/Events,-Queues,-Tasks)
 
 |Name          | State |Priority | High Water |Stack Number |	
 |--------------|-------|---------|------------|-------------|	
