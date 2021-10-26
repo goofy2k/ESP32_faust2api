@@ -374,7 +374,14 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
    - the issues with polyphony remain when the WIFI and MQTT functionality is switched off !
    - it looks from the code that no additional interrupts or tasks are created when using a second voice.  
      the contributions of additional voices are simply computed in sequence and the voices are added before copying a buffer to the audio codec
-   - going further into this with logging messages....	
+   - going further into this with logging messages....  
+	- when playing a sequence "over" a background note, the sequence "hangs" as soon as the newVoice has been called. 
+	- A hum appears and after some time " esp_timer: timer queue overflow" messages appear. 
+	- The next note is never played.
+	- MQTT messages for changing controls arrive OK
+	- changing Dsp parameters like ADRS, waveTravel etc arrive OK AND !!! result into changes in the sound. 
+	- it looks like Dsp processing goes on more or less OK
+	
 	
 	
 9. For creation of alternative MIDI input (non) uart,  start at base class in midi.h  , derived esp32_midi  and have a look at other midi_handlers (teensy_midi , juce_midi_handler, ...). Is it possible to re-use jdsk code?
