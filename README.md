@@ -386,7 +386,7 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
 	- switch to other dsp (elecGuitarMidi)
    - task list in loop, before starting player. (see [Github, mriksman
 /
-esp-idf-homekit](https://github.com/mriksman/esp-idf-homekit/wiki/Events,-Queues,-Tasks)
+esp-idf-homekit](https://github.com/mriksman/esp-idf-homekit/wiki/Events,-Queues,-Tasks))
 
 |Name          | State |Priority | High Water |Stack Number |	
 |--------------|-------|---------|------------|-------------|	
