@@ -403,7 +403,15 @@ esp-idf-homekit](https://github.com/mriksman/esp-idf-homekit/wiki/Events,-Queues
 |wifi          |  B    |   23    |  1036      | 16          |
 |ipc0          |  B    |   24    |  564       |  2          |
 
-	
+High Water Mark is the minimum amount of stack space that has remained for the task since the task was created. The closer this value is to zero the closer the task has come to overflowing its stack.
+
+States are:
+
+R -- Ready
+X -- Running (the calling task is querying its own priority)
+D -- Deleted (waiting clean up)
+B -- Blocked
+S -- Suspended, or Blocked without a timeout	
 	
 	
 9. For creation of alternative MIDI input (non) uart,  start at base class in midi.h  , derived esp32_midi  and have a look at other midi_handlers (teensy_midi , juce_midi_handler, ...). Is it possible to re-use jdsk code?
