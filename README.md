@@ -393,12 +393,12 @@ esp-idf-homekit](https://github.com/mriksman/esp-idf-homekit/wiki/Events,-Queues
 |DSP Task      |  R    |   24    |  3244      | 18          |
 |mqtt_task     |  R    |   5     |  4644      | 17          |
 |main          |  R    |   1     |  8244      |  5          |
-|IDLE1         |  R    |   0     |  1084      |  7          |
-|IDLE0         |  R    |   0     |  1080      |  6          |
-|tiT           |  B    |   18    |  2136      | 12          |
-|Tmr Svc       |  B    |   1     |  1636      |  8          |
+|**IDLE1**         |  R    |   0     |  1084      |  7          |
+|**IDLE0**         |  R    |   0     |  1080      |  6          |
+|**tiT**           |  B    |   18    |  2136      | 12          |
+|**Tmr Svc**       |  B    |   1     |  1636      |  8          |
 |ipc1          |  B    |   24    |  524       |  3          |
-|sys_evt       |  B    |   20    |  864       | 15          |
+|**sys_evt**       |  B    |   20    |  864       | 15          |
 |esp_timer     |  B    |   22    |  3384      |  1          |
 |wifi          |  B    |   23    |  1036      | 16          |
 |ipc0          |  B    |   24    |  564       |  2          |
