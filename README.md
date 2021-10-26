@@ -371,6 +371,11 @@ DspFaust.cpp:10886:79: error: 'dynamic_cast' not permitted with -fno-rtti
 	- xTaskCreatePinnedToCore(audioTaskHandler, "Faust DSP Task", 4096, (void*)this, 24, &fHandle, 0) == pdPASS so audio is handled by CPU0
 
    - see how these interfere with the chosen stratey for WiFi and MQTT (main.cpp or ESP-IDF menuconfig)	
+   - the issues with polyphony remain when the WIFI and MQTT functionality is switched off !
+   - it looks from the code that no additional interrupts or tasks are created when using a second voice.  
+     the contributions of additional voices are simply computed in sequence and the voices are added before copying a buffer to the audio codec
+   - going further into this with logging messages....	
+	
 	
 9. For creation of alternative MIDI input (non) uart,  start at base class in midi.h  , derived esp32_midi  and have a look at other midi_handlers (teensy_midi , juce_midi_handler, ...). Is it possible to re-use jdsk code?
   - start: look how esp32 midi handler uses the base class in midi.h
