@@ -412,6 +412,20 @@ X -- Running (the calling task is querying its own priority)
 D -- Deleted (waiting clean up)  
 B -- Blocked  
 S -- Suspended, or Blocked without a timeout	 
+
+Note: (C) means it is configurable by menuconfig.
+
+- uiT. This task initializes the system, including peripherals, file system, user entry function and so on. This task will delete itself and free the resources after calling app_main.
+- ppT. This task is to process Wi-Fi hardware driver and stack. It posts messages from the logic link layer to the upper layer TCP/IP stack after transforming them into ethernet packets.
+- tiT. The task is the main task of TCP-IP stack (LwIP), it is to deal with TCP-IP packets.
+- Tmr Svc. This task is the processor of FreeRTOS internal software timer.
+- IDLE. This task is FreeRTOS internal idle callback task, it is created when starting the FreeRTOS. Its hook function is vApplicationIdleHook. The system's function of sleep and function of feeding task watch dog are called in the vApplicationIdleHook.
+- sys_evt. The task processes system events, for example, Wi-Fi and TCP-IP stack events.
+- pmT. The task is for system power management. It will check if the system can sleep right now, and if it is, it will start preparing for system sleep.
+- rtT. The task is the processor of high priority hardware timer. It mainly processes Wi-Fi real time events. It is suggested that functions based on this component should not be called in application, because it may block other low layer Wi-Fi functions.	
+	
+	
+	
 	
 	
 9. For creation of alternative MIDI input (non) uart,  start at base class in midi.h  , derived esp32_midi  and have a look at other midi_handlers (teensy_midi , juce_midi_handler, ...). Is it possible to re-use jdsk code?
