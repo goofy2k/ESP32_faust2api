@@ -137,7 +137,7 @@ int songlength = 0;
 char * songbuffer = "Bond:d=4,o=5,b=80:32p,16c#6,32d#6,32d#6,16d#6,8d#6,16c#6,16c#6,16c#6,16c#6,32e6,32e6,16e6,8e6,16d#6,16d#6,16d#6,16c#6,32d#6,32d#6,16d#6,8d#6,16c#6,16c#6,16c#6,16c#6,32e6,32e6,16e6,8e6,16d#6,16d6,16c#6,16c#7,c.7,16g#6,16f#6,g#.6";
 ;
 
-bool play_flag = true;
+bool play_flag = false;
 int poly = 0; //ofset for 
 
 
@@ -2034,6 +2034,53 @@ ESP_LOGI(TAG, "play_poly_without_midi_Id");
 * not yet categorized players
 */
 
+/*
+* ALTENATIVE API command handler
+* called in MQTT events with topics starting with /faust/api/
+* it is the intention to reserve this handler for API commands of the faust2api generated DspFaust
+*
+* Populate the handler using getParamsCount and getParamAddress(id) 
+*/
+/*
+Implement the same on the server side for the wm8978 API
+OR:  implement a getParamsCount and getParamAddress(id) based on the received JSONUI.  Put this very useful jsonui code in a separate lib 
+*/
+
+
+//static void call_auto_faust_api(esp_mqtt_event_handle_t event){
+
+static void call_auto_faust_api(esp_mqtt_event_handle_t event) {
+    static const char *TAG = "AUTO_API";
+    int paramsCount = DSP->getParamsCount(); 
+    if (paramsCount > 0){
+        int id = 0;
+        bool paramFound = false;
+        while ((id < paramsCount) &&  (!paramFound) ){
+         ESP_LOGD(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic); 
+         ESP_LOGD(TAG,"CHECKED ADDRESS: %s", DSP->getParamAddress(id) );
+          if (strncmp(event->topic, DSP->getParamAddress(id),strlen(DSP->getParamAddress(id))) == 0) {    
+             ESP_LOGD(TAG,"HIT!");
+             //how to make storage generic?  use array with indexid and values address names
+             //MORE CHALLENGING: HOW TO MAKE (type dependent) CONVERSION GENERIC?  IS IT NECESSARY TO CONVERT???
+             //OR DOES setParamValue accept one specific type??
+             //so:  type must be fit to setParamValue already in the controller widget!   NO CONVERSIONS
+             //setParamValue ALWAYS ???? accepts float values 
+             //so, let widgets send float values!!!!            
+             someStorage = atof(event->data);     //local storage (to be used as flag for the GUI)  SO someStorage must always be float????
+             DSP->setParamValue(id,someStorage);  //send to DSP
+          }          
+         /*
+         if (strncmp(event->topic, "/faust/api/DspFaust",strlen("/faust/api/DspFaust")) == 0) {
+         printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic); }
+         */
+        //    getParamAddress(id)
+        id = id + 1;
+        }
+    } else { //paramsCount <= 0
+        ESP_LOGD(TAG,"paramsCount <=0");   
+    };
+    
+};
 
 
 
@@ -2043,8 +2090,12 @@ ESP_LOGI(TAG, "play_poly_without_midi_Id");
 * called in MQTT events with topics starting with /faust/api/
 * it is the intention to reserve this handler for API commands of the faust2api generated DspFaust 
 */
+
+
+
 static void call_faust_api(esp_mqtt_event_handle_t event){
     //printf("HANDLING FAUST API CALL=%s\n"," /faust/api");
+   
     static const char *TAG = "MQTT_FAUST_API";
     incoming_updates = true;
     if (strncmp(event->topic, "/faust/api/DspFaust",strlen("/faust/api/DspFaust")) == 0) {
@@ -2464,7 +2515,8 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event){
             else if (strncmp(event->topic, "/faust/api",strlen("/faust/api")) == 0) {
                 call_faust_api(event);
                 }                
-            else if (strncmp(event->topic, "/Polyphonic/",strlen("/Polyphonic/")) == 0) {
+            else if (strncmp(event->topic, "/Polyphonic/",strlen("/Polyphonic/")) == 0) { //this measn: string starts with ....
+                call_auto_faust_api(event);  //embedded call for testing
                 call_faust_api(event);    
                 } 
             else if (strncmp(event->topic, "/wm8978/",strlen("/wm8978/")) == 0) {
@@ -2660,14 +2712,18 @@ void app_main(void)
     static const char *TAG = "APP_MAIN";
 
 
-    esp_log_level_set("*", ESP_LOG_INFO);
+    esp_log_level_set("*", ESP_LOG_VERBOSE);
     esp_log_level_set("APP_MAIN", ESP_LOG_INFO);
     
     //esp_log_level_set("DSPFAUST", ESP_LOG_ERROR);
     esp_log_level_set("DSPFAUST", ESP_LOG_VERBOSE);
     
+    esp_log_level_set("I2S", ESP_LOG_ERROR);
+    
+    
+   
     esp_log_level_set("MQTT_CLIENT", ESP_LOG_INFO);
-    esp_log_level_set("MQTT_FAUST", ESP_LOG_WARN);
+ /*   esp_log_level_set("MQTT_FAUST", ESP_LOG_WARN);
     esp_log_level_set("MQTT_FAUST_API", ESP_LOG_WARN);
     
     esp_log_level_set("MQTT_EXAMPLE", ESP_LOG_VERBOSE);
@@ -2675,6 +2731,7 @@ void app_main(void)
     esp_log_level_set("TRANSPORT_SSL", ESP_LOG_VERBOSE);
     esp_log_level_set("TRANSPORT", ESP_LOG_VERBOSE);
     esp_log_level_set("OUTBOX", ESP_LOG_VERBOSE);
+    */
     
     ESP_LOGI(TAG, "[APP] Startup..");
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
