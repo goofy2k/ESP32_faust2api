@@ -42,10 +42,8 @@ The code depends on using the jdksmidi lib.  The presence of the #include jdksmi
 ### Configure the project
 (partially dummy content, to be edited)
 
-- Installation of the ESP-IDF environment is considered as out of scope for this description. Please consult relevant sources of information.
-- One of the learnings during development of this example is that the ESP-IDF project and compiler settings are as important as the C++ code itself. Different settings may lead to a non-working example.  
-- The settings stored with this example (in CMAKE and ....sdk files)  lead to a working example for the included engines. The settings may not be optimal and may not work for other DSP engines. For example: the WaveSynth_FX.dsp engine does not work with the current settings, probably because of the heavy computational load for it.
-- A description of the why's for changed settings will be described separately.
+Installation of the ESP-IDF environment is considered as out of scope for this description. Please consult relevant sources of information.  
+One of the learnings during development of this example is that the ESP-IDF project and `compiler settings are as important as the C++ code itself`. Different settings may lead to a non-working example. The settings stored with this example (in CMAKE and ....sdk files)  lead to a working example for the included engines. The settings may not be optimal and may not work for other DSP engines. For example: the WaveSynth_FX.dsp engine does not work with the current settings, probably because of the heavy computational load for it. A description of the why's for changed settings will be described separately.
 
 
 - Copy the example folder to your system
