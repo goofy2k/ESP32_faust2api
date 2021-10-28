@@ -50,10 +50,7 @@ One of the learnings during development of this example is that the ESP-IDF proj
 - Open the ESP-IDF environment. (e.g. ESP-IDF 4.2 Powershell in Windows Terminal).
 - Move to the example directory (this is the parent directory of the main folder).
 - .... set the environment for ESP32  (1 time requirement)
-
-* Open the project configuration menu (`idf.py menuconfig`)
-* Configure Wi-Fi or Ethernet under "Example Connection Configuration" menu. See "Establishing Wi-Fi or Ethernet Connection" section in [examples/protocols/README.md](../../README.md) for more details.
-* When using Make build system, set `Default serial port` under `Serial flasher config`.
+- Optionally, when using Make build system, open the project configuration menu (`idf.py menuconfig`) set `Default serial port` under `Serial flasher config`.
 
 ### Build and Flash
 (dummy content, to be edited)
@@ -61,19 +58,18 @@ One of the learnings during development of this example is that the ESP-IDF proj
 
 - Remove existing build informatin with **idf.py fullclean** (required e.g. after copying new DspFaust files to the main folder) 
 - Build the project: **idf.py --no-ccache build** or **idf.py --no-ccache build > buildlog.txt** if you want to keep the compiler output for debugging purposes
-- Flash the firmware and  
+- Connect the board to a serial port of your system
+- Flash the firmware: **idf.py --no-ccache -p COMnn flash**
+- Run the monitor tool to view serial output: **idf.py --no-ccache -p COMnn monitor**
+  - OR flash and run the monitor in one go: **idf.py --no-ccache -p COM10 flash monitor**
 
-Build the project and flash it to the board, then run monitor tool to view serial output:
-
-```
-idf.py -p PORT flash monitor
-```
-
-(To exit the serial monitor, type ``Ctrl-]``.)
-
-See the Getting Started Guide for full steps to configure and use ESP-IDF to build projects.
 
 ## Example Output
+
+The audio can be heared over the headphone connection of the TTGO TAudio board.
+
+The monitor shows the following information:
+
 (dummy content, to be edited)
 ```
 I (3714) event: sta ip: 192.168.0.139, mask: 255.255.255.0, gw: 192.168.0.2
