@@ -1,11 +1,7 @@
 #define ESP32_DRIVER 1
 #define NVOICES 12
 /* ------------------------------------------------------------
-author: "Grame"
-copyright: "(c)GRAME 2007"
-license: "BSD"
-name: "quadEcho"
-version: "1.0"
+name: "FaustSawtooth"
 Code generated with Faust 2.34.6 (https://faust.grame.fr)
 Compilation options: -a api/DspFaust.cpp -lang cpp -es 1 -single -ftz 0
 ------------------------------------------------------------ */
@@ -4822,46 +4818,41 @@ class mydsp : public dsp {
 	
  public:
 	
-	FAUSTFLOAT fHslider0;
 	int fSampleRate;
 	float fConst0;
-	FAUSTFLOAT fHslider1;
-	int IOTA;
-	float fRec0[131072];
-	float fRec1[131072];
-	float fRec2[131072];
-	float fRec3[131072];
+	float fConst1;
+	FAUSTFLOAT fEntry0;
+	float fConst2;
+	float fRec0[2];
+	float fConst3;
+	FAUSTFLOAT fEntry1;
+	float fRec3[2];
+	float fRec1[2];
 	
  public:
 	
 	void metadata(Meta* m) { 
-		m->declare("author", "Grame");
-		m->declare("basics.lib/name", "Faust Basic Element Library");
-		m->declare("basics.lib/version", "0.2");
 		m->declare("compile_options", "-a api/DspFaust.cpp -lang cpp -es 1 -single -ftz 0");
-		m->declare("copyright", "(c)GRAME 2007");
-		m->declare("delays.lib/name", "Faust Delay Library");
-		m->declare("delays.lib/version", "0.1");
-		m->declare("filename", "quadEcho.dsp");
-		m->declare("license", "BSD");
+		m->declare("filename", "FaustSawtooth.dsp");
 		m->declare("maths.lib/author", "GRAME");
 		m->declare("maths.lib/copyright", "GRAME");
 		m->declare("maths.lib/license", "LGPL with exception");
 		m->declare("maths.lib/name", "Faust Math Library");
 		m->declare("maths.lib/version", "2.4");
-		m->declare("misceffects.lib/name", "Misc Effects Library");
-		m->declare("misceffects.lib/version", "2.0");
-		m->declare("name", "quadEcho");
+		m->declare("name", "FaustSawtooth");
+		m->declare("oscillators.lib/name", "Faust Oscillator Library");
+		m->declare("oscillators.lib/version", "0.1");
 		m->declare("platform.lib/name", "Generic Platform Library");
 		m->declare("platform.lib/version", "0.1");
-		m->declare("version", "1.0");
+		m->declare("signals.lib/name", "Faust Signal Routing Library");
+		m->declare("signals.lib/version", "0.0");
 	}
 
 	virtual int getNumInputs() {
-		return 4;
+		return 0;
 	}
 	virtual int getNumOutputs() {
-		return 4;
+		return 1;
 	}
 	
 	static void classInit(int sample_rate) {
@@ -4869,27 +4860,26 @@ class mydsp : public dsp {
 	
 	virtual void instanceConstants(int sample_rate) {
 		fSampleRate = sample_rate;
-		fConst0 = (0.00100000005f * std::min<float>(192000.0f, std::max<float>(1.0f, float(fSampleRate))));
+		fConst0 = std::min<float>(192000.0f, std::max<float>(1.0f, float(fSampleRate)));
+		fConst1 = (44.0999985f / fConst0);
+		fConst2 = (1.0f - fConst1);
+		fConst3 = (1.0f / fConst0);
 	}
 	
 	virtual void instanceResetUserInterface() {
-		fHslider0 = FAUSTFLOAT(0.0f);
-		fHslider1 = FAUSTFLOAT(0.0f);
+		fEntry0 = FAUSTFLOAT(1.0f);
+		fEntry1 = FAUSTFLOAT(440.0f);
 	}
 	
 	virtual void instanceClear() {
-		IOTA = 0;
-		for (int l0 = 0; (l0 < 131072); l0 = (l0 + 1)) {
+		for (int l0 = 0; (l0 < 2); l0 = (l0 + 1)) {
 			fRec0[l0] = 0.0f;
 		}
-		for (int l1 = 0; (l1 < 131072); l1 = (l1 + 1)) {
-			fRec1[l1] = 0.0f;
+		for (int l1 = 0; (l1 < 2); l1 = (l1 + 1)) {
+			fRec3[l1] = 0.0f;
 		}
-		for (int l2 = 0; (l2 < 131072); l2 = (l2 + 1)) {
-			fRec2[l2] = 0.0f;
-		}
-		for (int l3 = 0; (l3 < 131072); l3 = (l3 + 1)) {
-			fRec3[l3] = 0.0f;
+		for (int l2 = 0; (l2 < 2); l2 = (l2 + 1)) {
+			fRec1[l2] = 0.0f;
 		}
 	}
 	
@@ -4912,35 +4902,29 @@ class mydsp : public dsp {
 	}
 	
 	virtual void buildUserInterface(UI* ui_interface) {
-		ui_interface->openVerticalBox("stereo echo");
-		ui_interface->openVerticalBox("echo 1000");
-		ui_interface->addHorizontalSlider("feedback", &fHslider0, FAUSTFLOAT(0.0f), FAUSTFLOAT(0.0f), FAUSTFLOAT(100.0f), FAUSTFLOAT(0.100000001f));
-		ui_interface->addHorizontalSlider("millisecond", &fHslider1, FAUSTFLOAT(0.0f), FAUSTFLOAT(0.0f), FAUSTFLOAT(1000.0f), FAUSTFLOAT(0.100000001f));
-		ui_interface->closeBox();
+		ui_interface->openVerticalBox("FaustSawtooth");
+		ui_interface->addNumEntry("freq", &fEntry1, FAUSTFLOAT(440.0f), FAUSTFLOAT(20.0f), FAUSTFLOAT(20000.0f), FAUSTFLOAT(0.00999999978f));
+		ui_interface->addNumEntry("gain", &fEntry0, FAUSTFLOAT(1.0f), FAUSTFLOAT(0.0f), FAUSTFLOAT(1.0f), FAUSTFLOAT(0.00999999978f));
 		ui_interface->closeBox();
 	}
 	
 	virtual void compute(int count, FAUSTFLOAT** inputs, FAUSTFLOAT** outputs) {
-		FAUSTFLOAT* input0 = inputs[0];
-		FAUSTFLOAT* input1 = inputs[1];
-		FAUSTFLOAT* input2 = inputs[2];
-		FAUSTFLOAT* input3 = inputs[3];
 		FAUSTFLOAT* output0 = outputs[0];
-		FAUSTFLOAT* output1 = outputs[1];
-		FAUSTFLOAT* output2 = outputs[2];
-		FAUSTFLOAT* output3 = outputs[3];
-		float fSlow0 = (0.00999999978f * float(fHslider0));
-		int iSlow1 = (std::min<int>(65536, std::max<int>(0, (int((fConst0 * float(fHslider1))) + -1))) + 1);
+		float fSlow0 = (fConst1 * float(fEntry0));
+		float fSlow1 = (fConst1 * float(fEntry1));
 		for (int i0 = 0; (i0 < count); i0 = (i0 + 1)) {
-			fRec0[(IOTA & 131071)] = (float(input0[i0]) + (fSlow0 * fRec0[((IOTA - iSlow1) & 131071)]));
-			output0[i0] = FAUSTFLOAT(fRec0[((IOTA - 0) & 131071)]);
-			fRec1[(IOTA & 131071)] = (float(input1[i0]) + (fSlow0 * fRec1[((IOTA - iSlow1) & 131071)]));
-			output1[i0] = FAUSTFLOAT(fRec1[((IOTA - 0) & 131071)]);
-			fRec2[(IOTA & 131071)] = (float(input2[i0]) + (fSlow0 * fRec2[((IOTA - iSlow1) & 131071)]));
-			output2[i0] = FAUSTFLOAT(fRec2[((IOTA - 0) & 131071)]);
-			fRec3[(IOTA & 131071)] = (float(input3[i0]) + (fSlow0 * fRec3[((IOTA - iSlow1) & 131071)]));
-			output3[i0] = FAUSTFLOAT(fRec3[((IOTA - 0) & 131071)]);
-			IOTA = (IOTA + 1);
+			fRec0[0] = (fSlow0 + (fConst2 * fRec0[1]));
+			fRec3[0] = (fSlow1 + (fConst2 * fRec3[1]));
+			float fTemp0 = std::max<float>(1.1920929e-07f, std::fabs(fRec3[0]));
+			float fTemp1 = (fRec1[1] + (fConst3 * fTemp0));
+			float fTemp2 = (fTemp1 + -1.0f);
+			int iTemp3 = (fTemp2 < 0.0f);
+			fRec1[0] = (iTemp3 ? fTemp1 : fTemp2);
+			float fRec2 = (iTemp3 ? fTemp1 : (fTemp1 + ((1.0f - (fConst0 / fTemp0)) * fTemp2)));
+			output0[i0] = FAUSTFLOAT((fRec0[0] * ((2.0f * fRec2) + -1.0f)));
+			fRec0[1] = fRec0[0];
+			fRec3[1] = fRec3[0];
+			fRec1[1] = fRec1[0];
 		}
 	}
 
@@ -4948,19 +4932,19 @@ class mydsp : public dsp {
 
 #ifdef FAUST_UIMACROS
 	
-	#define FAUST_FILE_NAME "quadEcho.dsp"
+	#define FAUST_FILE_NAME "FaustSawtooth.dsp"
 	#define FAUST_CLASS_NAME "mydsp"
-	#define FAUST_INPUTS 4
-	#define FAUST_OUTPUTS 4
+	#define FAUST_INPUTS 0
+	#define FAUST_OUTPUTS 1
 	#define FAUST_ACTIVES 2
 	#define FAUST_PASSIVES 0
 
-	FAUST_ADDHORIZONTALSLIDER("stereo echo/echo 1000/feedback", fHslider0, 0.0f, 0.0f, 100.0f, 0.10000000000000001f);
-	FAUST_ADDHORIZONTALSLIDER("stereo echo/echo 1000/millisecond", fHslider1, 0.0f, 0.0f, 1000.0f, 0.10000000000000001f);
+	FAUST_ADDNUMENTRY("freq", fEntry1, 440.0f, 20.0f, 20000.0f, 0.01f);
+	FAUST_ADDNUMENTRY("gain", fEntry0, 1.0f, 0.0f, 1.0f, 0.01f);
 
 	#define FAUST_LIST_ACTIVES(p) \
-		p(HORIZONTALSLIDER, feedback, "stereo echo/echo 1000/feedback", fHslider0, 0.0f, 0.0f, 100.0f, 0.10000000000000001f) \
-		p(HORIZONTALSLIDER, millisecond, "stereo echo/echo 1000/millisecond", fHslider1, 0.0f, 0.0f, 1000.0f, 0.10000000000000001f) \
+		p(NUMENTRY, freq, "freq", fEntry1, 440.0f, 20.0f, 20000.0f, 0.01f) \
+		p(NUMENTRY, gain, "gain", fEntry0, 1.0f, 0.0f, 1.0f, 0.01f) \
 
 	#define FAUST_LIST_PASSIVES(p) \
 
@@ -24977,7 +24961,7 @@ DspFaust::DspFaust(bool auto_connect)
     driver = new juceaudio();
 #else
     printf("You are not setting 'sample_rate' and 'buffer_size', but the audio driver needs it !\n");
-    throw std::bad_alloc();
+   // throw std::bad_alloc();
 #endif
     init(NULL, driver);
 }
