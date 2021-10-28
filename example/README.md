@@ -1,8 +1,8 @@
 # Example application showing polyphony
 
 ## Notes in advance
-Derived from the "faust_mqtt_tcp6_nb_v2 polyphony OK" version in the repo.
-Note: the first working version contains WIFI and MQTT functionality for enabling remote control of Dsp parameters. This code will be progressively removed to get a basic example for demonstrating polyphony.
+This example is derived from the "faust_mqtt_tcp6_nb_v2 polyphony OK" version in the repo.
+The first working version contains WIFI and MQTT functionality for enabling remote control of Dsp parameters. This code will be progressively removed to get a basic example for demonstrating polyphony.
 
 Work ongoing to:
 - clean up the code and folder
