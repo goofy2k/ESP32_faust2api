@@ -105,21 +105,36 @@ int msg_id;
 
 //audio codec parameters WM8978 
 WM8978 wm8978;
+
+//audio codec default parameters
 int hpVol_L = 20;
 int hpVol_R = 20;
 int micGain = 30;
 int lineinGain = 0;    //check wm8978 docs for min/max and type (float vs int)
 
-bool micen = false;
-bool lineinen = false;
-bool auxen = false;
+bool micen    = false;    //microphone enable
+bool lineinen = false;    //line in enable
+bool auxen    = false;    //aux (in?) enable
 
-bool dacen = true;
-bool bpen = false;
+bool dacen = true;        //DAC enable
+bool bpen = false;        //bypass mic, line in , aux  CHECK
 
+//implement functions to:
+//          - set the GUI widgets to these initial values
+//          - let the GUI status follow changes in these parameters (as an option.....)
+
+DspFaust* DSP;
+bool incoming_updates = false;
 
 //initial values in app for DSP parameters (may not be compliant with DspFaust.cpp defaults)
-DspFaust* DSP;
+//NOTE: these are specific for a sound engine (WaveSynth_FX.dsp in the current version)
+//Try to circumvent using these parameters. Use getParamValue, getVoiceParamValue, setParamValue, setVoiceParamValue and getParamsCount to
+//have a more generic way to handle Dsp parameters
+
+//implement functions to:
+//          - set the GUI widgets to these initial values
+//          - let the GUI status follow changes in these parameters (as an option.....)
+
 float lfoFreq = 0.1;     //
 float lfoDepth = 0;
 float gain = 0.5;
@@ -128,7 +143,7 @@ float synthA = 0.01;
 float synthD = 0.6;
 float synthS = 0.2;
 float synthR = 0.9;
-bool incoming_updates = false;
+
 float bend = 0;
 float synthFreq = 440;
 float waveTravel = 0;
@@ -137,10 +152,11 @@ int songlength = 0;
 char * songbuffer = "Bond:d=4,o=5,b=80:32p,16c#6,32d#6,32d#6,16d#6,8d#6,16c#6,16c#6,16c#6,16c#6,32e6,32e6,16e6,8e6,16d#6,16d#6,16d#6,16c#6,32d#6,32d#6,16d#6,8d#6,16c#6,16c#6,16c#6,16c#6,32e6,32e6,16e6,8e6,16d#6,16d6,16c#6,16c#7,c.7,16g#6,16f#6,g#.6";
 ;
 
-bool play_flag = false;
+bool play_flag = true;
 int poly = 0; //ofset for 
 
 
+//Prevent to use the following parameters. Use the generic Faust API functions instead!
 //parameter base ID's (WaveSynth FX), taken from API README.md
 //add 1 in case of polyphony
 int synthABaseId = 0;
@@ -2049,13 +2065,14 @@ OR:  implement a getParamsCount and getParamAddress(id) based on the received JS
 
 //static void call_auto_faust_api(esp_mqtt_event_handle_t event){
 
-static void call_auto_faust_api(esp_mqtt_event_handle_t event) {
+static bool call_auto_faust_api(esp_mqtt_event_handle_t event) {  //return true if a command was handled
     static const char *TAG = "AUTO_API";
     int paramsCount = DSP->getParamsCount(); 
+    bool paramHandled = false;
     if (paramsCount > 0){
         int id = 0;
-        bool paramFound = false;
-        while ((id < paramsCount) &&  (!paramFound) ){
+
+        while ((id < paramsCount) &&  (!paramHandled) ){
          ESP_LOGD(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic); 
          ESP_LOGD(TAG,"CHECKED ADDRESS: %s", DSP->getParamAddress(id) );
           if (strncmp(event->topic, DSP->getParamAddress(id),strlen(DSP->getParamAddress(id))) == 0) {    
@@ -2066,8 +2083,13 @@ static void call_auto_faust_api(esp_mqtt_event_handle_t event) {
              //so:  type must be fit to setParamValue already in the controller widget!   NO CONVERSIONS
              //setParamValue ALWAYS ???? accepts float values 
              //so, let widgets send float values!!!!            
-             someStorage = atof(event->data);     //local storage (to be used as flag for the GUI)  SO someStorage must always be float????
-             DSP->setParamValue(id,someStorage);  //send to DSP
+           //  someStorage = atof(event->data);     //local storage (to be used as flag for the GUI)  SO someStorage must always be float????
+            // DSP->setParamValue(id,someStorage);  //send to DSP
+            
+            DSP->setParamValue(id,atof(event->data));
+            paramHandled = true;
+             //try to prevent usage of additional local storage parameters!
+             //instead set and get the parameter values with DSP->set and DSP->get functions. These already exist in DspFaust!             
           }          
          /*
          if (strncmp(event->topic, "/faust/api/DspFaust",strlen("/faust/api/DspFaust")) == 0) {
@@ -2076,10 +2098,12 @@ static void call_auto_faust_api(esp_mqtt_event_handle_t event) {
         //    getParamAddress(id)
         id = id + 1;
         }
+        
+        
     } else { //paramsCount <= 0
         ESP_LOGD(TAG,"paramsCount <=0");   
     };
-    
+    return paramHandled;
 };
 
 
@@ -2202,7 +2226,12 @@ static void call_faust_api(esp_mqtt_event_handle_t event){
     } else 
     if (strncmp(event->topic, "/faust/api/isOSCOn",strlen("/faust/api/isOSCOn")) == 0) {
              printf("HANDLING FAUST API CALL: COMMAND= %s\n",event->topic);
-    } else       
+    } else
+
+/*        
+    //the following parts fit with the commands for UI elements that have an "address" string defined by the DspFaust API
+    //these can be handled in a more generic way, using the functions of in the DspFaust API. See: call_auto_faust_api
+    //special attention for the path ending with /gate. This is the only one using a conversion to int i.s.o. float.
     if (strncmp(event->topic, "/Polyphonic/Voices/sawtooth_synth/A",strlen("/Polyphonic/Voices/sawtooth_synth/A")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
@@ -2259,7 +2288,7 @@ static void call_faust_api(esp_mqtt_event_handle_t event){
     if (strncmp(event->topic, "/Polyphonic/Voices/sawtooth_synth/gate",strlen("/Polyphonic/Voices/sawtooth_synth/gate")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
-             gate= atoi(event->data); //must convert from int
+             gate= atoi(event->data); //must convert from int  !! ??
              ESP_LOGI(TAG,"...to be implemented<<<"); 
     } else  
     if (strncmp(event->topic, "/Polyphonic/Voices/sawtooth_synth/lfoFreq",strlen("/Polyphonic/Voices/sawtooth_synth/lfoFreq")) == 0) {
@@ -2282,9 +2311,11 @@ static void call_faust_api(esp_mqtt_event_handle_t event){
              waveTravel = atof(event->data);
              DSP->setParamValue(waveTravelBaseId+1,waveTravel);
              //ESP_LOGI(TAG,"...to be implemented<<<"); 
-    } else          
+    } else  
+*/        
     {
-        printf("HANDLING FAUST API CALL: INVALID COMMAND= %s\n",event->topic);
+        ESP_LOGI(TAG,"HANDLING FAUST API CALL: INVALID COMMAND= %s\n",event->topic); 
+        //printf("HANDLING FAUST API CALL: INVALID COMMAND= %s\n",event->topic);
         incoming_updates = false;
           }            
     }
@@ -2516,8 +2547,8 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event){
                 call_faust_api(event);
                 }                
             else if (strncmp(event->topic, "/Polyphonic/",strlen("/Polyphonic/")) == 0) { //this measn: string starts with ....
-                call_auto_faust_api(event);  //embedded call for testing
-                call_faust_api(event);    
+                if (!call_auto_faust_api(event)) { //go for checking additional commands only if no DspFaust address handled
+                call_faust_api(event);   }; 
                 } 
             else if (strncmp(event->topic, "/wm8978/",strlen("/wm8978/")) == 0) {
                 call_faust_api2(event);    
