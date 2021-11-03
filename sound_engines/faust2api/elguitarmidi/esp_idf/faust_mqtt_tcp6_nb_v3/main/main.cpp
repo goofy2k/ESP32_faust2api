@@ -6,7 +6,11 @@
    software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
    CONDITIONS OF ANY KIND, either express or implied.
 */
-//#define MIDICTRL 1
+
+//#define FCKX_SEQUENCER_API
+#define MIDICTRL 1  //to enable compilation of midi functionality
+
+
 
 #include <stdio.h>
 #include <stdint.h>
@@ -41,6 +45,8 @@
 #include "WM8978.h"
 #include "DspFaust.h"
 #include "secrets.h"
+
+#include "fckx_sequencer.h"
 
 
 /* The examples use WiFi configuration that you can set via project configuration menu
@@ -576,7 +582,7 @@ void play_keys(DspFaust * aDSP){  //uses keyOn / keyOff
         //vTaskDelay(1000 / portTICK_PERIOD_MS);
         //aDSP->setVoiceParamValue(5,voiceAddress,110);
         //update_controls(voiceAddress,aDSP);
-        //aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress,110);
+        //aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,110);
          nbDelay(1000);
         //vTaskDelay(1000 / portTICK_PERIOD_MS);
         ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1);  
@@ -665,7 +671,7 @@ void play_keys2(DspFaust * aDSP){  //uses keyOn / keyOff
         nbDelay(1000);
         //vTaskDelay(1000 / portTICK_PERIOD_MS);
         //aDSP->setVoiceParamValue(5,voiceAddress,110);
-        aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress,110);
+        aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,110);
         nbDelay(1000);
         //vTaskDelay(1000 / portTICK_PERIOD_MS);
         int res = aDSP->keyOff(ii);
@@ -713,7 +719,7 @@ void play_midi_rtttl_chords(char *p, DspFaust * aDSP){
 aDSP->allNotesOff(false); //delete main voice
   for (unsigned int chordNote = 0; chordNote < sizeof(chord)/4; chordNote++){       
       voiceAddress[chordNote] = aDSP->newVoice(); //create main voice};  
-      aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress[chordNote],1);
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress[chordNote],1);
         };
 */
   
@@ -894,23 +900,23 @@ aDSP->allNotesOff(false); //delete main voice
     /*      
       voiceAddress[chordNote] = aDSP->newVoice(); //create main voice};  
  
-  aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress[chordNote],freqs[(scale-4) * 12 + note+ chord[chordNote] ]);
+  aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress[chordNote],freqs[(scale-4) * 12 + note+ chord[chordNote] ]);
 
-       aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress[chordNote],1);   
+       aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress[chordNote],1);   
            
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress[chordNote],1); 
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress[chordNote],1); 
      */      
        };
 /*
 
-      aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress,freqs[(scale-4) * 12 + note]);
-      aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,1); 
+      aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,freqs[(scale-4) * 12 + note]);
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1); 
 
-      aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress2,freqs[(scale-4) * 12 + note+chord1]);
-      aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress2,1); 
+      aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress2,freqs[(scale-4) * 12 + note+chord1]);
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress2,1); 
       
-      aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress3,freqs[(scale-4) * 12 + note+chord2]);
-      aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress3,1); 
+      aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress3,freqs[(scale-4) * 12 + note+chord2]);
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress3,1); 
   */    
       nbDelay(duration);
       //vTaskDelay(duration / portTICK_PERIOD_MS);
@@ -930,14 +936,14 @@ aDSP->allNotesOff(false); //delete main voice
         data2 = 0*16; //keyOff
        ESP_LOGI(TAG, "keyOff pitch %d velocity % d", 4*16+note+chord[chordNote]-64,vel1); 
         aDSP->propagateMidi(count, time, type, channel, data1, data2);    
-              //  aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress[chordNote],0);
+              //  aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress[chordNote],0);
                 
             };
       
       /*
-      aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,0);
-      aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress2,0); 
-      aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress3,0);   
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress2,0); 
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress3,0);   
       */  
   // tone1.play(notes[(scale - 4) * 12 + note]);
       
@@ -966,16 +972,16 @@ aDSP->allNotesOff(false); //delete main voice
       /*
        for (unsigned int chordNote = 0; chordNote < sizeof(chord)/4; chordNote++){
            
-           aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress[chordNote],0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress[chordNote],0);
              aDSP->deleteVoice(voiceAddress[chordNote]); //delete main voice
            
        };
       */
       
       /*
-      aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress,0);
-          aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress2,0);
-                aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress3,0);
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress,0);
+          aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress2,0);
+                aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress3,0);
         aDSP->deleteVoice(voiceAddress); //delete main voice
         aDSP->deleteVoice(voiceAddress2); //delete voice2
        aDSP->deleteVoice(voiceAddress3); //delete voice3
@@ -1030,7 +1036,7 @@ void play_midi(DspFaust * aDSP){  //uses propagateMidi
         nbDelay(1000);
         //aDSP->setVoiceParamValue(5,voiceAddress,110);
         //update_controls(voiceAddress,aDSP);
-        //aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress,110);
+        //aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,110);
         //vTaskDelay(1000 / portTICK_PERIOD_MS);
         nbDelay(1000);
         ESP_LOGI(TAG, "keyOn pitch %d velocity % d", pitch,vel1);  
@@ -1064,36 +1070,36 @@ void play_setVoiceParam_path(DspFaust * aDSP)
        ESP_LOGI(TAG, "starting play_setVoiceParam_path");
 /*
     uintptr_t bg_voiceAddress = aDSP->newVoice(); //create background voice    
-    aDSP->setVoiceParamValue("/sawtooth_synth/gain",bg_voiceAddress,1);  
-    aDSP->setVoiceParamValue("/sawtooth_synth/freq",bg_voiceAddress,110.0);
-    // aDSP->setVoiceParamValue("/sawtooth_synth/freq",freqs[(scale-4) * 12 + note]);
-    aDSP->setVoiceParamValue("/sawtooth_synth/gate",bg_voiceAddress,1.0);
+    aDSP->setVoiceParamValue("/WaveSynth_FX/gain",bg_voiceAddress,1);  
+    aDSP->setVoiceParamValue("/WaveSynth_FX/freq",bg_voiceAddress,110.0);
+    // aDSP->setVoiceParamValue("/WaveSynth_FX/freq",freqs[(scale-4) * 12 + note]);
+    aDSP->setVoiceParamValue("/WaveSynth_FX/gate",bg_voiceAddress,1.0);
     vTaskDelay(500 / portTICK_PERIOD_MS);  
 */
 
     /*
     uintptr_t bg_voiceAddress = aDSP->newVoice(); //create main voice    
-    aDSP->setVoiceParamValue("/sawtooth_synth/gain",bg_voiceAddress,1);
+    aDSP->setVoiceParamValue("/WaveSynth_FX/gain",bg_voiceAddress,1);
     update_controls(bg_voiceAddress,aDSP);
     */
     
     uintptr_t voiceAddress = aDSP->newVoice(); //create main voice
-    aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress,1);
+    aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress,1);
     //update_controls(voiceAddress,aDSP);
         
-    //aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress,1); 
+    //aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress,1); 
     
         for (int ii = 50; ii < 60; ii++){
            update_controls(voiceAddress,aDSP);  
            ESP_LOGI(TAG, "going to set frequency 2"); 
            
-           aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress,220.0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,220.0);
            ESP_LOGI(TAG, "going to set gate ON"); 
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,1.0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1.0);
            nbDelay(500);
            //vTaskDelay(500 / portTICK_PERIOD_MS); 
            ESP_LOGI(TAG, "going to set gate OFF");            
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
            nbDelay(5000);
            //vTaskDelay(5000 / portTICK_PERIOD_MS);
 
@@ -1101,50 +1107,50 @@ void play_setVoiceParam_path(DspFaust * aDSP)
            
            
            //update_controls(voiceAddress,aDSP);  
-           // aDSP->setVoiceParamValue("/sawtooth_synth/freq",freqs[(scale-4) * 12 + note]);
+           // aDSP->setVoiceParamValue("/WaveSynth_FX/freq",freqs[(scale-4) * 12 + note]);
 
-           //aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress,440.0);
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,1.0);
+           //aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,440.0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1.0);
            nbDelay(100);
            //vTaskDelay(100 / portTICK_PERIOD_MS);          
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
            nbDelay(100);
            //vTaskDelay(100 / portTICK_PERIOD_MS);  
            
            //adding subsequent short notes does not work!
            //the strange thing is that when the third note is added, also the two first ones do not fire .....
           
-           //aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress,440.0);
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,1.0);
+           //aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,440.0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1.0);
            nbDelay(100);
            //vTaskDelay(100 / portTICK_PERIOD_MS);           
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
            nbDelay(100);
            //vTaskDelay(100 / portTICK_PERIOD_MS);  
            
            
            
            
-           aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress,440.0);
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,1);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,440.0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1);
            nbDelay(100);
            //vTaskDelay(100 / portTICK_PERIOD_MS);            
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
            nbDelay(100);
            //vTaskDelay(100 / portTICK_PERIOD_MS);  
                       
                       
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,1);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1);
            nbDelay(100);
            //vTaskDelay(100 / portTICK_PERIOD_MS);           
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
            nbDelay(100);
            //vTaskDelay(100 / portTICK_PERIOD_MS);  
            
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,1);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1);
            nbDelay(100);
            //vTaskDelay(100 / portTICK_PERIOD_MS);            
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
            nbDelay(100);
            //vTaskDelay(100 / portTICK_PERIOD_MS);  
            
@@ -1154,7 +1160,7 @@ void play_setVoiceParam_path(DspFaust * aDSP)
            
            /*
            vTaskDelay(500 / portTICK_PERIOD_MS);          
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",bg_voiceAddress,0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",bg_voiceAddress,0);
            vTaskDelay(500 / portTICK_PERIOD_MS); 
            */
            
@@ -1177,20 +1183,20 @@ bool testpoly = true;
        ESP_LOGI(TAG, "starting play_setVoiceParam_path");
 /*
     uintptr_t bg_voiceAddress = aDSP->newVoice(); //create background voice    
-    aDSP->setVoiceParamValue("/sawtooth_synth/gain",bg_voiceAddress,1);  
-    aDSP->setVoiceParamValue("/sawtooth_synth/freq",bg_voiceAddress,110.0);
-    aDSP->setVoiceParamValue("/sawtooth_synth/gate",bg_voiceAddress,1.0);
+    aDSP->setVoiceParamValue("/WaveSynth_FX/gain",bg_voiceAddress,1);  
+    aDSP->setVoiceParamValue("/WaveSynth_FX/freq",bg_voiceAddress,110.0);
+    aDSP->setVoiceParamValue("/WaveSynth_FX/gate",bg_voiceAddress,1.0);
     vTaskDelay(500 / portTICK_PERIOD_MS);  
 */
 uintptr_t bg_voiceAddress;
    if (testpoly) {
     bg_voiceAddress = aDSP->newVoice(); //create main voice    
-    aDSP->setVoiceParamValue("/sawtooth_synth/gain",bg_voiceAddress,1);
+    aDSP->setVoiceParamValue("/WaveSynth_FX/gain",bg_voiceAddress,1);
     //update_controls(bg_voiceAddress,aDSP);
 
-           aDSP->setVoiceParamValue("/sawtooth_synth/freq",bg_voiceAddress,110.0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/freq",bg_voiceAddress,110.0);
            ESP_LOGI(TAG, "going to set gate ON for BACKGROUND voice"); 
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",bg_voiceAddress,1.0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",bg_voiceAddress,1.0);
            //vTaskDelay(500 / portTICK_PERIOD_MS);     
  
            nbDelay(1000); 
@@ -1199,68 +1205,68 @@ uintptr_t bg_voiceAddress;
              ESP_LOGI(TAG, "going to call newVoice for main voice"); 
     uintptr_t voiceAddress = aDSP->newVoice(); //create main voice
        ESP_LOGI(TAG, "going to set gain for main voice"); 
-    aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress,1);
+    aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress,1);
     //update_controls(voiceAddress,aDSP);
         
-    aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress,1); 
+    aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress,1); 
      ESP_LOGI(TAG, "entering play loop"); 
         for (int ii = 50; ii < 52; ii++){
                ESP_LOGI(TAG, "going to update controls"); 
            update_controls(voiceAddress,aDSP);  
            ESP_LOGI(TAG, "going to set frequency 2"); 
            
-           aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress,220.0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,220.0);
            ESP_LOGI(TAG, "going to set gate ON for MAIN voice"); 
-         aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,1.0);
+         aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1.0);
            //vTaskDelay(500 / portTICK_PERIOD_MS); 
            nbDelay(500); 
            ESP_LOGI(TAG, "going to set gate OFF for MAIN voice");            
-          aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,0);
+          aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
            //vTaskDelay(5000 / portTICK_PERIOD_MS);
            nbDelay(1000); 
 
            
            
            //update_controls(voiceAddress,aDSP);  
-           // aDSP->setVoiceParamValue("/sawtooth_synth/freq",freqs[(scale-4) * 12 + note]);
+           // aDSP->setVoiceParamValue("/WaveSynth_FX/freq",freqs[(scale-4) * 12 + note]);
 
-           //aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress,440.0);
-   //        aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,1.0);
+           //aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,440.0);
+   //        aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1.0);
            //vTaskDelay(100 / portTICK_PERIOD_MS);          
            nbDelay(100); 
-    //       aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,0);
+    //       aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
            //vTaskDelay(100 / portTICK_PERIOD_MS);
            nbDelay(100); 
            //adding subsequent short notes does not work!
            //the strange thing is that when the third note is added, also the two first ones do not fire .....
           
-           aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress,440.0);
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,1.0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,440.0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1.0);
            //vTaskDelay(100 / portTICK_PERIOD_MS); 
  nbDelay(100);            
-      aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,0);
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
            //vTaskDelay(100 / portTICK_PERIOD_MS);
             nbDelay(100);           
            
            
-           aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress,440.0);
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,1);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,440.0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1);
            //vTaskDelay(100 / portTICK_PERIOD_MS);          
             nbDelay(100); 
-          aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,0);
+          aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
          
             nbDelay(100);            
                       
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,1);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1);
            //vTaskDelay(100 / portTICK_PERIOD_MS);          
             nbDelay(100); 
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
            //vTaskDelay(100 / portTICK_PERIOD_MS);
             nbDelay(100); 
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,1);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1);
            //vTaskDelay(100 / portTICK_PERIOD_MS);          
             nbDelay(100); 
-          aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,0);
+          aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
       
             nbDelay(100); 
            
@@ -1270,7 +1276,7 @@ uintptr_t bg_voiceAddress;
  if (testpoly){          
            //vTaskDelay(500 / portTICK_PERIOD_MS);   
            ESP_LOGI(TAG, "going to set gate OFF for BACKGROUND voice");            
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",bg_voiceAddress,0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",bg_voiceAddress,0);
            //vTaskDelay(500 / portTICK_PERIOD_MS); 
  nbDelay(100); }
            
@@ -1278,10 +1284,10 @@ uintptr_t bg_voiceAddress;
         }
         ESP_LOGI(TAG, "end of sequence");
         //gently delete the Voice
-           aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress,0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress,0);
            aDSP->deleteVoice(voiceAddress); //delete main voice
   if (testpoly){
- aDSP->setVoiceParamValue("/sawtooth_synth/gain",bg_voiceAddress,0);     
+ aDSP->setVoiceParamValue("/WaveSynth_FX/gain",bg_voiceAddress,0);     
   aDSP->deleteVoice(bg_voiceAddress); } //delete background voice
 };
 
@@ -1295,17 +1301,17 @@ void play_poly_rtttl(char *p, DspFaust * aDSP)
  
  
   uintptr_t voiceAddress = aDSP->newVoice(); //create main voice  
-  aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress,1);
+  aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress,1);
  
  /* FCKXFCKX
  update_controls(voiceAddress,aDSP);
  
-  aDSP->setVoiceParamValue("/sawtooth_synth/lfoFreq",voiceAddress,lfoFreq);
-  aDSP->setVoiceParamValue("/sawtooth_synth/lfoDepth",voiceAddress,lfoDepth); 
-  aDSP->setVoiceParamValue("/sawtooth_synth/A",voiceAddress,synthA);
-  aDSP->setVoiceParamValue("/sawtooth_synth/D",voiceAddress,synthD); 
-  aDSP->setVoiceParamValue("/sawtooth_synth/S",voiceAddress,synthS); 
-  aDSP->setVoiceParamValue("/sawtooth_synth/R",voiceAddress,synthR); 
+  aDSP->setVoiceParamValue("/WaveSynth_FX/lfoFreq",voiceAddress,lfoFreq);
+  aDSP->setVoiceParamValue("/WaveSynth_FX/lfoDepth",voiceAddress,lfoDepth); 
+  aDSP->setVoiceParamValue("/WaveSynth_FX/A",voiceAddress,synthA);
+  aDSP->setVoiceParamValue("/WaveSynth_FX/D",voiceAddress,synthD); 
+  aDSP->setVoiceParamValue("/WaveSynth_FX/S",voiceAddress,synthS); 
+  aDSP->setVoiceParamValue("/WaveSynth_FX/R",voiceAddress,synthR); 
   
   */
   
@@ -1466,8 +1472,8 @@ void play_poly_rtttl(char *p, DspFaust * aDSP)
       aDSP->setParamValue("/simpleSynt_Analog/gate",1);     
 */
 
-      aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress,freqs[(scale-4) * 12 + note]);
-      aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,1); 
+      aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,freqs[(scale-4) * 12 + note]);
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1); 
 
       nbDelay(duration);
       //vTaskDelay(duration / portTICK_PERIOD_MS);
@@ -1475,7 +1481,7 @@ void play_poly_rtttl(char *p, DspFaust * aDSP)
       //DSP->setParamValue("gain",0);
       //aDSP->setParamValue("/simpleSynt_Analog/gate",0); 
       // aDSP->setParamValue("/elecGuitar/gate",0);
-      aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,0); 
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0); 
      // tone1.play(notes[(scale - 4) * 12 + note]);
       
      //FCKXFCKX update_controls(voiceAddress,aDSP);  //later do this in a freertos task 
@@ -1497,7 +1503,7 @@ void play_poly_rtttl(char *p, DspFaust * aDSP)
   }  //while (p*)
         printf("End of song: \n");
       //set gain to zero for gently swithing off this voice.....
-      aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress,0);
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress,0);
     
         aDSP->deleteVoice(voiceAddress); //delete main voice
   } //song player    
@@ -1507,7 +1513,7 @@ void play_poly_rtttl(char *p, DspFaust * aDSP)
 
 void play_poly_rtttl_chords(char *p, DspFaust * aDSP){
  // aDSP->allNotesOff(); 
- static const char *TAG = "PLAY_POLY_RTTL_CHORDS";
+ static const char *TAG = "PLAY_POLY_RTTTL_CHORDS";
  ESP_LOGW(TAG,"playing songbuffer");
 
  int chord[] = {1,2,4, 9};
@@ -1525,7 +1531,7 @@ void play_poly_rtttl_chords(char *p, DspFaust * aDSP){
 aDSP->allNotesOff(false); //delete main voice
   for (unsigned int chordNote = 0; chordNote < sizeof(chord)/4; chordNote++){       
       voiceAddress[chordNote] = aDSP->newVoice(); //create main voice};  
-      aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress[chordNote],1);
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress[chordNote],1);
         };
 */
   
@@ -1595,8 +1601,7 @@ aDSP->allNotesOff(false); //delete main voice
 
 
   // now begin note loop
-  while(*p)
-  {
+  while(*p)  {
     // first, get note duration, if available
     num = 0;
     while(isdigit(*p))
@@ -1671,11 +1676,8 @@ aDSP->allNotesOff(false); //delete main voice
 
     // now play the note
 
-    if(note)
-    {
-       
+    if(note){
       printf("Playing: note %c\n", note);
-
       /*
       aDSP->setParamValue("/elecGuitar/midi/freq",freqs[(scale-4) * 12 + note]);
       aDSP->setParamValue("/elecGuitar/gate",1);
@@ -1688,25 +1690,21 @@ aDSP->allNotesOff(false); //delete main voice
 
        for (unsigned int chordNote = 0; chordNote < sizeof(chord)/4; chordNote++){
           ESP_LOGW(TAG,"create  %d ",sizeof(chord)/4 ); 
-      voiceAddress[chordNote] = aDSP->newVoice(); //create main voice};  
- 
-  aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress[chordNote],freqs[(scale-4) * 12 + note+ chord[chordNote] ]);
-
-       aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress[chordNote],1);   
-           
-           aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress[chordNote],1); 
-           
-       };
+          voiceAddress[chordNote] = aDSP->newVoice(); //create main voice};  
+          aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress[chordNote],freqs[(scale-4) * 12 + note+ chord[chordNote] ]);
+          aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress[chordNote],1);           
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress[chordNote],1); 
+            };
 /*
 
-      aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress,freqs[(scale-4) * 12 + note]);
-      aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,1); 
+      aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress,freqs[(scale-4) * 12 + note]);
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,1); 
 
-      aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress2,freqs[(scale-4) * 12 + note+chord1]);
-      aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress2,1); 
+      aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress2,freqs[(scale-4) * 12 + note+chord1]);
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress2,1); 
       
-      aDSP->setVoiceParamValue("/sawtooth_synth/freq",voiceAddress3,freqs[(scale-4) * 12 + note+chord2]);
-      aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress3,1); 
+      aDSP->setVoiceParamValue("/WaveSynth_FX/freq",voiceAddress3,freqs[(scale-4) * 12 + note+chord2]);
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress3,1); 
   */    
       nbDelay(duration);
       //vTaskDelay(duration / portTICK_PERIOD_MS);
@@ -1716,14 +1714,14 @@ aDSP->allNotesOff(false); //delete main voice
       // aDSP->setParamValue("/elecGuitar/gate",0);
       
             for (unsigned int chordNote = 0; chordNote < sizeof(chord)/4; chordNote++){
-                aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress[chordNote],0);
+                aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress[chordNote],0);
                 
             };
       
       /*
-      aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress,0);
-      aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress2,0); 
-      aDSP->setVoiceParamValue("/sawtooth_synth/gate",voiceAddress3,0);   
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress,0);
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress2,0); 
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gate",voiceAddress3,0);   
       */  
   // tone1.play(notes[(scale - 4) * 12 + note]);
       
@@ -1752,16 +1750,16 @@ aDSP->allNotesOff(false); //delete main voice
       /*
        for (unsigned int chordNote = 0; chordNote < sizeof(chord)/4; chordNote++){
            
-           aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress[chordNote],0);
+           aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress[chordNote],0);
              aDSP->deleteVoice(voiceAddress[chordNote]); //delete main voice
            
        };
       */
       
       /*
-      aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress,0);
-          aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress2,0);
-                aDSP->setVoiceParamValue("/sawtooth_synth/gain",voiceAddress3,0);
+      aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress,0);
+          aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress2,0);
+                aDSP->setVoiceParamValue("/WaveSynth_FX/gain",voiceAddress3,0);
         aDSP->deleteVoice(voiceAddress); //delete main voice
         aDSP->deleteVoice(voiceAddress2); //delete voice2
        aDSP->deleteVoice(voiceAddress3); //delete voice3
@@ -1781,12 +1779,12 @@ aDSP->allNotesOff(false); //delete main voice
 void play_mono_rtttl(char *p, DspFaust * aDSP)
 {
  // aDSP->allNotesOff();  
-  aDSP->setParamValue("/sawtooth_synth/lfoFreq",lfoFreq);
-  aDSP->setParamValue("/sawtooth_synth/lfoDepth",lfoDepth); 
-  aDSP->setParamValue("/sawtooth_synth/A",synthA);
-  aDSP->setParamValue("/sawtooth_synth/D",synthD); 
-  aDSP->setParamValue("/sawtooth_synth/S",synthS); 
-  aDSP->setParamValue("/sawtooth_synth/R",synthR); 
+  aDSP->setParamValue("/WaveSynth_FX/lfoFreq",lfoFreq);
+  aDSP->setParamValue("/WaveSynth_FX/lfoDepth",lfoDepth); 
+  aDSP->setParamValue("/WaveSynth_FX/A",synthA);
+  aDSP->setParamValue("/WaveSynth_FX/D",synthD); 
+  aDSP->setParamValue("/WaveSynth_FX/S",synthS); 
+  aDSP->setParamValue("/WaveSynth_FX/R",synthR); 
   // Absolutely no error checking in here
   unsigned char default_dur = 4;
   unsigned char default_oct = 6;
@@ -1947,8 +1945,8 @@ void play_mono_rtttl(char *p, DspFaust * aDSP)
       aDSP->setParamValue("/simpleSynt_Analog/gate",1);     
 */
 
-      aDSP->setParamValue("/sawtooth_synth/freq",freqs[(scale-4) * 12 + note]);
-      aDSP->setParamValue("/sawtooth_synth/gate",1); 
+      aDSP->setParamValue("/WaveSynth_FX/freq",freqs[(scale-4) * 12 + note]);
+      aDSP->setParamValue("/WaveSynth_FX/gate",1); 
 
       nbDelay(duration);
       //vTaskDelay(duration / portTICK_PERIOD_MS);
@@ -1956,7 +1954,7 @@ void play_mono_rtttl(char *p, DspFaust * aDSP)
       //DSP->setParamValue("gain",0);
     //  aDSP->setParamValue("/simpleSynt_Analog/gate",0); 
         // aDSP->setParamValue("/elecGuitar/gate",0);
-        aDSP->setParamValue("/sawtooth_synth/gate",0); 
+        aDSP->setParamValue("/WaveSynth_FX/gate",0); 
      // tone1.play(notes[(scale - 4) * 12 + note]);
       
       update_controls(0,aDSP);  //later do this in a freertos task 
@@ -2232,7 +2230,7 @@ static void call_faust_api(esp_mqtt_event_handle_t event){
     //the following parts fit with the commands for UI elements that have an "address" string defined by the DspFaust API
     //these can be handled in a more generic way, using the functions of in the DspFaust API. See: call_auto_faust_api
     //special attention for the path ending with /gate. This is the only one using a conversion to int i.s.o. float.
-    if (strncmp(event->topic, "/Polyphonic/Voices/sawtooth_synth/A",strlen("/Polyphonic/Voices/sawtooth_synth/A")) == 0) {
+    if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/A",strlen("/Polyphonic/Voices/WaveSynth_FX/A")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
              synthA = atof(event->data);
@@ -2244,68 +2242,68 @@ static void call_faust_api(esp_mqtt_event_handle_t event){
                           
              //ESP_LOGI(TAG,"...to be implemented<<<"); 
     } else
-    if (strncmp(event->topic, "/Polyphonic/Voices/sawtooth_synth/D",strlen("/Polyphonic/Voices/sawtooth_synth/D")) == 0) {
+    if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/D",strlen("/Polyphonic/Voices/WaveSynth_FX/D")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data);
              synthD = atof(event->data); 
              DSP->setParamValue(synthDBaseId+1,synthD);             
              //ESP_LOGI(TAG,"...to be implemented<<<"); 
     } else     
-    if (strncmp(event->topic, "/Polyphonic/Voices/sawtooth_synth/R",strlen("/Polyphonic/Voices/sawtooth_synth/R")) == 0) {
+    if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/R",strlen("/Polyphonic/Voices/WaveSynth_FX/R")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data);
              synthR = atof(event->data);
              DSP->setParamValue(synthRBaseId+1,synthR);               
              //ESP_LOGI(TAG,"...to be implemented<<<"); 
     } else     
-    if (strncmp(event->topic, "/Polyphonic/Voices/sawtooth_synth/S",strlen("/Polyphonic/Voices/sawtooth_synth/S")) == 0) {
+    if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/S",strlen("/Polyphonic/Voices/WaveSynth_FX/S")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
              synthS = atof(event->data);
              DSP->setParamValue(synthSBaseId+1,synthS);               
              //ESP_LOGI(TAG,"...to be implemented<<<"); 
     } else     
-    if (strncmp(event->topic, "/Polyphonic/Voices/sawtooth_synth/bend",strlen("/Polyphonic/Voices/sawtooth_synth/bend")) == 0) {
+    if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/bend",strlen("/Polyphonic/Voices/WaveSynth_FX/bend")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
              bend = atof(event->data); 
              DSP->setParamValue(bendBaseId+1,bend);  
     } else  
-    if (strncmp(event->topic, "/Polyphonic/Voices/sawtooth_synth/freq",strlen("/Polyphonic/Voices/sawtooth_synth/freq")) == 0) {
+    if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/freq",strlen("/Polyphonic/Voices/WaveSynth_FX/freq")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data);
              synthFreq = atof(event->data);              
              ESP_LOGI(TAG,"...to be implemented<<<"); 
              
     } else
-    if (strncmp(event->topic, "/Polyphonic/Voices/sawtooth_synth/gain",strlen("/Polyphonic/Voices/sawtooth_synth/gain")) == 0) {
+    if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/gain",strlen("/Polyphonic/Voices/WaveSynth_FX/gain")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data);
              gain = atof(event->data);
              DSP->setParamValue(gainBaseId+1,gain);    //does not work???? 
              ESP_LOGI(TAG,"...to be implemented<<<");             
     } else  
-    if (strncmp(event->topic, "/Polyphonic/Voices/sawtooth_synth/gate",strlen("/Polyphonic/Voices/sawtooth_synth/gate")) == 0) {
+    if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/gate",strlen("/Polyphonic/Voices/WaveSynth_FX/gate")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
              gate= atoi(event->data); //must convert from int  !! ??
              ESP_LOGI(TAG,"...to be implemented<<<"); 
     } else  
-    if (strncmp(event->topic, "/Polyphonic/Voices/sawtooth_synth/lfoFreq",strlen("/Polyphonic/Voices/sawtooth_synth/lfoFreq")) == 0) {
+    if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/lfoFreq",strlen("/Polyphonic/Voices/WaveSynth_FX/lfoFreq")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data);
              lfoFreq = atof(event->data); 
              DSP->setParamValue(lfoFreqBaseId+1,lfoFreq);              
              //ESP_LOGI(TAG,"...to be implemented<<<"); 
     } else  
-    if (strncmp(event->topic, "/Polyphonic/Voices/sawtooth_synth/lfoDepth",strlen("/Polyphonic/Voices/sawtooth_synth/lfoDepth")) == 0) {
+    if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/lfoDepth",strlen("/Polyphonic/Voices/WaveSynth_FX/lfoDepth")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data);
              lfoDepth = atof(event->data);   
              DSP->setParamValue(lfoDepthBaseId+1,lfoDepth);              
              //ESP_LOGI(TAG,"...to be implemented<<<"); 
     } else 
-    if (strncmp(event->topic, "/Polyphonic/Voices/sawtooth_synth/waveTravel",strlen("/Polyphonic/Voices/sawtooth_synth/waveTravel")) == 0) {
+    if (strncmp(event->topic, "/Polyphonic/Voices/WaveSynth_FX/waveTravel",strlen("/Polyphonic/Voices/WaveSynth_FX/waveTravel")) == 0) {
              ESP_LOGI(TAG,"COMMAND:%.*s\r ", event->topic_len, event->topic);
              ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data);
              waveTravel = atof(event->data);
@@ -2688,6 +2686,8 @@ const int32_t xMaxExpiryCountBeforeStopping = 10;
 * experimental code for using software timers
 */
 bool expired;
+bool metronome_keyOn_expired;
+bool metronome_keyOff_expired;
  
 void myDelayTimerCallback( TimerHandle_t pxTimer )
 {
@@ -2704,10 +2704,10 @@ void non_blocking_Delay( int myTicks){
 //create timer
         ESP_LOGI(TAG, "Creating delay timer");
         expired = false;         
-        delayTimer = xTimerCreate(    "Timer",       // Just a text name, not used by the kernel.
-                                         myTicks  ,   // The timer period in ticks.
-                                         pdFALSE,    // The timers will auto-reload themselves when they expire.
-                                         ( void * ) 1,  // Assign each timer a unique id equal to its array index.
+        delayTimer = xTimerCreate(    "Timer",                // Just a text name, not used by the kernel.
+                                         myTicks  ,           // The timer period in ticks.
+                                         pdFALSE,             // The timer will not auto-reload itself when it expires.
+                                         ( void * ) 1,        // Assign each timer a unique id equal to its array index.
                                          myDelayTimerCallback // Each timer calls the same callback when it expires.
                                      );
 
@@ -2737,24 +2737,153 @@ while(!expired) {
 
 
 
+
+uintptr_t metronomeVoiceAddress;
+
+void metronome_CB( TimerHandle_t pxTimer )
+{
+    
+    
+    static const char *TAG = "METRONOME_OFF_CB";   
+ESP_LOGI(TAG, "metronomeOffTimer_CALLBACK: expired!");
+
+
+
+
+int32_t timerId = ( int32_t ) pvTimerGetTimerID( pxTimer );
+
+if (timerId == 1) {
+          //keyOn
+
+metronomeVoiceAddress = DSP->newVoice(); //create main voice};
+DSP->setVoiceParamValue("/WaveSynth_FX/A",metronomeVoiceAddress,0.01);
+DSP->setVoiceParamValue("/WaveSynth_FX/D",metronomeVoiceAddress,2);
+DSP->setVoiceParamValue("/WaveSynth_FX/R",metronomeVoiceAddress,2);
+DSP->setVoiceParamValue("/WaveSynth_FX/S",metronomeVoiceAddress,0.2);
+
+          
+          DSP->setVoiceParamValue("/WaveSynth_FX/freq",metronomeVoiceAddress,50);
+          DSP->setVoiceParamValue("/WaveSynth_FX/gain",metronomeVoiceAddress,1);           
+          DSP->setVoiceParamValue("/WaveSynth_FX/gate",metronomeVoiceAddress,1); 
+
+} else {  if (timerId == 2) {
+          //keyOff
+
+          DSP->setVoiceParamValue("/WaveSynth_FX/gain",metronomeVoiceAddress,0);           
+          DSP->setVoiceParamValue("/WaveSynth_FX/gate",metronomeVoiceAddress,0); 
+          DSP->deleteVoice(metronomeVoiceAddress);
+} }
+
+
+//xTimerStop( pxTimer, 0 );
+//metronome_keyOff_expired = true;    
+
+ }
+
+
+
+
+
+
+
+void start_metronome(int metronomeMS){
+  static const char *TAG = "METRONOME_STARTER";   
+//non_blocking delay based on freertos timer
+ TimerHandle_t keyOnTimer;
+TimerHandle_t keyOffTimer;
+
+//create timers
+        ESP_LOGI(TAG, "Creating metronome timer");
+        metronome_keyOn_expired = false;         
+        keyOnTimer = xTimerCreate(    "metronomeONTimer",            // Just a text name, not used by the kernel.
+                                         metronomeMS/portTICK_PERIOD_MS  ,           // The timer period in ticks.
+                                         pdTRUE,             // The timer will not auto-reload itself when it expires.
+                                         ( void * ) 1,        // Assign each timer a unique id equal to its array index.
+                                         metronome_CB  // Each timer calls the same callback when it expires.
+                                     );
+
+         if( keyOnTimer == NULL )
+         {
+             // The timer was not created.
+             ESP_LOGI(TAG, "OnTimer was not created!");
+         }
+         else
+         {
+             // Start the timer.  No block time is specified, and even if one was
+             // it would be ignored because the scheduler has not yet been
+             // started.
+             ESP_LOGI(TAG, "metronomeOnTimer to be started!");
+             if( xTimerStart( keyOnTimer, 0 ) != pdPASS )
+             {
+                 // The timer could not be set into the Active state.
+                 ESP_LOGI(TAG, "metronomeTimer could not be set into the Active state");
+             }
+         }
+         
+         
+         metronome_keyOff_expired = false;         
+        keyOffTimer = xTimerCreate(    "metronomeOFFTimer",            // Just a text name, not used by the kernel.
+                                         (metronomeMS+10)/portTICK_PERIOD_MS  ,           // The timer period in ticks.
+                                         pdTRUE,             // The timer will not auto-reload itself when it expires.
+                                         ( void * ) 2,        // Assign each timer a unique id equal to its array index.
+                                         metronome_CB  // Each timer calls the same callback when it expires.
+                                     );
+
+         if( keyOffTimer == NULL )
+         {
+             // The timer was not created.
+             ESP_LOGI(TAG, "OffTimer was not created!");
+         }
+         else
+         {
+             // Start the timer.  No block time is specified, and even if one was
+             // it would be ignored because the scheduler has not yet been
+             // started.
+             ESP_LOGI(TAG, "metronomeOFFTimer to be started!");
+             if( xTimerStart( keyOffTimer, 0 ) != pdPASS )
+             {
+                 // The timer could not be set into the Active state.
+                 ESP_LOGI(TAG, "metronomeTimer could not be set into the Active state");
+             }
+         }        
+         
+         
+         
+         
+         
+//stay in non-blocking delay loop until expired  NOT APPLICABLE TO METRONOME !!!!
+/*
+while(!expired) {
+    vTaskDelay(1);
+}    
+*/    
+    
+    
+    
+    
+}; //start_metronome
+
+
 void app_main(void)
 {
     
     static const char *TAG = "APP_MAIN";
 
+ 
 
     esp_log_level_set("*", ESP_LOG_VERBOSE);
     esp_log_level_set("APP_MAIN", ESP_LOG_INFO);
     
-    //esp_log_level_set("DSPFAUST", ESP_LOG_ERROR);
-    esp_log_level_set("DSPFAUST", ESP_LOG_VERBOSE);
-    
+    esp_log_level_set("DSPFAUST", ESP_LOG_ERROR);
+    //esp_log_level_set("DSPFAUST", ESP_LOG_VERBOSE);
+    esp_log_level_set("PLAY_POLY_RTTTL_CHORDS", ESP_LOG_ERROR);
     esp_log_level_set("I2S", ESP_LOG_ERROR);
     
-    
+    esp_log_level_set("AUTO_API", ESP_LOG_ERROR);
    
-    esp_log_level_set("MQTT_CLIENT", ESP_LOG_INFO);
- /*   esp_log_level_set("MQTT_FAUST", ESP_LOG_WARN);
+    esp_log_level_set("MQTT_CLIENT", ESP_LOG_DEBUG);
+  esp_log_level_set("MQTT_FAUST", ESP_LOG_ERROR);
+/*
     esp_log_level_set("MQTT_FAUST_API", ESP_LOG_WARN);
     
     esp_log_level_set("MQTT_EXAMPLE", ESP_LOG_VERBOSE);
@@ -2809,8 +2938,8 @@ void app_main(void)
     ESP_LOGW(TAG,"WM8978 audio codec initialized");
     
  //   YOU MUST USE faust2api API calls
-    int SR = 48000;
-    int BS = 32; //was 8
+    int SR = 9600;  //48000 
+    int BS = 32; //was 8   //32
     nbDelay(100);
     DSP = new DspFaust(SR,BS); 
     //nbDelay(100); //doesn't help
@@ -2828,7 +2957,8 @@ void app_main(void)
             ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
             //send JSONUI to Nodered
             msg_id = esp_mqtt_client_publish(mqtt_client, "/faust/jsonui", DSP->getJSONUI(), 0, 0, 0);  //to be implemented: publish the UI by remote request
-            } else {
+
+          } else {
                  ESP_LOGW(TAG,"MQTT client not available"); 
             }
             
@@ -2858,7 +2988,12 @@ void app_main(void)
    ESP_LOGI(TAG,     "Name	State	Priority	High Water	Stack Number");
        vTaskList( TaskListBuffer);
        ESP_LOGI(TAG,"\n\n%s", TaskListBuffer); 
-    ESP_LOGI(TAG,"--------------------");   
+    ESP_LOGI(TAG,"--------------------"); 
+
+start_metronome(2000);
+
+
+
     while(1) {
             if (even) {
                 printf("\r                       ");
@@ -2868,7 +3003,7 @@ void app_main(void)
                  printf("\r                   ");
                  printf("\r>>>>>Loop TIME<<<<<");};
 
-  
+    
   
        
        while(play_flag){
@@ -2884,7 +3019,7 @@ void app_main(void)
              //how to update controls??  VERY PREF OUTSIDE THE PLAYER
        
                //play_keys(DSP);                 // OK clean ladder
-               play_keys_nb(DSP);              // OK with distortions
+     //  play_keys_nb(DSP);              // OK with distortions
                //play_keys2(DSP);                // NOK overlapping keys, hangs?            
 
 /* 
@@ -2898,8 +3033,10 @@ void app_main(void)
 * setVoiceParamValue path players
 */
              //play_setVoiceParam_path_nb(DSP);  //OK no distortions at all
-             // play_poly_rtttl(song, DSP);       //OK, clean responds to controls 
-  //>>>>>             play_poly_rtttl_chords(song, DSP);       //OK, clean responds to controls                                   
+              play_poly_rtttl(song, DSP);       //OK, clean responds to controls 
+          // test_fckx_sequencer_lib();
+       //    start_metronome(5000);
+         //  play_poly_rtttl_chords(song, DSP);       //OK, clean responds to controls                                   
                                                   
                   //play_poly_rtttl(songbuffer, DSP);         //not tested                         
              //play_setVoiceParam_path(DSP);        //OK clean responds to controls, not flawless
