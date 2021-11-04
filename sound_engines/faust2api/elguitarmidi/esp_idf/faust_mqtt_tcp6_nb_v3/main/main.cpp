@@ -2075,6 +2075,7 @@ static bool call_auto_faust_api(esp_mqtt_event_handle_t event) {  //return true 
          ESP_LOGD(TAG,"CHECKED ADDRESS: %s", DSP->getParamAddress(id) );
           if (strncmp(event->topic, DSP->getParamAddress(id),strlen(DSP->getParamAddress(id))) == 0) {    
              ESP_LOGD(TAG,"HIT!");
+             ESP_LOGD(TAG,"DATA:%.*s\r ", event->data_len, event->data);
              //how to make storage generic?  use array with indexid and values address names
              //MORE CHALLENGING: HOW TO MAKE (type dependent) CONVERSION GENERIC?  IS IT NECESSARY TO CONVERT???
              //OR DOES setParamValue accept one specific type??
@@ -2083,8 +2084,8 @@ static bool call_auto_faust_api(esp_mqtt_event_handle_t event) {  //return true 
              //so, let widgets send float values!!!!            
            //  someStorage = atof(event->data);     //local storage (to be used as flag for the GUI)  SO someStorage must always be float????
             // DSP->setParamValue(id,someStorage);  //send to DSP
-            
-            DSP->setParamValue(id,atof(event->data));
+            if (id > 0) {
+            DSP->setParamValue(id,atof(event->data)); } else {DSP->allNotesOff(false);};
             paramHandled = true;
              //try to prevent usage of additional local storage parameters!
              //instead set and get the parameter values with DSP->set and DSP->get functions. These already exist in DspFaust!             
@@ -2688,12 +2689,23 @@ const int32_t xMaxExpiryCountBeforeStopping = 10;
 bool expired;
 bool metronome_keyOn_expired;
 bool metronome_keyOff_expired;
+bool beat_expired;
+int beatCount;
+int measureCount;
+bool metronomeOn = true;
+int timesig_num; 
+int timesig_denom;
+TimerHandle_t beatTimer;
+
+uintptr_t metronomeVoiceAddress;
  
 void myDelayTimerCallback( TimerHandle_t pxTimer )
 {
 ESP_LOGI(TAG, "delayTimer_CALLBACK: expired!");    
 xTimerStop( pxTimer, 0 );
-expired = true;    
+expired = true;  
+xTimerDelete(pxTimer, 0);  //delete the timer immediately to prevent stack overflow
+                           //this is useful for these timers that are created randomly  
 
  }
 
@@ -2736,9 +2748,197 @@ while(!expired) {
 
 
 
+void metronome_keyOff_CB( TimerHandle_t pxTimer )
+{ 
+    static const char *TAG = "METRONOME_KEYOFF_CB";   
+    ESP_LOGI(TAG, "metronomeOffTimer_CALLBACK: expired!");
+
+    int32_t timerId = ( int32_t ) pvTimerGetTimerID( pxTimer );
+
+    //keyOff
+    DSP->setVoiceParamValue("/WaveSynth_FX/gain",metronomeVoiceAddress,0);           
+    DSP->setVoiceParamValue("/WaveSynth_FX/gate",metronomeVoiceAddress,0); 
+    DSP->deleteVoice(metronomeVoiceAddress);
+ 
+
+    //xTimerStop( pxTimer, 0 );
+    //metronome_keyOff_expired = true;    
+ }
 
 
-uintptr_t metronomeVoiceAddress;
+void start_metronome_keyOff(int metronomeMS){
+  static const char *TAG = "START_METRONOME_KEYOFF";   
+//non_blocking delay based on freertos timer
+
+TimerHandle_t keyOffTimer;
+
+//create timer
+//later: create it only once, but start it when desired
+
+     
+        metronome_keyOff_expired = false;         
+        keyOffTimer = xTimerCreate(    "metronome_key_OffTimer",            // Just a text name, not used by the kernel.
+                                         (metronomeMS+10)/portTICK_PERIOD_MS  ,           // The timer period in ticks.
+                                         pdFALSE,             // The timer will not auto-reload itself when it expires.
+                                         ( void * ) 2,        // Assign each timer a unique id equal to its array index.
+                                         metronome_keyOff_CB  // Each timer calls the same callback when it expires.
+                                     );
+
+         if( keyOffTimer == NULL )
+         {
+             // The timer was not created.
+             ESP_LOGI(TAG, "OffTimer was not created!");
+         }
+         else
+         {
+             // Start the timer.  No block time is specified, and even if one was
+             // it would be ignored because the scheduler has not yet been
+             // started.
+             ESP_LOGI(TAG, "metronomeOFFTimer to be started!");
+             if( xTimerStart( keyOffTimer, 0 ) != pdPASS )
+             {
+                 // The timer could not be set into the Active state.
+                 ESP_LOGI(TAG, "metronomeTimer could not be set into the Active state");
+             }
+         }        
+          
+         
+//stay in non-blocking delay loop until expired  NOT APPLICABLE TO METRONOME !!!!
+/*
+while(!expired) {
+    vTaskDelay(1);
+}    
+*/      
+    
+}; //start_metronome_keyOff
+
+
+
+
+void play_metronome(bool measureTick) {
+    float mF;
+    if (measureTick){mF = 200;} else {mF = 100;} ;
+    //keyOn for metronome;
+    metronomeVoiceAddress = DSP->newVoice(); //create main voice};
+    DSP->setVoiceParamValue("/WaveSynth_FX/A",metronomeVoiceAddress,0.01);
+    DSP->setVoiceParamValue("/WaveSynth_FX/D",metronomeVoiceAddress,2);
+    DSP->setVoiceParamValue("/WaveSynth_FX/R",metronomeVoiceAddress,2);
+    DSP->setVoiceParamValue("/WaveSynth_FX/S",metronomeVoiceAddress,0.2);
+
+              
+    DSP->setVoiceParamValue("/WaveSynth_FX/freq",metronomeVoiceAddress,mF);
+    DSP->setVoiceParamValue("/WaveSynth_FX/gain",metronomeVoiceAddress,0.2);           
+    DSP->setVoiceParamValue("/WaveSynth_FX/gate",metronomeVoiceAddress,1);   
+    //start keyOff timer for metronome
+    start_metronome_keyOff(50);
+    
+};
+
+
+
+void handle_beat(void){
+static const char *TAG = "HANDLE_BEAT %d, timesig_num";   
+beatCount = beatCount+1; 
+ESP_LOGI(TAG, "timesig_num %d ", timesig_num);
+
+int beatInMeasureCount =  beatCount % timesig_num;
+if (beatInMeasureCount == 0) {measureCount = measureCount + 1;};
+
+if (metronomeOn) {
+
+    play_metronome(beatInMeasureCount == 0);};
+ 
+
+ESP_LOGI(TAG, "beatCount %d  beatInMeasureCount %d  measureCount %d ", beatCount, beatInMeasureCount, measureCount);
+
+    
+};
+
+
+void beat_CB( TimerHandle_t pxTimer )
+{
+    
+    
+int32_t timerId = ( int32_t ) pvTimerGetTimerID( pxTimer );
+static const char *TAG = "BEAT_CB";   
+ESP_LOGI(TAG, "BEAT_CALLBACK: expired! timerId: %d", timerId);
+
+
+if (timerId == 1) {
+    ESP_LOGI(TAG, "timerId OK in beat_CB");
+    handle_beat();
+    
+    } 
+else {  
+    ESP_LOGI(TAG, "Unknown timerId in beat_CB");
+    }
+
+
+//xTimerStop( pxTimer, 0 );
+   
+
+ }
+
+void stop_beat(int ticksToWait){
+    
+        xTimerStop(beatTimer, ticksToWait);    
+    
+};
+
+void start_beat(float tempo,int timesig_num_in, int timesig_denom_in){
+static const char *TAG = "START_BEAT";   
+//non_blocking delay based on freertos timer
+
+beatCount = 0;
+measureCount = 0;
+timesig_num = timesig_num_in;  //these variables must be initialized somewhere else later
+timesig_denom = timesig_denom_in;
+if (beatTimer == NULL) {
+    //create timer
+    ESP_LOGI(TAG, "Creating beat timer");
+    beat_expired = false;      
+    beatTimer = xTimerCreate(        "beatTimer",            // Just a text name, not used by the kernel.
+                                     60*1000/tempo/portTICK_PERIOD_MS  ,           // The timer period in ticks.
+                                     pdTRUE,             // The timer will not auto-reload itself when it expires.
+                                     ( void * ) 1,        // Assign each timer a unique id equal to its array index.
+                                     beat_CB  // Each timer calls the same callback when it expires.
+                                  );
+    }
+
+ if(beatTimer == NULL )
+ {
+     // The timer was not created.
+     ESP_LOGI(TAG, "beatTimer was not created!");
+ }
+ else
+ {
+     // Start the timer.  No block time is specified, and even if one was
+     // it would be ignored because the scheduler has not yet been
+     // started.
+     ESP_LOGI(TAG, "beatTimer to be started!");
+     if( xTimerStart( beatTimer, 0 ) != pdPASS ) {
+         // The timer could not be set into the Active state.
+         ESP_LOGI(TAG, "beatTimer could not be set into the Active state");
+     }
+ }
+         
+         
+//stay in non-blocking delay loop until expired  NOT APPLICABLE TO METRONOME !!!!
+/*
+while(!expired) {
+    vTaskDelay(1);
+}    
+*/      
+    
+}; //start_beat
+
+
+
+
+
+
+
+
 
 void metronome_CB( TimerHandle_t pxTimer )
 {
@@ -2781,15 +2981,10 @@ DSP->setVoiceParamValue("/WaveSynth_FX/S",metronomeVoiceAddress,0.2);
  }
 
 
-
-
-
-
-
 void start_metronome(int metronomeMS){
   static const char *TAG = "METRONOME_STARTER";   
 //non_blocking delay based on freertos timer
- TimerHandle_t keyOnTimer;
+TimerHandle_t keyOnTimer;
 TimerHandle_t keyOffTimer;
 
 //create timers
@@ -2846,22 +3041,19 @@ TimerHandle_t keyOffTimer;
                  ESP_LOGI(TAG, "metronomeTimer could not be set into the Active state");
              }
          }        
-         
-         
-         
-         
+          
          
 //stay in non-blocking delay loop until expired  NOT APPLICABLE TO METRONOME !!!!
 /*
 while(!expired) {
     vTaskDelay(1);
 }    
-*/    
-    
-    
-    
+*/      
     
 }; //start_metronome
+
+
+
 
 
 void app_main(void)
@@ -2879,10 +3071,11 @@ void app_main(void)
     esp_log_level_set("PLAY_POLY_RTTTL_CHORDS", ESP_LOG_ERROR);
     esp_log_level_set("I2S", ESP_LOG_ERROR);
     
-    esp_log_level_set("AUTO_API", ESP_LOG_ERROR);
-   
-    esp_log_level_set("MQTT_CLIENT", ESP_LOG_DEBUG);
-  esp_log_level_set("MQTT_FAUST", ESP_LOG_ERROR);
+    esp_log_level_set("AUTO_API", ESP_LOG_VERBOSE);
+    esp_log_level_set("event", ESP_LOG_ERROR);  //MQTT event 
+    esp_log_level_set("MQTT_CLIENT", ESP_LOG_ERROR);
+    esp_log_level_set("MQTT_FAUST", ESP_LOG_ERROR);
+    
 /*
     esp_log_level_set("MQTT_FAUST_API", ESP_LOG_WARN);
     
@@ -2990,8 +3183,16 @@ void app_main(void)
        ESP_LOGI(TAG,"\n\n%s", TaskListBuffer); 
     ESP_LOGI(TAG,"--------------------"); 
 
-start_metronome(2000);
 
+FCKXSequence seq;
+
+ESP_LOGI(TAG,"-------seq defined-------------");
+ESP_LOGI(TAG,"fresh beat: %5.1f", seq.getTempo());
+seq.setTempo(55);
+ESP_LOGI(TAG,"user defined beat: %5.1f", seq.getTempo());
+
+//start_metronome(2000);
+start_beat(120,4,4);
 
 
     while(1) {
@@ -3033,7 +3234,7 @@ start_metronome(2000);
 * setVoiceParamValue path players
 */
              //play_setVoiceParam_path_nb(DSP);  //OK no distortions at all
-              play_poly_rtttl(song, DSP);       //OK, clean responds to controls 
+//>>>>>  play_poly_rtttl(song, DSP);       //OK, clean responds to controls 
           // test_fckx_sequencer_lib();
        //    start_metronome(5000);
          //  play_poly_rtttl_chords(song, DSP);       //OK, clean responds to controls                                   

@@ -62,6 +62,18 @@ static const char *TAG = "FCKX_SEQUENCER";
 */
 
 
+/*
+ void FCKXSequence::setBeat( int beatin ) {
+   beat = beatin;
+}
+int FCKXSequence::getBeat( void ) {
+   return beat;
+}
+*/
+
+
+
+
 
 
 

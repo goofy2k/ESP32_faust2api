@@ -1,0 +1,34 @@
+I (72351) wifi:bcn_timout,ap_probe_send_start
+
+I (95381) wifi:bcn_timout,ap_probe_send_start
+W (95381) wifi:m f probe req l=0
+
+I (95431) METRONOME_KEYOFF_CB: metronomeOffTimer_CALLBACK: expired!
+I (95861) BEAT_CB: BEAT_CALLBACK: expired! timerId: 1
+I (95861) BEAT_CB: timerId OK in beat_CB
+I (95861) HANDLE_BEAT %d, timesig_num: timesig_num 5
+I (95861) START_METRONOME_KEYOFF: metronomeOFFTimer to be started!
+I (95871) HANDLE_BEAT %d, timesig_num: beatCount 178  beatInMeasureCount 3  measureCount 35
+W (95881) wifi:m f probe req l=0
+
+I (95931) METRONOME_KEYOFF_CB: metronomeOffTimer_CALLBACK: expired!
+I (96361) BEAT_CB: BEAT_CALLBACK: expired! timerId: 1
+I (96361) BEAT_CB: timerId OK in beat_CB
+I (96361) HANDLE_BEAT %d, timesig_num: timesig_num 5
+I (96361) START_METRONOME_KEYOFF: OffTimer was not created!
+I (96371) HANDLE_BEAT %d, timesig_num: beatCount 179  beatInMeasureCount 4  measureCount 35
+W (96381) wifi:m f probe req l=0
+
+I (96861) BEAT_CB: BEAT_CALLBACK: expired! timerId: 1
+I (96861) BEAT_CB: timerId OK in beat_CB
+I (96861) HANDLE_BEAT %d, timesig_num: timesig_num 5
+I (96861) START_METRONOME_KEYOFF: OffTimer was not created!
+I (96871) HANDLE_BEAT %d, timesig_num: beatCount 180  beatInMeasureCount 0  measureCount 36
+W (96881) wifi:m f probe req l=0
+
+I (97361) BEAT_CB: BEAT_CALLBACK: expired! timerId: 1
+I (97361) BEAT_CB: timerId OK in beat_CB
+I (97361) HANDLE_BEAT %d, timesig_num: timesig_num 5
+I (97361) START_METRONOME_KEYOFF: OffTimer was not created!
+I (97371) HANDLE_BEAT %d, timesig_num: beatCount 181  beatInMeasureCount 1  measureCount 36
+W (97381) wifi:m f probe req l=0
