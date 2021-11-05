@@ -96,6 +96,8 @@ extern "C" {
 
 */
 
+
+/*
 //software timer parameters. See example in: https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos.html#timer-api
 #define NUM_TIMERS 1
 
@@ -106,6 +108,8 @@ TimerHandle_t xTimers[ NUM_TIMERS ];
 int32_t lExpireCounters[ NUM_TIMERS ] = { 0 };
 
 //timer callback to be defined just before main (OR should it be just before the sequencer procedure that uses it?
+
+*/
 
 int msg_id;
 
@@ -2699,6 +2703,8 @@ static esp_mqtt_client * mqtt_app_start(void){
 // associated timer expires, and stop the timer once the timer has expired
 // 10 times.
 */
+
+/*
 void vTimerCallback( TimerHandle_t pxTimer )
 {
 ESP_LOGI(TAG, "TIMER_CALLBACK");    
@@ -2722,9 +2728,9 @@ const int32_t xMaxExpiryCountBeforeStopping = 10;
     }
  }
 
-/*
-* experimental code for using software timers
 */
+
+
 bool expired;
 bool metronome_keyOn_expired;
 bool metronome_keyOff_expired;
@@ -2889,8 +2895,8 @@ if (metronomeOn) {
  
 
 ESP_LOGI(TAG, "beatCount %d  beatInMeasureCount %d  measureCount %d ", beatCount, beatInMeasureCount, measureCount);
-
-    
+ESP_LOGI(TAG, "xTaskGetTickCount() %d ", xTaskGetTickCount());
+ESP_LOGI(TAG, "portTICK_PERIOD_MS %d ", portTICK_PERIOD_MS);    
 };
 
 
