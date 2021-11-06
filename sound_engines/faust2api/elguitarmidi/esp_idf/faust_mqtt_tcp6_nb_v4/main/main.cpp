@@ -111,6 +111,83 @@ int32_t lExpireCounters[ NUM_TIMERS ] = { 0 };
 
 */
 
+class MIDITimedBigMessage;
+
+//dummy message class
+class MIDITimedBigMessage //: public MIDIBigMessage
+{
+public:
+    char value [3];
+    //
+    // Constructors
+    //
+
+    MIDITimedBigMessage();
+
+};
+
+
+class MIDIQueue
+{
+public:
+    MIDIQueue ( int num_msgs );
+    virtual ~MIDIQueue();
+
+    void Clear();
+
+    bool CanPut() const;
+
+    bool CanGet() const;
+
+    bool IsFull() const
+    {
+        return !CanPut();
+    }
+
+
+    void Put ( const MIDITimedBigMessage &msg )
+    {
+        buf[next_in] = msg;
+        next_in = ( next_in + 1 ) % bufsize;
+    }
+
+    MIDITimedBigMessage Get() const
+    {
+        return MIDITimedBigMessage ( buf[next_out] );
+    }
+
+    void Next()
+    {
+        next_out = ( next_out + 1 ) % bufsize;
+    }
+
+    const MIDITimedBigMessage *Peek() const
+    {
+        return &buf[next_out];
+    }
+
+protected:
+    MIDITimedBigMessage *buf;
+    int bufsize;
+    volatile int next_in;
+    volatile int next_out;
+};
+
+
+
+MIDIQueue::MIDIQueue ( int num_msgs )
+    :
+    buf ( new MIDITimedBigMessage[ num_msgs ] ),
+    bufsize ( num_msgs ),
+    next_in ( 0 ),
+    next_out ( 0 )
+{
+}
+
+
+MIDIQueue myqueue(10); //create queue of 10 msgs...
+
+
 int msg_id;
 
 //audio codec parameters WM8978 
@@ -163,8 +240,13 @@ char * songbuffer = "Bond:d=4,o=5,b=80:32p,16c#6,32d#6,32d#6,16d#6,8d#6,16c#6,16
 ;
 
 bool play_flag = true;
-int poly = 0; //ofset for 
+int poly = 0; //ofset for
 
+unsigned short int play_mode = 0x80;
+unsigned short int record_mode = 0x40;
+unsigned short int metronome_mode = 0x20; 
+ 
+unsigned short int seq_mode = play_mode + record_mode + metronome_mode;//+ metronome_mode;
 
 //Prevent to use the following parameters. Use the generic Faust API functions instead!
 //parameter base ID's (WaveSynth FX), taken from API README.md
@@ -299,21 +381,30 @@ void wifi_init_sta(void)
 
 
 void execute_single_midi_command(DspFaust * aDSP, int mididata){  //uses propagateMidi
-static const char *TAG = "EXECUTE_SINGLE_COMMAND";
-             int data2 = mididata & 0x000000ff;
-             int data1 = (mididata & 0x0000ff00)>>8;
-             int status = (mididata & 0x00ff0000)>>16;
-             ESP_LOGI(TAG,"NUMERICAL VALUE:%u ", mididata);
-             ESP_LOGI(TAG,"STATUS: %u (0x%X)", status, status);
-             ESP_LOGI(TAG,"DATA1: %u (0x%X)", data1, data1);
-             ESP_LOGI(TAG,"DATA2: %u (0x%X)", data2, data2) ; //integers are 32 bits!!!!             
-             ESP_LOGI(TAG,"...to be implemented...(store msg and) call mqtt_midi"); 
-             int type = status & 0xf0;
-             int channel = status & 0x0f;
-             int count = 3;
-             int time = 0;
-             aDSP->propagateMidi(count, time, type, channel, data1, data2);
-
+    static const char *TAG = "EXECUTE_SINGLE_COMMAND";
+    int data2 = mididata & 0x000000ff;
+    int data1 = (mididata & 0x0000ff00)>>8;
+    int status = (mididata & 0x00ff0000)>>16;
+    ESP_LOGI(TAG,"NUMERICAL VALUE:%u ", mididata);
+    ESP_LOGI(TAG,"STATUS: %u (0x%X)", status, status);
+    ESP_LOGI(TAG,"DATA1: %u (0x%X)", data1, data1);
+    ESP_LOGI(TAG,"DATA2: %u (0x%X)", data2, data2) ; //integers are 32 bits!!!!             
+    ESP_LOGI(TAG,"...to be implemented...(store msg and) call mqtt_midi"); 
+    int type = status & 0xf0;
+    int channel = status & 0x0f;
+    int count = 3;
+    int time = 0;
+    ESP_LOGW(TAG,"seq_mode %d", seq_mode);
+    ESP_LOGW(TAG,"have a look at mode selection method!");
+    if (seq_mode && record_mode) {
+        //record
+        ESP_LOGW(TAG,"RECORD MIDI EVENT (in development)");
+    };
+     if (seq_mode && play_mode) {    
+        //and play
+         ESP_LOGW(TAG,"PLAY MIDI EVENT");
+        aDSP->propagateMidi(count, time, type, channel, data1, data2); 
+    };
 };
 
 
@@ -2323,42 +2414,6 @@ static void call_faust_api(esp_mqtt_event_handle_t event){
           }            
     }
 
-void handle_seqevent (esp_mqtt_event_handle_t event) {
-    
-static const char *TAG = "HANDLE_SEQEVENT";
-ESP_LOGW(TAG,"VALUE:%.*s\r ", event->data_len, event->data); 
-unsigned long long int midinum = atoi(event->data);
-printf("midinum: %llx\n",midinum); 
-
-if (!(midinum & 0x80)) {  //test if high bit is set in lowest byte  
-    
-unsigned int status = (midinum & 0xff0000)>>16;  
- 
-printf("status: %d\n", status);
-unsigned int byte2 =   (midinum & 0x00ff00)>>8;
-printf("byte2: %d\n", byte2);
-      
-unsigned int byte3 =   midinum & 0x0000ff;
-printf("byte3: %d\n", byte3);     
-};
-
-//depending on the MODE this info will now be played,  recorded ,  recorded+played
-
-//recording can be done in seq_time or loop_time and time stamping is done accordingly
-
-//FOR PLAYING:
-/*
-*  propagateMidi(int count, double time, int type, int channel, int data1, int data2)`
-* `count`: size of the message (1-3)
-* `time`: time stamp
-* `type`: message type (byte)
-* `channel`: channel number
-* `data1`: first data byte (should be `null` if `count<2`)
-* `data2`: second data byte (should be `null` if `count<3`)
-*/
-};
-
-
 int bool2int( bool mybool){
     int myint;
     if (mybool) {
@@ -2382,11 +2437,7 @@ static void call_faust_api2(esp_mqtt_event_handle_t event){
 
     if (strncmp(event->topic, "/faust/api2/gate",strlen("/faust/api2/gate")) == 0) {
             ESP_LOGI(TAG,"...to be implemented..."); 
-    } else 
-    if (strncmp(event->topic, "/faust/api2/seqevent",strlen("/faust/api2/seqevent")) == 0) {
-            //ESP_LOGI(TAG,"...to be implemented..."); 
-            handle_seqevent(event);
-    } else        
+    } else    
     if (strncmp(event->topic, "/wm8978/hpVolL",strlen("/wm8978/hpVolL")) == 0)        {
              hpVol_L = atoi(event->data); 
              wm8978.hpVolSet(hpVol_R, hpVol_L);                
@@ -2464,24 +2515,9 @@ static void call_faust_api2(esp_mqtt_event_handle_t event){
     if (strncmp(event->topic, "/faust/api2/midi/single",strlen("/faust/api2/midi/single")) == 0)        {
              //receive a single midi message 3 bytes, coded by Nodered as a 24 bit integer
              //ESP_LOGI(TAG,"VALUE:%.*s\r ", event->data_len, event->data);
-             int mididata = atoi(event->data);
-             int data2 = mididata & 0x000000ff;
-             int data1 = (mididata & 0x0000ff00)>>8;
-             int status = (mididata & 0x00ff0000)>>16;
-             int type = status & 0xf0;
-             int channel = status & 0x0f;
-             ESP_LOGI(TAG,"NUMERICAL VALUE:%u ", mididata);
-             ESP_LOGI(TAG,"STATUS: %u (0x%X)", status, status);
-             ESP_LOGI(TAG,"DATA1: %u (0x%X)", data1, data1);
-             ESP_LOGI(TAG,"DATA2: %u (0x%X)", data2, data2) ; //integers are 32 bits!!!!
-
-             ESP_LOGI(TAG,"TYPE: %u (0x%X)", type, type);
-             ESP_LOGI(TAG,"CHANNEL: %u (0x%X)", channel, channel);             
-             ESP_LOGI(TAG,"...to be implemented...(store msg and) call mqtt_midi"); 
-
-             //aDSP->propagateMidi(3, 0, type, channel, data1, data2);
-             update_all_controls(DSP);
-             execute_single_midi_command(DSP, mididata);
+             //int mididata = atoi(event->data);
+             execute_single_midi_command(DSP, atoi(event->data));
+            
              ESP_LOGI(TAG, "after single command");                          
              
              
@@ -2563,7 +2599,7 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event){
             
             break;
         case MQTT_EVENT_DISCONNECTED:
-            ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
+            ESP_LOGE(TAG, "MQTT_EVENT_DISCONNECTED");
             break;
 
         case MQTT_EVENT_SUBSCRIBED:
@@ -2597,7 +2633,9 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event){
                 }                  
             break;
         case MQTT_EVENT_ERROR:
-            ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
+            ESP_LOGE(TAG, "MQTT_EVENT_ERROR");
+            ESP_LOGE(TAG, "Switching allNotesOff to prevent future crash");
+            DSP->allNotesOff();
             break;
         default:
             ESP_LOGI(TAG, "Other event id:%d", event->event_id);
@@ -2737,7 +2775,7 @@ bool metronome_keyOff_expired;
 bool beat_expired;
 int beatCount;
 int measureCount;
-bool metronomeOn = true;
+//bool metronomeOn = true;
 int timesig_num; 
 int timesig_denom;
 TimerHandle_t beatTimer;
@@ -2865,11 +2903,13 @@ void play_metronome(bool measureTick) {
     if (measureTick){mF = 200;} else {mF = 100;} ;
     //keyOn for metronome;
     metronomeVoiceAddress = DSP->newVoice(); //create main voice};
+    //find a way to give the metronome voice it's own envelope
+    /*
     DSP->setVoiceParamValue("/WaveSynth_FX/A",metronomeVoiceAddress,0.01);
     DSP->setVoiceParamValue("/WaveSynth_FX/D",metronomeVoiceAddress,2);
     DSP->setVoiceParamValue("/WaveSynth_FX/R",metronomeVoiceAddress,2);
     DSP->setVoiceParamValue("/WaveSynth_FX/S",metronomeVoiceAddress,0.2);
-
+    */
               
     DSP->setVoiceParamValue("/WaveSynth_FX/freq",metronomeVoiceAddress,mF);
     DSP->setVoiceParamValue("/WaveSynth_FX/gain",metronomeVoiceAddress,0.2);           
@@ -2882,16 +2922,27 @@ void play_metronome(bool measureTick) {
 
 
 void handle_beat(void){
-static const char *TAG = "HANDLE_BEAT %d, timesig_num";   
+static const char *TAG = "HANDLE_BEAT";   
 beatCount = beatCount+1; 
 ESP_LOGI(TAG, "timesig_num %d ", timesig_num);
 
 int beatInMeasureCount =  beatCount % timesig_num;
 if (beatInMeasureCount == 0) {measureCount = measureCount + 1;};
 
-if (metronomeOn) {
+//metronome_mode = 0x00; //switches off metronome
+//the metronome plays, even if the corresponding bit in seq_mode is not set !!!
+    ESP_LOGW(TAG,"seq_mode %d", seq_mode);
+    ESP_LOGW(TAG,"have a look at mode selection method!");
+    ESP_LOGW(TAG,"seq_mode && metronome_mode %d", seq_mode && metronome_mode);
+     ESP_LOGW(TAG,"seq_mode & metronome_mode %d", seq_mode & metronome_mode);
 
-    play_metronome(beatInMeasureCount == 0);};
+// & represents bitwise AND,   && is logical AND       
+if (!(seq_mode & metronome_mode) == 0) {
+    play_metronome(beatInMeasureCount == 0);  //play metronome with a frequency depending on end of measure
+                                                 //doesn't need to be called
+                                                 //it is already running autonomously
+                                                 //NO, the call to metronome should be part of the beaat handler
+    };
  
 
 ESP_LOGI(TAG, "beatCount %d  beatInMeasureCount %d  measureCount %d ", beatCount, beatInMeasureCount, measureCount);
@@ -3279,7 +3330,7 @@ start_beat(120,4,4);
 * setVoiceParamValue path players
 */
              //play_setVoiceParam_path_nb(DSP);  //OK no distortions at all
-play_poly_rtttl(song, DSP);       //OK, clean responds to controls 
+//>>>play_poly_rtttl(song, DSP);       //OK, clean responds to controls 
           // test_fckx_sequencer_lib();
        //    start_metronome(5000);
          //  play_poly_rtttl_chords(song, DSP);       //OK, clean responds to controls                                   

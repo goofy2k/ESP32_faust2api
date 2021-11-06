@@ -1,0 +1,29 @@
+W (36490) HANDLE_BEAT: seq_mode 192
+W (36490) HANDLE_BEAT: have a look at mode selection method!
+I (36500) START_METRONOME_KEYOFF: metronomeOFFTimer to be started!
+Guru Meditation Error: Core  0 panic'ed (Unhandled debug exception).
+Debug exception reason: Stack canary watchpoint triggered (Tmr Svc)
+Core  0 register dump:
+PC      : 0x40089a96  PS      : 0x00050036  A0      : 0x40089007  A1      : 0x3ffbf500
+0x40089a96: portENTER_CRITICAL_NESTED at C:/Users/Fred/esp-idf/components/freertos/xtensa/include/freertos/portmacro.h:147
+ (inlined by) vTaskSwitchContext at C:/Users/Fred/esp-idf/components/freertos/tasks.c:2726
+
+0x40089007: _frxt_dispatch at C:/Users/Fred/esp-idf/components/freertos/xtensa/portasm.S:432
+
+A2      : 0x00050023  A3      : 0x00000000  A4      : 0x00000800  A5      : 0x60033c48
+A6      : 0x60033c68  A7      : 0x00000000  A8      : 0x800859a8  A9      : 0x3ffb0760
+A10     : 0x000000fe  A11     : 0x00000001  A12     : 0x00000000  A13     : 0x00000001
+A14     : 0x0000cdcd  A15     : 0x3ffba4ae  SAR     : 0x00000004  EXCCAUSE: 0x00000001
+EXCVADDR: 0x00000000  LBEG    : 0x4000c2e0  LEND    : 0x4000c2f6  LCOUNT  : 0xffffffff
+
+Backtrace:0x40089a93:0x3ffbf500 0x40089004:0x3ffbf540 0x40088fba:0xa5a5a5a5 |<-CORRUPTED
+0x40089a93: portENTER_CRITICAL_NESTED at C:/Users/Fred/esp-idf/components/freertos/xtensa/include/freertos/portmacro.h:147
+ (inlined by) vTaskSwitchContext at C:/Users/Fred/esp-idf/components/freertos/tasks.c:2726
+
+0x40089004: _frxt_dispatch at C:/Users/Fred/esp-idf/components/freertos/xtensa/portasm.S:431
+
+0x40088fba: _frxt_int_exit at C:/Users/Fred/esp-idf/components/freertos/xtensa/portasm.S:231
+
+
+
+ALSO frequent WIfi / MQTT losses
