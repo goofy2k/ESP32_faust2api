@@ -568,7 +568,8 @@ void MIDIMessage::SetPan( unsigned char chan, double pan )
     //     leftmost  centre   rightmost
     //  pan = -1 ...    0 ...    +1
     // ipan =  0 ... 8192 ... 16384
-    int ipan = jdks_float2int( 8192. * (pan + 1.) );
+    //int ipan = jdks_float2int( 8192. * (pan + 1.) );
+    int ipan = (int)( 8192. * (pan + 1.) );  //FCKX
     if ( ipan > 16383 ) ipan = 16383;
 
     int pan_msb = ipan / 128;
@@ -858,7 +859,7 @@ void MIDIBigMessage::SetSysEx ( MIDISystemExclusive *e )
 
 void MIDIBigMessage::ClearSysEx()
 {
-    jdks_safe_delete_object( sysex );
+   // jdks_safe_delete_object( sysex );  //FCKX
 }
 
 

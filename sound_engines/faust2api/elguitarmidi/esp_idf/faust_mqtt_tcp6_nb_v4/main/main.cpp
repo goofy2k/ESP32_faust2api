@@ -10,6 +10,8 @@
 //#define FCKX_SEQUENCER_API
 #define MIDICTRL 1  //to enable compilation of midi functionality
 
+//#define SYSEX_START_N 0x7b  //added by FCKX
+//#define SYSEX_END 0x05
 
 
 #include <stdio.h>
@@ -47,6 +49,9 @@
 #include "secrets.h"
 
 #include "fckx_sequencer.h"
+#include "midi.h"
+#include "jdksmidi/msg.h"
+#include "queue.h"
 
 
 /* The examples use WiFi configuration that you can set via project configuration menu
@@ -121,11 +126,18 @@ bool metronome_keyOff_expired;
 bool beat_expired;
 int beatCount;
 int measureCount;
+int loopCount;
+int loopLength = 4;
+unsigned long loopStart;
+int myCounter = 0;
 float tempo_scale = 1;
 //bool metronomeOn = true;
 int timesig_num; 
 int timesig_denom;
 TimerHandle_t beatTimer;
+
+//buffer for .MsgToText()
+char messageText[64];
 
 uintptr_t metronomeVoiceAddress;
 
@@ -156,7 +168,7 @@ MIDITimedBigMessage::MIDITimedBigMessage(){
 MIDITimedBigMessage mybigmsg = MIDITimedBigMessage();
 
 
-
+/*
 
 class MIDIQueue
 {
@@ -207,7 +219,6 @@ protected:
 
 
 
-
 MIDIQueue::MIDIQueue ( int num_msgs )
     :
     buf ( new MIDITimedBigMessage[ num_msgs ] ),
@@ -239,10 +250,10 @@ bool MIDIQueue::CanGet() const
     return next_in != next_out;
 }
 
+*/
 
 
-
-
+jdksmidi::MIDIQueue myQueue(20); //create queue of 10 (dummy) msgs...
 
 
 
@@ -301,11 +312,12 @@ char * songbuffer = "Bond:d=4,o=5,b=80:32p,16c#6,32d#6,32d#6,16d#6,8d#6,16c#6,16
 bool play_flag = true;
 int poly = 0; //ofset for
 
-unsigned short int play_mode = 0x80;
+unsigned short int play_incoming_mode = 0x80;
 unsigned short int record_mode = 0x40;
 unsigned short int metronome_mode = 0x20; 
- 
-unsigned short int seq_mode = play_mode + record_mode + metronome_mode;//+ metronome_mode;
+unsigned short int loop_mode = 0x10
+;  
+unsigned short int seq_mode = play_incoming_mode + record_mode + metronome_mode;//+ metronome_mode;
 
 //Prevent to use the following parameters. Use the generic Faust API functions instead!
 //parameter base ID's (WaveSynth FX), taken from API README.md
@@ -438,6 +450,31 @@ void wifi_init_sta(void)
 
 //retrieve the parameters of all (active) voices
 
+//Callback for executing events for a list of message pointers
+/*
+void vEventTimerCallback( TimerHandle_t pxTimer ){
+  int32_t lArrayIndex;
+  const int32_t xMaxExpiryCountBeforeStopping = 10;
+
+      // Optionally do something if the pxTimer parameter is NULL.
+      configASSERT( pxTimer );
+ 
+      // Which timer expired?
+      lArrayIndex = ( int32_t ) pvTimerGetTimerID( pxTimer );
+ 
+      // Increment the number of times that pxTimer has expired.
+      lExpireCounters[ lArrayIndex ] += 1;
+ 
+      // If the timer has expired 10 times then stop it from running.
+      if( lExpireCounters[ lArrayIndex ] == xMaxExpiryCountBeforeStopping )
+      {
+          // Do not use a block time if calling a timer API function from a
+          // timer callback function, as doing so could cause a deadlock!
+          xTimerStop( pxTimer, 0 );
+      }
+  };
+
+*/
 
 void execute_single_midi_command(DspFaust * aDSP, int mididata){  //uses propagateMidi
     static const char *TAG = "EXECUTE_SINGLE_COMMAND";
@@ -455,15 +492,126 @@ void execute_single_midi_command(DspFaust * aDSP, int mididata){  //uses propaga
     int time = 0;
     ESP_LOGW(TAG,"seq_mode %d", seq_mode);
     ESP_LOGW(TAG,"have a look at mode selection method!");
-    if (!(seq_mode & record_mode) == 0) {
-        //record
-        ESP_LOGW(TAG,"RECORD MIDI EVENT (in development)");
-    };
-   if (!(seq_mode & play_mode) == 0) {    
+    
+
+            //create a MIDITimedBigMessage
+
+            jdksmidi::MIDITimedBigMessage inMessage = jdksmidi::MIDITimedBigMessage();
+
+            //inMessage.Clear();  //this may be incluede in the msg constructor
+      /*
+            //need to store status
+            inMessage.SetByte1(data1);
+            inMessage.SetByte2(data2);
+      */
+        if (type == 0x90) {
+            //  if (type == NOTE_ON) {
+          int note = data1;
+          int vel = data2;      
+          inMessage.SetNoteOn(channel, note, vel); } 
+        else {
+          if (type == 0x80) {
+            //    if (type == NOTE_OFF) {
+          int note = data1;
+          int vel = data2;      
+          inMessage.SetNoteOff(channel, note, vel);  
+          }  
+          }
+      
+      inMessage.SetTime(xTaskGetTickCount()-loopStart);   //to be replaced by loop time or whatever time measure is active
+    
+    if (!(seq_mode & play_incoming_mode) == 0) {    
         //and play
-         ESP_LOGW(TAG,"PLAY MIDI EVENT");
+        ESP_LOGW(TAG,"PLAY MIDI EVENT");                                  //wrap this into a routine using a MIDITimedBigMessage as input (not necessary for incoming
         aDSP->propagateMidi(count, time, type, channel, data1, data2); 
     };
+    
+    
+    if (!(seq_mode & record_mode) == 0) {
+        //record
+        ESP_LOGE(TAG,"RECORD MIDI EVENT (start of code)");
+        
+
+            if (myQueue.CanPut()){
+            myQueue.Put(inMessage);
+            //myQueue.Next(); //move pointer to the next message. IS THIS NECESSARY???
+            } else { ESP_LOGE(TAG,"cannot Put msg to queue");} 
+            //display length of queue or get some other indication of it's contents....
+            //ESP_LOGE(TAG,"myQueue.next_in %d", myQueue.next_in);
+            
+            //retrieve from inMessage 
+            int retrieved_status = inMessage.GetStatus();            
+            int retrieved_data1 = inMessage.GetByte1();
+            int retrieved_data2 = inMessage.GetByte2();
+            ESP_LOGI(TAG,"RETRIEVED_DATA1: %u (0x%X) xTaskGetTickCount: %d", retrieved_data1, retrieved_data1, xTaskGetTickCount() );
+            //retrieve from queue using Get
+            jdksmidi::MIDITimedBigMessage retrieved_Message = jdksmidi::MIDITimedBigMessage();
+            //const jdksmidi::MIDITimedBigMessage * retrieved_Message_ptr ;  //a single pointer....  you need an array of it
+            const jdksmidi::MIDITimedBigMessage * msg_ptr_Arr[20];
+            
+            
+            //the next code is for TESTING retrieval of messages from the queue
+            //more convenient handlers for the queue content is done with the track class !            
+            
+            myQueue.Next();
+            while (!(myQueue.CanGet())) { 
+                     ESP_LOGI(TAG,"SKIP");
+                     myQueue.Next();
+            };
+            
+            ESP_LOGI(TAG,"READY SKIPPING NOT GETTABLES");
+            int eventsCount = 0;
+            while (myQueue.CanGet()) {
+                
+                retrieved_Message = myQueue.Get();
+                //retrieved_Message_ptr = myQueue.Peek();
+                
+                // if (retrieved_Message.GetTime() != 0) {retrieved_Message = myQueue.Get();  myQueue.Next();};
+                retrieved_status = retrieved_Message.GetStatus();  
+                if (retrieved_status != 0x00){                
+                retrieved_data1 = retrieved_Message.GetByte1();
+                retrieved_data2 = retrieved_Message.GetByte2();
+                
+                ESP_LOGI(TAG,"RETRIEVED_QUEUE STATUS:  %u (0x%X) DATA1: %u (0x%X)  DATA2: %u (0x%X)  timestamp: %lu", retrieved_status, retrieved_status, retrieved_data1, retrieved_data1, retrieved_data2, retrieved_data2, retrieved_Message.GetTime()); 
+                //start timers to play the events
+                //the delay in ticks depends on the loopTime stored in the message,  on the actual loopTime and on the length of the loop in ticks
+                //how to link a payload to the timer to transfer the message properties.....?
+                //it is probably useful to link a single message pointer to the timer
+                msg_ptr_Arr[eventsCount] = retrieved_Message.Peek();
+                eventsCount = eventsCount + 1;
+
+                //USE pvTimer id to hold an index to an array of message pointers, the message pointers to be collected from the message buffer with Peek
+                //create timer with eventsCount as timer ID            
+                //you can have a look at the timer example in the ESP-IDF freeRTOS docs: https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos.html
+                //scan for: TimerHandle_t xTimers[ NUM_TIMERS ];
+                
+                
+                //make sure to destroy the timer after use. OR use a cyclic scheme as with the message buffer. The number of timers does not have to be very long
+                //something relating to the max number of events in a measure?                
+                };
+                myQueue.Next();
+                }
+                
+                //create vEventTimerCallback as in the docs (see above)
+                
+                //};
+            /*    
+            //retrieve from queue using Peek    
+            jdksmidi::MIDITimedBigMessage * retrieved_Message_Ptr = myQueue.Peek();
+            */
+     
+            
+            //ESP_LOGW(TAG,"inMessage %s", inMessage.MsgToText());
+            //SetTime  //timestamp is actual midi time 
+            //if quantisizer_on:  round to nearest beat time
+            //actual miditime my be looping
+            //Set note parameters
+            //insert in queue
+            ESP_LOGE(TAG,"RECORD MIDI EVENT (end of code)");
+        };
+        
+ 
+
 };
 
 
@@ -3008,7 +3156,12 @@ void handle_beat(void){
 
     int beatInMeasureCount =  beatCount % timesig_num;
     if (beatInMeasureCount == 0) {measureCount = measureCount + 1;};
-
+    int measureInLoopCount = measureCount % loopLength;
+    if (measureInLoopCount == 0) {
+        loopCount = loopCount + 1;
+        loopStart = xTaskGetTickCount(); //record start time of loop
+    };
+    
     //metronome_mode = 0x00; //switches off metronome
     //the metronome plays, even if the corresponding bit in seq_mode is not set !!!
     ESP_LOGW(TAG,"seq_mode %d", seq_mode);
@@ -3026,6 +3179,8 @@ void handle_beat(void){
 
     ESP_LOGI(TAG, "beatCount %d  beatInMeasureCount %d  measureCount %d ", beatCount, beatInMeasureCount, measureCount);
     ESP_LOGI(TAG, "xTaskGetTickCount() %d ", xTaskGetTickCount());
+    int loopTime = xTaskGetTickCount()-loopStart;
+    ESP_LOGI(TAG, "xTaskGetTickCount()-loopStart %d ", loopTime);
     ESP_LOGI(TAG, "portTICK_PERIOD_MS %d ", portTICK_PERIOD_MS);    
 };
 
@@ -3087,6 +3242,7 @@ if (beatTimer == NULL) {
      // Start the timer.  No block time is specified, and even if one was
      // it would be ignored because the scheduler has not yet been
      // started.
+     loopStart = xTaskGetTickCount();
      ESP_LOGI(TAG, "beatTimer to be started!");
      if( xTimerStart( beatTimer, 0 ) != pdPASS ) {
          // The timer could not be set into the Active state.
@@ -3337,13 +3493,13 @@ ESP_LOGI(TAG,"user defined beat: %5.1f", seq.getTempo());
 */
 
 
-MIDIQueue myqueue(10); //create queue of 10 (dummy) msgs...
-if (myqueue.CanPut()) {   ESP_LOGE(TAG,  "myqueue.CanPut()");};
-if (myqueue.CanGet()) {   ESP_LOGE(TAG,  "myqueue.CanGet()");};
-if (myqueue.IsFull()) {   ESP_LOGE(TAG,  "myqueue.IsFull()");};
-if (myqueue.CanPut()) {   ESP_LOGE(TAG,  "myqueue.CanPut()");};
-if (myqueue.CanGet()) {   ESP_LOGE(TAG,  "myqueue.CanGet()");};
-if (myqueue.IsFull()) {   ESP_LOGE(TAG,  "myqueue.IsFull()");};
+//MIDIQueue myQueue(10); //create queue of 10 (dummy) msgs...
+if (myQueue.CanPut()) {   ESP_LOGE(TAG,  "myQueue.CanPut()");};
+if (myQueue.CanGet()) {   ESP_LOGE(TAG,  "myQueue.CanGet()");};
+if (myQueue.IsFull()) {   ESP_LOGE(TAG,  "myQueue.IsFull()");};
+if (myQueue.CanPut()) {   ESP_LOGE(TAG,  "myQueue.CanPut()");};
+if (myQueue.CanGet()) {   ESP_LOGE(TAG,  "myQueue.CanGet()");};
+if (myQueue.IsFull()) {   ESP_LOGE(TAG,  "myQueue.IsFull()");};
 
 
 

@@ -82,12 +82,15 @@ MIDISystemExclusive::MIDISystemExclusive ( const MIDISystemExclusive &e )
 
 MIDISystemExclusive::~MIDISystemExclusive()
 {
+    //FCKX
+/*
     ENTER ( "MIDISystemExclusive::~MIDISystemExclusive" );
 
     if ( deletable )
     {
         jdks_safe_delete_array( buf );
     }
+*/    
 }
 
 bool operator == ( const MIDISystemExclusive &e1, const MIDISystemExclusive &e2 )
