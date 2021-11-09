@@ -476,22 +476,31 @@ void vEventTimerCallback( TimerHandle_t pxTimer ){
 
 */
 
-void execute_single_midi_command(DspFaust * aDSP, int mididata){  //uses propagateMidi
+unsigned long generate_Timestamp( unsigned long now_Ts) {
+    
+    return now_Ts-loopStart;
+    
+};
+
+jdksmidi::MIDITimedBigMessage generate_MIDITimedBigMessage( int mididata, unsigned long timestamp){
+    
+       //convert incoming mididata to jdksmidi MIDITimedBigMessage
+    //create a function that accepts mididata and current time and returns a MIDITimedBigMessage
+    //this function will depend on another function that generates the message timestamp, based on actual time and on playing mode (e.g. correcting for looping)     
     static const char *TAG = "EXECUTE_SINGLE_COMMAND";
     int data2 = mididata & 0x000000ff;
     int data1 = (mididata & 0x0000ff00)>>8;
     int status = (mididata & 0x00ff0000)>>16;
-    ESP_LOGI(TAG,"NUMERICAL VALUE:%u ", mididata);
-    ESP_LOGI(TAG,"STATUS: %u (0x%X)", status, status);
-    ESP_LOGI(TAG,"DATA1: %u (0x%X)", data1, data1);
-    ESP_LOGI(TAG,"DATA2: %u (0x%X)", data2, data2) ; //integers are 32 bits!!!!             
-    ESP_LOGI(TAG,"...to be implemented...(store msg and) call mqtt_midi"); 
+    //ESP_LOGI(TAG,"NUMERICAL VALUE:%u ", mididata);
+    //ESP_LOGI(TAG,"STATUS: %u (0x%X)", status, status);
+    //ESP_LOGI(TAG,"DATA1: %u (0x%X)", data1, data1);
+    //ESP_LOGI(TAG,"DATA2: %u (0x%X)", data2, data2) ; //integers are 32 bits!!!!             
+    //ESP_LOGI(TAG,"...to be implemented...(store msg and) call mqtt_midi"); 
     int type = status & 0xf0;
     int channel = status & 0x0f;
-    int count = 3;
-    int time = 0;
-    ESP_LOGW(TAG,"seq_mode %d", seq_mode);
-    ESP_LOGW(TAG,"have a look at mode selection method!");
+
+    //ESP_LOGW(TAG,"seq_mode %d", seq_mode);
+    //ESP_LOGW(TAG,"have a look at mode selection method!");
     
 
             //create a MIDITimedBigMessage
@@ -517,13 +526,74 @@ void execute_single_midi_command(DspFaust * aDSP, int mididata){  //uses propaga
           inMessage.SetNoteOff(channel, note, vel);  
           }  
           }
-      
-      inMessage.SetTime(xTaskGetTickCount()-loopStart);   //to be replaced by loop time or whatever time measure is active
+      //unsigned long eventTimestamp = xTaskGetTickCount()-loopStart; 
+
+      inMessage.SetTime(timestamp );   //actual time in ticks id replaced by loop time or whatever time measure is active 
+    return inMessage;
+};
+
+void propagate_Midi_Event(DspFaust * aDSP, int mididata) {    
+    ESP_LOGW(TAG,"PLAY MIDI EVENT");                                  //wrap this into a routine using a MIDITimedBigMessage as input (not necessary for incoming
+    int data2 = mididata & 0x000000ff;
+    int data1 = (mididata & 0x0000ff00)>>8;
+    int status = (mididata & 0x00ff0000)>>16;
+    ESP_LOGI(TAG,"NUMERICAL VALUE:%u ", mididata);
+    ESP_LOGI(TAG,"STATUS: %u (0x%X)", status, status);
+    ESP_LOGI(TAG,"DATA1: %u (0x%X)", data1, data1);
+    ESP_LOGI(TAG,"DATA2: %u (0x%X)", data2, data2) ; //integers are 32 bits!!!!             
+    ESP_LOGI(TAG,"...to be implemented...(store msg and) call mqtt_midi"); 
+    int type = status & 0xf0;
+    int channel = status & 0x0f;
+    int count = 3;
+    int time = 0;
+    aDSP->propagateMidi(count, time, type, channel, data1, data2);    
+};
+
+
+void   execute_MIDITimedBigMessage_immediate_temp(jdksmidi::MIDITimedBigMessage  inMessage) {
+     static const char *TAG = "execute_MIDITimedBigMessage_immediate_temp";
+             //ESP_LOGW(TAG,"execute_MIDITimedBigMessage_immediate_temp"); 
+              //retrieve data from inMessage 
+            int retrieved_status = inMessage.GetStatus();            
+            int retrieved_data1 = inMessage.GetByte1();
+            int retrieved_data2 = inMessage.GetByte2();
+            
+            ESP_LOGI(TAG,"RETRIEVED_QUEUE STATUS:  %u (0x%X) DATA1: %u (0x%X)  DATA2: %u (0x%X)  timestamp: %lu", retrieved_status, retrieved_status, retrieved_data1, retrieved_data1, retrieved_data2, retrieved_data2, inMessage.GetTime()); 
+
+            //ESP_LOGE(TAG,"RETRIEVED_DATA1: %u (0x%X) xTaskGetTickCount: %d", retrieved_data1, retrieved_data1, xTaskGetTickCount() );  
+    
+    
+};
+
+
+void   execute_MIDITimedBigMessage_immediate(const jdksmidi::MIDITimedBigMessage * inMessage) {
+     static const char *TAG = "EMTBMI";
+             //ESP_LOGW(TAG,"execute_MIDITimedBigMessage_immediate_temp"); 
+              //retrieve data from inMessage 
+            int retrieved_status = inMessage->GetStatus();            
+            int retrieved_data1 = inMessage->GetByte1();
+            int retrieved_data2 = inMessage->GetByte2();            
+            ESP_LOGI(TAG,"MIDImsg:  %u (0x%X) DATA1: %u (0x%X)  DATA2: %u (0x%X)  timestamp: %lu", retrieved_status, retrieved_status, retrieved_data1, retrieved_data1, retrieved_data2, retrieved_data2, inMessage->GetTime()); 
+
+            //ESP_LOGE(TAG,"RETRIEVED_DATA1: %u (0x%X) xTaskGetTickCount: %d", retrieved_data1, retrieved_data1, xTaskGetTickCount() );  
+    
+    
+};
+
+
+
+const jdksmidi::MIDITimedBigMessage * retrieved_Message_Ptr ;
+
+void execute_single_midi_command(DspFaust * aDSP, int mididata){  //uses propagateMidi
+      //unsigned long eventTimestamp = generate_Timestamp(xTaskGetTickCount());
+    unsigned long event_Timestamp =  generate_Timestamp( xTaskGetTickCount() ) ;
+    jdksmidi::MIDITimedBigMessage inMessage = generate_MIDITimedBigMessage( mididata, event_Timestamp);
     
     if (!(seq_mode & play_incoming_mode) == 0) {    
         //and play
-        ESP_LOGW(TAG,"PLAY MIDI EVENT");                                  //wrap this into a routine using a MIDITimedBigMessage as input (not necessary for incoming
-        aDSP->propagateMidi(count, time, type, channel, data1, data2); 
+     propagate_Midi_Event(aDSP, mididata);
+     
+
     };
     
     
@@ -533,23 +603,24 @@ void execute_single_midi_command(DspFaust * aDSP, int mididata){  //uses propaga
         
 
             if (myQueue.CanPut()){
-            myQueue.Put(inMessage);
-            //myQueue.Next(); //move pointer to the next message. IS THIS NECESSARY???
+            myQueue.Put(inMessage); //store inMessage in queue and move next_in index up by one position
+                                    //messages are in the queue in order of the moment that they are added. Especially for e.g. looping applications
+                                    //the messages are NOT in order of the time that the events need to be fired
+                                    //for firing of events, timers based on the actual moment of activation can be used
+                                    //to prevent long timer / output queues the main message queue must be sorted now and then. THis is also done in the jdksmidi lib
+                                    //by the track subclass 
+            
             } else { ESP_LOGE(TAG,"cannot Put msg to queue");} 
             //display length of queue or get some other indication of it's contents....
             //ESP_LOGE(TAG,"myQueue.next_in %d", myQueue.next_in);
             
-            //retrieve from inMessage 
-            int retrieved_status = inMessage.GetStatus();            
-            int retrieved_data1 = inMessage.GetByte1();
-            int retrieved_data2 = inMessage.GetByte2();
-            ESP_LOGI(TAG,"RETRIEVED_DATA1: %u (0x%X) xTaskGetTickCount: %d", retrieved_data1, retrieved_data1, xTaskGetTickCount() );
-            //retrieve from queue using Get
+            
+
+            
+            
+            //retrieve msg from queue using Get
             jdksmidi::MIDITimedBigMessage retrieved_Message = jdksmidi::MIDITimedBigMessage();
-            //const jdksmidi::MIDITimedBigMessage * retrieved_Message_ptr ;  //a single pointer....  you need an array of it
-            const jdksmidi::MIDITimedBigMessage * msg_ptr_Arr[20];
-            
-            
+
             //the next code is for TESTING retrieval of messages from the queue
             //more convenient handlers for the queue content is done with the track class !            
             
@@ -565,20 +636,23 @@ void execute_single_midi_command(DspFaust * aDSP, int mididata){  //uses propaga
                 
                 retrieved_Message = myQueue.Get();
                 //retrieved_Message_ptr = myQueue.Peek();
-                
+             /*   
                 // if (retrieved_Message.GetTime() != 0) {retrieved_Message = myQueue.Get();  myQueue.Next();};
                 retrieved_status = retrieved_Message.GetStatus();  
                 if (retrieved_status != 0x00){                
                 retrieved_data1 = retrieved_Message.GetByte1();
                 retrieved_data2 = retrieved_Message.GetByte2();
-                
+              
                 ESP_LOGI(TAG,"RETRIEVED_QUEUE STATUS:  %u (0x%X) DATA1: %u (0x%X)  DATA2: %u (0x%X)  timestamp: %lu", retrieved_status, retrieved_status, retrieved_data1, retrieved_data1, retrieved_data2, retrieved_data2, retrieved_Message.GetTime()); 
+             */   
+                
                 //start timers to play the events
                 //the delay in ticks depends on the loopTime stored in the message,  on the actual loopTime and on the length of the loop in ticks
                 //how to link a payload to the timer to transfer the message properties.....?
                 //it is probably useful to link a single message pointer to the timer
-                msg_ptr_Arr[eventsCount] = retrieved_Message.Peek();
-                eventsCount = eventsCount + 1;
+            
+//            msg_ptr_Arr[eventsCount] = retrieved_Message.Peek();
+//                eventsCount = eventsCount + 1;
 
                 //USE pvTimer id to hold an index to an array of message pointers, the message pointers to be collected from the message buffer with Peek
                 //create timer with eventsCount as timer ID            
@@ -587,19 +661,35 @@ void execute_single_midi_command(DspFaust * aDSP, int mididata){  //uses propaga
                 
                 
                 //make sure to destroy the timer after use. OR use a cyclic scheme as with the message buffer. The number of timers does not have to be very long
-                //something relating to the max number of events in a measure?                
+                //something relating to the max number of events in a measure?   
+
+                //create a routine that takes a pointer at a MIDITimedBigMessage as input and handles the event.
+                //to be called in the timer callback.
+                   retrieved_Message_Ptr = myQueue.Peek(); //a single pointer....  you need an array of it
+                   execute_MIDITimedBigMessage_immediate(retrieved_Message_Ptr); 
+                 myQueue.Next();
                 };
-                myQueue.Next();
-                }
+               
+                
                 
                 //create vEventTimerCallback as in the docs (see above)
                 
                 //};
-            /*    
+              
             //retrieve from queue using Peek    
-            jdksmidi::MIDITimedBigMessage * retrieved_Message_Ptr = myQueue.Peek();
-            */
-     
+      retrieved_Message_Ptr = myQueue.Peek(); //a single pointer....  you need an array of it
+                        //const jdksmidi::MIDITimedBigMessage * retrieved_Message_ptr ; 
+                        
+     //test immediate playing with a pointer as input                   
+   //  execute_MIDITimedBigMessage_immediate_temp(inMessage);      
+     //test immediate playing with a pointer as input
+ //   execute_MIDITimedBigMessage_immediate(retrieved_Message_Ptr); 
+     // execute_MIDITimedBigMessage_immediate(jdksmidi::MIDITimedBigMessage * inMessage);  //to be implemented, overrides the timestamp in the message
+     //test timed playing with a pointer as input
+     //execute_MIDITimedBigMessage(jdksmidi::MIDITimedBigMessage * inMessage);  //to be implemented, uses the timestamp in the message
+     //test using an array of timed events
+ //    const jdksmidi::MIDITimedBigMessage * msg_ptr_Arr[20];        
+     //have a look at delayUntil.....???
             
             //ESP_LOGW(TAG,"inMessage %s", inMessage.MsgToText());
             //SetTime  //timestamp is actual midi time 
@@ -610,9 +700,7 @@ void execute_single_midi_command(DspFaust * aDSP, int mididata){  //uses propaga
             ESP_LOGE(TAG,"RECORD MIDI EVENT (end of code)");
         };
         
- 
-
-};
+ };
 
 
 
