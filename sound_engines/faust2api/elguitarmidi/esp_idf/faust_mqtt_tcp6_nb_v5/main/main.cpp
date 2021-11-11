@@ -51,6 +51,7 @@
 #include "fckx_sequencer.h"
 #include "midi.h"         //FCKX
 #include "jdksmidi/msg.h" //FCKX
+#include "jdksmidi/track.h" //FCKX
 #include "queue.h"
 
 
@@ -160,6 +161,8 @@ uintptr_t metronomeVoiceAddress;
 
 //class MIDITimedBigMessage;
 
+/*
+
 //dummy message class
 class MIDITimedBigMessage //: public MIDIBigMessage
 {
@@ -180,7 +183,7 @@ MIDITimedBigMessage::MIDITimedBigMessage(){
 };    
 // * mybigmsg = new MIDITimedBigMessage();
 MIDITimedBigMessage mybigmsg = MIDITimedBigMessage();
-
+*/
 
 /*
 
@@ -267,7 +270,7 @@ bool MIDIQueue::CanGet() const
 */
 
 jdksmidi::MIDIQueue myQueue(100); //create queue of 100 (dummy) msgs...
-
+//jdksmidi::MIDITrack myTrack(128); //create track of 2 chunks
 
 int msg_id;
 
@@ -328,7 +331,7 @@ unsigned short int record_mode = 0x40;
 unsigned short int metronome_mode = 0x20; 
 unsigned short int loop_mode = 0x10
 ;  
-unsigned short int seq_mode = play_incoming_mode + record_mode + metronome_mode;//+ metronome_mode;
+unsigned short int seq_mode = play_incoming_mode + record_mode ;//+ metronome_mode;//+ metronome_mode;
 
 //Prevent to use the following parameters. Use the generic Faust API functions instead!
 //parameter base ID's (WaveSynth FX), taken from API README.md
@@ -3595,7 +3598,7 @@ void app_main(void){
     
     esp_log_level_set("AUTO_API", ESP_LOG_VERBOSE);
     esp_log_level_set("event", ESP_LOG_ERROR);  //MQTT event 
-    esp_log_level_set("MQTT_CLIENT", ESP_LOG_ERROR);
+
     esp_log_level_set("MQTT_FAUST", ESP_LOG_INFO);
     
 /*
@@ -3611,6 +3614,7 @@ void app_main(void){
     
     esp_log_level_set("*", ESP_LOG_ERROR);
     esp_log_level_set("MIDI_EVENT_CB", ESP_LOG_WARN);
+    esp_log_level_set("MQTT_CLIENT", ESP_LOG_DEBUG);
     
     ESP_LOGI(TAG, "[APP] Startup..");
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
