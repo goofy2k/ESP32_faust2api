@@ -6,7 +6,7 @@
 
 [Faust]() is a system for Digital Sound Processing (creating digitally synthesized audio). 
  
-It takes a sound engine (.dsp) file generated in an GUI or with a text editor and generates C++ code that can be included in a user's project for creation of firmware for sound genrating application.
+It takes a sound engine (.dsp) file generated in an GUI or with a text editor and generates C++ code that can be included in a user's project for creation of firmware for sound generating application.
 
 ![workflow_partial](/images/workflow_general_cropped.png)    
 
